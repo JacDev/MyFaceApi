@@ -10,5 +10,6 @@ namespace MyFaceApi.Repository
 		Task DeleteUserAsync(User user);
 		Task<User> GetUserAsync(Guid userId);
 		Task UpdateUserAsync(User user);
+		bool CheckIfUserExists(Guid userId);
 	}
 }

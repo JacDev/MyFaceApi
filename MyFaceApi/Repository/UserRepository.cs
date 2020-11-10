@@ -109,5 +109,31 @@ namespace MyFaceApi.Repository
 				throw;
 			}
 		}
+		public bool CheckIfUserExists(Guid userId)
+		{
+			if (userId == Guid.Empty)
+			{
+				throw new ArgumentNullException(nameof(userId));
+			}
+			_logger.LogDebug("Trying to check if exist user {userId}", userId);
+			try
+			{
+				bool wasFound = _appDbContext.Users.Any(a => a.Id == userId);
+				if (wasFound)
+				{
+					_logger.LogDebug("User {userId} exist.", userId);
+				}
+				else
+				{
+					_logger.LogDebug("User {userId} does not exist.", userId);
+				}
+				return wasFound;
+			}
+			catch
+			{
+				_logger.LogWarning("Something went wrong while searching user: {userId}.", userId);
+				throw;
+			}
+		}
 	}
 }

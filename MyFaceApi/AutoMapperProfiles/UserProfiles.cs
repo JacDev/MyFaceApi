@@ -12,7 +12,8 @@ namespace MyFaceApi.AutoMapperProfiles
 	{
 		public UserProfiles()
 		{
-			CreateMap<User, UserToReturn>();
+			CreateMap<User, BasicUserData>();
+			CreateMap<BasicUserData, User>();
 		}
 	}
 }

@@ -14,5 +14,17 @@
             <response code="400">If parameter is not a valid guid</response>    
             <response code="404">If user not found</response>   
         </member>
+        <member name="M:MyFaceApi.Controllers.UsersController.AddUser(MyFaceApi.Models.BasicUserData)">
+            <summary>
+            Add user to database
+            </summary>
+            <param name="user"></param>
+            <returns>
+            Returns added user, HttpCode 400 or HttpCode 409
+            </returns>
+            <response code="200">Returns added user</response>
+            <response code="400"> If user is not valid</response>    
+            <response code="409"> If user already exist</response>
+        </member>
     </members>
 </doc>

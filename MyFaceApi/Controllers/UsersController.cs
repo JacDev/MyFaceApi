@@ -44,7 +44,7 @@ namespace MyFaceApi.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[HttpGet("{userId}", Name = "GetUser")]
-		public async Task<ActionResult<UserToReturn>> GetUser(string userId)
+		public async Task<ActionResult<BasicUserData>> GetUser(string userId)
 		{
 			if (Guid.TryParse(userId, out Guid gUserId))
 			{
@@ -53,7 +53,7 @@ namespace MyFaceApi.Controllers
 				{
 					return NotFound();
 				}
-				return Ok(_mapper.Map<UserToReturn>(userFromRepo));
+				return Ok(_mapper.Map<BasicUserData>(userFromRepo));
 			}
 			else
 			{
@@ -62,10 +62,41 @@ namespace MyFaceApi.Controllers
 		}
 
 
-		// POST api/<ValuesController>
+		/// <summary>
+		/// Add user to database
+		/// </summary>
+		/// <param name="user"></param>
+		/// <returns>
+		/// Returns added user, HttpCode 400 or HttpCode 409
+		/// </returns>
+		/// <response code="200">Returns added user</response>
+		/// <response code="400"> If user is not valid</response>    
+		/// <response code="409"> If user already exist</response>
+
+
 		[HttpPost]
-		public void Post([FromBody] string value)
+		public async Task<ActionResult<BasicUserData>> AddUser(BasicUserData user)
 		{
+			//ModelState.IsValid dosent work during testing
+			if (user.Id == null || user.FirstName==null || user.LastName == null)
+			{
+				return BadRequest("One or more validation errors occurred.");
+			}
+			User userEntity = _mapper.Map<User>(user);
+			if (!_userRepository.CheckIfUserExists(user.Id))
+			{
+				await _userRepository.AddUserAcync(userEntity);
+			}
+			else
+			{
+				return Conflict($"{user.Id} already exist.");
+			}
+
+			BasicUserData userToReturn = _mapper.Map<BasicUserData>(userEntity);
+
+			return CreatedAtRoute("GetUser",
+			new { userId = userToReturn.Id },
+			userToReturn);
 		}
 
 		// PUT api/<ValuesController>/5

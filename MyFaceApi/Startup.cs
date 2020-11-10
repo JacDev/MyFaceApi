@@ -13,6 +13,7 @@ using MyFaceApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using MyFaceApi.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace MyFaceApi
 {
@@ -50,6 +51,8 @@ namespace MyFaceApi
 
 			})
 				.AddEntityFrameworkStores<AppDbContext>();
+
+			services.AddScoped<IAppDbContext>(provider => provider.GetService<AppDbContext>());
 
 			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 			services.AddScoped<IUserRepository, UserRepository>();
