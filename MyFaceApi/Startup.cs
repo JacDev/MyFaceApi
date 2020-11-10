@@ -7,6 +7,12 @@ using Serilog;
 using System;
 using System.IO;
 using System.Reflection;
+using AutoMapper;
+using MyFaceApi.Repository;
+using MyFaceApi.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using MyFaceApi.Entities;
 
 namespace MyFaceApi
 {
@@ -28,6 +34,25 @@ namespace MyFaceApi
 				var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 				c.IncludeXmlComments(xmlPath);
 			});
+
+			services.AddDbContext<AppDbContext>(
+				options => options.UseSqlServer(Configuration.GetConnectionString("MyFaceApi")));
+
+			services.AddIdentity<User, IdentityRole<Guid>>(config =>
+			{
+				config.Password.RequiredLength = 1;
+				config.Password.RequireDigit = false;
+				config.Password.RequireNonAlphanumeric = false;
+				config.Password.RequireUppercase = false;
+				config.Password.RequiredUniqueChars = 0;
+				config.Password.RequireLowercase = false;
+				config.SignIn.RequireConfirmedEmail = true;
+
+			})
+				.AddEntityFrameworkStores<AppDbContext>();
+
+			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+			services.AddScoped<IUserRepository, UserRepository>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
