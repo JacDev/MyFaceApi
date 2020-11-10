@@ -1,0 +1,121 @@
+{
+  "Timestamp": "2020-11-10T01:37:49.2760761+01:00",
+  "Level": "Information",
+  "MessageTemplate": "{time} - Application Starting Up",
+  "Properties": {
+    "time": "2020-11-10T01:37:49.2603240+01:00",
+    "MachineName": "DESKTOP-JCMLOIJ",
+    "ProcessId": 22248,
+    "ThreadId": 1
+  }
+} {
+  "Timestamp": "2020-11-10T02:05:35.0478489+01:00",
+  "Level": "Information",
+  "MessageTemplate": "{time} - Application Starting Up",
+  "Properties": {
+    "time": "2020-11-10T02:05:35.0375770+01:00",
+    "MachineName": "DESKTOP-JCMLOIJ",
+    "ProcessId": 11388,
+    "ThreadId": 1
+  }
+} {
+  "Timestamp": "2020-11-10T02:10:01.0895181+01:00",
+  "Level": "Information",
+  "MessageTemplate": "{time} - Application Starting Up",
+  "Properties": {
+    "time": "2020-11-10T02:10:01.0809329+01:00",
+    "MachineName": "DESKTOP-JCMLOIJ",
+    "ProcessId": 12608,
+    "ThreadId": 1
+  }
+} {
+  "Timestamp": "2020-11-10T02:10:13.0438351+01:00",
+  "Level": "Information",
+  "MessageTemplate": "someone call api",
+  "Properties": {
+    "SourceContext": "MyFaceApi.Controllers.ValuesController",
+    "ActionId": "0c5f72c9-7644-4a18-ace6-000e8481e9a1",
+    "ActionName": "MyFaceApi.Controllers.ValuesController.Get (MyFaceApi)",
+    "RequestId": "0HM452LG31G37:00000001",
+    "RequestPath": "/api/values",
+    "SpanId": "|2208b06a-4242f7d4631e260c.",
+    "TraceId": "2208b06a-4242f7d4631e260c",
+    "ParentId": "",
+    "ConnectionId": "0HM452LG31G37",
+    "MachineName": "DESKTOP-JCMLOIJ",
+    "ProcessId": 12608,
+    "ThreadId": 10
+  }
+} {
+  "Timestamp": "2020-11-10T02:10:13.0738619+01:00",
+  "Level": "Information",
+  "MessageTemplate": "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms",
+  "Properties": {
+    "RequestMethod": "GET",
+    "RequestPath": "/api/values",
+    "StatusCode": 200,
+    "Elapsed": 187.3802,
+    "SourceContext": "Serilog.AspNetCore.RequestLoggingMiddleware",
+    "RequestId": "0HM452LG31G37:00000001",
+    "SpanId": "|2208b06a-4242f7d4631e260c.",
+    "TraceId": "2208b06a-4242f7d4631e260c",
+    "ParentId": "",
+    "ConnectionId": "0HM452LG31G37",
+    "MachineName": "DESKTOP-JCMLOIJ",
+    "ProcessId": 12608,
+    "ThreadId": 10
+  },
+  "Renderings": {
+    "Elapsed": [
+      {
+        "Format": "0.0000",
+        "Rendering": "187.3802"
+      }
+    ]
+  }
+} {
+  "Timestamp": "2020-11-10T02:10:39.9209239+01:00",
+  "Level": "Information",
+  "MessageTemplate": "someone call api",
+  "Properties": {
+    "SourceContext": "MyFaceApi.Controllers.ValuesController",
+    "ActionId": "0c5f72c9-7644-4a18-ace6-000e8481e9a1",
+    "ActionName": "MyFaceApi.Controllers.ValuesController.Get (MyFaceApi)",
+    "RequestId": "0HM452LG31G37:00000002",
+    "RequestPath": "/api/values",
+    "SpanId": "|2208b06b-4242f7d4631e260c.",
+    "TraceId": "2208b06b-4242f7d4631e260c",
+    "ParentId": "",
+    "ConnectionId": "0HM452LG31G37",
+    "MachineName": "DESKTOP-JCMLOIJ",
+    "ProcessId": 12608,
+    "ThreadId": 8
+  }
+} {
+  "Timestamp": "2020-11-10T02:10:39.9239907+01:00",
+  "Level": "Information",
+  "MessageTemplate": "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms",
+  "Properties": {
+    "RequestMethod": "GET",
+    "RequestPath": "/api/values",
+    "StatusCode": 200,
+    "Elapsed": 36.1385,
+    "SourceContext": "Serilog.AspNetCore.RequestLoggingMiddleware",
+    "RequestId": "0HM452LG31G37:00000002",
+    "SpanId": "|2208b06b-4242f7d4631e260c.",
+    "TraceId": "2208b06b-4242f7d4631e260c",
+    "ParentId": "",
+    "ConnectionId": "0HM452LG31G37",
+    "MachineName": "DESKTOP-JCMLOIJ",
+    "ProcessId": 12608,
+    "ThreadId": 8
+  },
+  "Renderings": {
+    "Elapsed": [
+      {
+        "Format": "0.0000",
+        "Rendering": "36.1385"
+      }
+    ]
+  }
+}

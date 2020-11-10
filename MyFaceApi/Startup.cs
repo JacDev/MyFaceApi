@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace MyFaceApi
 {
@@ -35,6 +36,9 @@ namespace MyFaceApi
 			}
 
 			app.UseHttpsRedirection();
+
+			//przy ka¿dym zapytaniu http zapisuje logi
+			app.UseSerilogRequestLogging();
 
 			app.UseRouting();
 

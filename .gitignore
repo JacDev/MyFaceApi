@@ -5,3 +5,6 @@
 /.vs
 /MyFaceApi/bin/Debug/netcoreapp3.1
 /MyFaceApi/obj
+/Stream
+/Documents
+/Logs
