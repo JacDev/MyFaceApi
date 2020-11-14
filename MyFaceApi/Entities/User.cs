@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MyFaceApi.Entities
 {
@@ -8,6 +9,7 @@ namespace MyFaceApi.Entities
 	{
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        [AllowNull]
         public string ProfileImagePath { get; set; } = null;
         public virtual ICollection<Post> Posts { get; set; }
         public virtual ICollection<FriendRelation> Relations { get; set; }

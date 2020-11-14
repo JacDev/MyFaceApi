@@ -13,6 +13,7 @@
             <response code="200">Returns the found user</response>
             <response code="400">If parameter is not a valid guid</response>    
             <response code="404">If user not found</response>   
+            <response code="500"> If internal error occured</response>
         </member>
         <member name="M:MyFaceApi.Controllers.UsersController.AddUser(MyFaceApi.Models.BasicUserData)">
             <summary>
@@ -25,6 +26,21 @@
             <response code="200">Returns added user</response>
             <response code="400"> If user is not valid</response>    
             <response code="409"> If user already exist</response>
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.UsersController.PartiallyUpdateUser(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.BasicUserData})">
+            <summary>
+            Uptade user in database
+            </summary>
+            <param name="userId"></param>
+            <param name="patchDocument"></param>
+            <returns>
+            Returns status 204 no content if user updated
+            </returns>
+            <response code="200">Returns added user</response>
+            <response code="400"> If user is not valid</response>    
+            <response code="409"> If user already exist</response>
+            <response code="500"> If internal error occured</response>
         </member>
     </members>
 </doc>

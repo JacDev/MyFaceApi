@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System;
 using System.IO;
@@ -13,7 +14,8 @@ using MyFaceApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using MyFaceApi.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Newtonsoft.Json.Serialization;
+
 
 namespace MyFaceApi
 {
@@ -28,8 +30,16 @@ namespace MyFaceApi
 
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddControllers();
-			services.AddSwaggerGen(c=>
+			services.AddControllers(options =>
+			{
+				options.ReturnHttpNotAcceptable = true;
+			})
+				.AddNewtonsoftJson(setupAction =>
+				{
+					setupAction.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+				});
+
+			services.AddSwaggerGen(c =>
 			{
 				var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
 				var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);

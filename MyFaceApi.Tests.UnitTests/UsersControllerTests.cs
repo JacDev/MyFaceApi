@@ -11,6 +11,11 @@ using MyFaceApi.Controllers;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.AutoMapperProfiles;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace MyFaceApi.Tests.UnitTests
 {
@@ -37,9 +42,7 @@ namespace MyFaceApi.Tests.UnitTests
 			Guid testUserGuid = new Guid("24610263-CEE4-4231-97DF-904EE6437278");
 
 			_mockRepo.Setup(repo => repo.GetUserAsync(testUserGuid))
-				.ReturnsAsync(GetTestUserData()
-				.FirstOrDefault(
-				s => s.Id == testUserGuid));
+				.ReturnsAsync((User)null);
 
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 
@@ -48,6 +51,7 @@ namespace MyFaceApi.Tests.UnitTests
 
 			//Assert
 			var notFoundResult = Assert.IsType<NotFoundResult>(result.Result);
+			_mockRepo.Verify();
 		}
 
 		[Fact]
@@ -61,7 +65,26 @@ namespace MyFaceApi.Tests.UnitTests
 
 			//Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-			Assert.IsType<string>(badRequestResult.Value);
+			Assert.Equal("InvalidGuid is not valid Guid.", badRequestResult.Value);
+		}
+		[Fact]
+		public async void GetUser_ReturnsInternalServerError_WhenExceptionThrownInRepository()
+		{
+			//Arrange
+			Guid testUserGuid = new Guid("24610263-CEE4-4231-97DF-904EE6437278");
+
+			_mockRepo.Setup(repo => repo.GetUserAsync(testUserGuid))
+				.Throws(new ArgumentNullException(nameof(testUserGuid)));
+
+			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
+
+			//Act
+			var result = await controller.GetUser("24610263-CEE4-4231-97DF-904EE6437278");
+
+			//Assert
+			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
+			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
+			_mockRepo.Verify();
 		}
 		[Fact]
 		public async void GetUser_ReturnsAnActionResult_WithABasicUserData()
@@ -73,6 +96,7 @@ namespace MyFaceApi.Tests.UnitTests
 				.ReturnsAsync(GetTestUserData()
 				.FirstOrDefault(
 				s => s.Id == testUserGuid));
+
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 			//Act
 			var result = await controller.GetUser(testUserGuid.ToString());
@@ -83,7 +107,9 @@ namespace MyFaceApi.Tests.UnitTests
 			Assert.Equal("Brad", model.FirstName);
 			Assert.Equal("Pit", model.LastName);
 			Assert.Equal(new Guid("24610263-CEE4-4231-97DF-904EE6437278"), model.Id);
+			_mockRepo.Verify();
 		}
+
 		private List<User> GetTestUserData()
 		{
 			var database = new List<User>();
@@ -139,7 +165,8 @@ namespace MyFaceApi.Tests.UnitTests
 			//Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
 			Assert.Equal("One or more validation errors occurred.", badRequestResult.Value);
-		}
+			_mockRepo.Verify();
+		}	
 		[Fact]
 		public async void AddUser_ReturnsConflict_WhenUserWithGuidAlreadyExist()
 		{
@@ -158,6 +185,106 @@ namespace MyFaceApi.Tests.UnitTests
 			//Assert
 			var conflictRequestResult = Assert.IsType<ConflictObjectResult>(result.Result);
 			Assert.Equal($"{userToAdd.Id} already exist.", conflictRequestResult.Value);
+			_mockRepo.Verify();
+		}
+		[Fact]
+		public async void AddUser_ReturnsInternalServerError_WhenExceptionThrownInRepository()
+		{
+			//Arrange
+			var userToAdd = GetTestUserData().ElementAt(0);
+			_mockRepo.Setup(repo => repo.CheckIfUserExists(userToAdd.Id))
+				.Throws(new ArgumentNullException(nameof(userToAdd.Id)));
+
+			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
+
+			//Act
+			var result = await controller.AddUser(_mapper.Map<BasicUserData>(userToAdd));
+
+			//Assert
+			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
+			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
+			_mockRepo.Verify();
+		}
+		[Fact]
+		public async void PartiallyUpdateUser_ReturnsBadRequestResult_WhenUserIdIsInvalid()
+		{
+			//Arrange
+			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
+
+			//Act
+			var result = await controller.PartiallyUpdateUser("InvalidGuid", GetJsonPatchDocument());
+
+			//Assert
+			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+			Assert.Equal("InvalidGuid is not valid Guid.", badRequestResult.Value);
+		}
+		[Fact]
+		public async void PartiallyUpdateUser_NotFoundRequest_WhenUserDataIsNotInTheDatabase()
+		{
+			Guid testUserGuid = new Guid("24610263-CEE4-4231-97DF-904EE6437278");
+			_mockRepo.Setup(repo => repo.GetUserAsync(testUserGuid))
+				.ReturnsAsync((User)null);
+
+			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
+
+			//Act
+			var result = await controller.PartiallyUpdateUser(testUserGuid.ToString(), GetJsonPatchDocument());
+
+			//Assert
+			var notFoundResult = Assert.IsType<NotFoundResult>(result);
+			_mockRepo.Verify();
+		}
+		[Fact]
+		public async void PartiallyUpdateUser_ReturnsInternalServerError_WhenExceptionThrownInRepository()
+		{
+			//Arrange
+			Guid testUserGuid = new Guid("24610263-CEE4-4231-97DF-904EE6437278");
+			_mockRepo.Setup(repo => repo.GetUserAsync(testUserGuid))
+				.Throws(new ArgumentNullException(nameof(testUserGuid)));
+
+			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
+
+			//Act
+			var result = await controller.PartiallyUpdateUser(testUserGuid.ToString(), GetJsonPatchDocument());
+
+			//Assert
+			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result);
+			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
+			_mockRepo.Verify();
+		}
+		[Fact]
+		public async void PartiallyUpdateUser_ReturnsNoContentResult_WhenUserUpdated()
+		{
+			//Arrange
+			var userInRepo = GetTestUserData().ElementAt(0);
+			_mockRepo.Setup(repo => repo.GetUserAsync(userInRepo.Id))
+				.ReturnsAsync(userInRepo);
+			_mockRepo.Setup(repo => repo.UpdateUserAsync(userInRepo))
+				.Verifiable();
+			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
+
+			var objectValidator = new Mock<IObjectModelValidator>();
+			objectValidator.Setup(o => o.Validate(It.IsAny<ActionContext>(),
+											  It.IsAny<ValidationStateDictionary>(),
+											  It.IsAny<string>(),
+											  It.IsAny<Object>()));
+			controller.ObjectValidator = objectValidator.Object;
+
+			//Act
+			var result = await controller.PartiallyUpdateUser(userInRepo.Id.ToString(), GetJsonPatchDocument());
+
+			//Assert
+			var noContentResult = Assert.IsType<NoContentResult>(result);
+			Assert.Equal("Changed", userInRepo.FirstName);
+			_mockRepo.Verify();
+
+		}
+		private JsonPatchDocument<BasicUserData> GetJsonPatchDocument() {
+			var jsonobject = new JsonPatchDocument<BasicUserData>();
+			jsonobject.ContractResolver = new CamelCasePropertyNamesContractResolver();
+			jsonobject.Replace(d => d.FirstName, "Changed");
+
+			return jsonobject;
 		}
 	}
 }
