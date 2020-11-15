@@ -4,15 +4,65 @@
         <name>MyFaceApi</name>
     </assembly>
     <members>
+        <member name="M:MyFaceApi.Controllers.PostsController.GetPost(System.String)">
+            <summary>
+            Return the found post
+            </summary>
+            <param name="postId">Post guid as a string </param>
+            <returns>Found post</returns>
+            <response code="200"> Returns the found post</response>
+            <response code="400"> If parameter is not a valid guid</response>    
+            <response code="404"> If post not found</response>   
+            <response code="500"> If internal error occured</response>
+        </member>
         <member name="M:MyFaceApi.Controllers.PostsController.GetPosts(System.String)">
             <summary>
             Return the found user posts
             </summary>
             <param name="userId">User guid as a string </param>
-            <returns>Found user</returns>
+            <returns>Found user posts</returns>
             <response code="200"> Returns the found user posts</response>
             <response code="400"> If parameter is not a valid guid</response>    
             <response code="404"> If user not found</response>   
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.PostsController.AddPost(System.String,MyFaceApi.Models.PostModels.PostToAdd)">
+            <summary>
+            Add post to database
+            </summary>
+            <param name="userId">User guid as a string </param>
+            <param name="post"></param>
+            <returns>Added post</returns>
+            <response code="201"> Return created post</response>
+            <response code="400"> If parameter is not a valid guid</response>    
+            <response code="404"> If user not found</response>   
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.PostsController.PartiallyUpdatePost(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.PostModels.PostToUpdate})">
+            <summary>
+            Update post in database
+            </summary>
+            <param name="postId"></param>
+            <param name="patchDocument"></param>
+            <returns>
+            Status 204 no content if the post has been updated
+            </returns>
+            <response code="204"> No content if the user has been updated</response>
+            <response code="400"> If the post is not valid</response>    
+            <response code="404"> If the post not found</response>
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.PostsController.DeletePost(System.String)">
+            <summary>
+            Remove a post from the database
+            </summary>
+            <param name="postId"></param>
+            <returns>
+            Status 204 no content if the post has been removed
+            </returns>
+            <response code="204"> No content if the post has been updated</response>
+            <response code="400"> If the post is not valid</response>    
+            <response code="404"> If the post not found</response>
             <response code="500"> If internal error occured</response>
         </member>
         <member name="M:MyFaceApi.Controllers.UsersController.GetUser(System.String)">
@@ -55,13 +105,13 @@
         </member>
         <member name="M:MyFaceApi.Controllers.UsersController.DeleteUser(System.String)">
             <summary>
-            Uptade user in database
+            Remove a user from the database
             </summary>
             <param name="userId"></param>
             <returns>
-            Returns status 204 no content if the user has been removed
+            Status 204 no content if the user has been removed
             </returns>
-            <response code="204"> No contentif the user has been removed</response>
+            <response code="204"> No content if the user has been removed</response>
             <response code="400"> If the user is not valid</response>    
             <response code="404"> If the user not found</response>
             <response code="500"> If internal error occured</response>

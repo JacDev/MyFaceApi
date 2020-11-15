@@ -3,59 +3,64 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MyFaceApi.Controllers;
 using MyFaceApi.Entities;
+using MyFaceApi.Models.PostModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
 namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 {
-	public class PostsControllerGetPostsTests : PostsControllerPreparation
+	public class PostsControllerAddPostTests : PostsControllerPreparation
 	{
-		public PostsControllerGetPostsTests() : base()
+		public PostsControllerAddPostTests() : base()
 		{
 		}
 		[Fact]
-		public void GetPosts_ReturnsAnActionResult_WithAListOfPosts()
+		public async void AddPost_ReturnsRedirectToAddedUser_WithBasicUserData()
 		{
 			//Arrange
-			var user = GetTestUserData().ElementAt(0);
-
+			var testUser = GetTestUserData().ElementAt(0);
+			var postToAdd = new PostToAdd
+			{
+				WhenAdded = DateTime.Now,
+				Text = "Added in test"
+			};
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
 				.Returns(true)
 				.Verifiable();
-			_mockPostRepo.Setup(repo => repo.GetUserPosts(It.IsAny<Guid>()))
-				.Returns(user.Posts.ToList())
-				.Verifiable();
+			Post postEntity = _mapper.Map<Post>(postToAdd);
+			postEntity.Id = new Guid(_exaplePostGuid);
+
+			_mockPostRepo.Setup(repo => repo.AddPostAsync(It.IsAny<Post>()))
+				.ReturnsAsync(postEntity);
 
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPosts(user.Id.ToString());
+			var result = await controller.AddPost(testUser.Id.ToString(), postToAdd);
 
 			//Assert
-			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-			var model = Assert.IsType<List<Post>>(actionResult.Value);
-
-			Assert.Equal(user.Posts.Count, model.Count);
+			var redirectToActionResult = Assert.IsType<CreatedAtRouteResult>(result.Result);
+			Assert.Equal(testUser.Id.ToString(), redirectToActionResult.RouteValues["userId"].ToString());
+			Assert.Equal(postEntity.Id.ToString(), redirectToActionResult.RouteValues["postId"].ToString());
+			Assert.Equal("GetPost", redirectToActionResult.RouteName);
 			_mockUserRepo.Verify();
-			_mockPostRepo.Verify();
 		}
 		[Fact]
-		public void GetPosts_ReturnsBadRequestResult_WhenTheUserIdIsInvalid()
+		public async void AddPost_ReturnsBadRequestResult_WhenTheUserIdIsInvalid()
 		{
 			//Arrange
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPosts("InvalidGuid");
+			var result = await controller.AddPost("InvalidGuid", new PostToAdd { Text = "Bad request" });
 
 			//Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
 			Assert.Equal("InvalidGuid is not valid Guid.", badRequestResult.Value);
 		}
 		[Fact]
-		public void GetPosts_ReturnsNotFoundObjectResult_WhenTheUserDoesntExist()
+		public async void AddPost_ReturnsNotFoundObjectResult_WhenTheUserDoesntExist()
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
@@ -65,7 +70,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPosts(_exaplePostGuid);
+			var result = await controller.AddPost(_exaplePostGuid, new PostToAdd { Text = "Bad request" });
 
 			//Assert
 			var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
@@ -74,21 +79,20 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			_mockPostRepo.Verify();
 		}
 		[Fact]
-		public void GetPosts_ReturnsInternalServerError_WhenExceptionThrownInRepository()
+		public async void AddPost_ReturnsInternalServerError_WhenExceptionThrownInRepository()
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
 				.Returns(true)
 				.Verifiable();
-			_mockPostRepo.Setup(repo => repo.GetUserPosts(It.IsAny<Guid>()))
+			_mockPostRepo.Setup(repo => repo.AddPostAsync(It.IsAny<Post>()))
 				.Throws(new ArgumentNullException(nameof(_exaplePostGuid)))
 				.Verifiable();
-
 
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPosts(_exaplePostGuid);
+			var result = await controller.AddPost(_exaplePostGuid, new PostToAdd { Text = "Bad request" });
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);

@@ -20,13 +20,16 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			//Arrange
 			var userToRemove = GetTestUserData().ElementAt(0);
 			_mockRepo.Setup(repo => repo.GetUserAsync(userToRemove.Id))
-				.ReturnsAsync(userToRemove);
+				.ReturnsAsync(userToRemove)
+				.Verifiable();
 			_mockRepo.Setup(repo => repo.DeleteUserAsync(userToRemove))
 				.Verifiable();
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 
 			//Act
 			var result = await controller.DeleteUser(userToRemove.Id.ToString());
+
+			//Assert
 			var noContentResult = Assert.IsType<NoContentResult>(result);
 			_mockRepo.Verify();
 		}
@@ -49,13 +52,14 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			//Arrange
 			Guid testUserGuid = new Guid("24610263-CEE4-4231-97DF-904EE6437278");
 
-			_mockRepo.Setup(repo => repo.GetUserAsync(testUserGuid))
-				.ReturnsAsync((User)null);
+			_mockRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
+				.ReturnsAsync((User)null)
+				.Verifiable();
 
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 
 			//Act
-			var result = await controller.DeleteUser("97114237-814B-419E-A952-2CE29EBE222F");
+			var result = await controller.DeleteUser(testUserGuid.ToString());
 
 			//Assert
 			var notFoundResult = Assert.IsType<NotFoundResult>(result);
@@ -68,12 +72,13 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			Guid testUserGuid = new Guid("24610263-CEE4-4231-97DF-904EE6437278");
 
 			_mockRepo.Setup(repo => repo.GetUserAsync(testUserGuid))
-				.Throws(new ArgumentNullException(nameof(testUserGuid)));
+				.Throws(new ArgumentNullException(nameof(testUserGuid)))
+				.Verifiable();
 
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 
 			//Act
-			var result = await controller.DeleteUser("24610263-CEE4-4231-97DF-904EE6437278");
+			var result = await controller.DeleteUser(testUserGuid.ToString());
 
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result);

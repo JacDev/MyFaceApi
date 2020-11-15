@@ -62,9 +62,28 @@ namespace MyFaceApi.Repository
 				throw;
 			}
 		}
+		public Post GetPost(Guid postId)
+		{
+			_logger.LogDebug("Trying to get the post: {userid}", postId);
+			if (postId == Guid.Empty)
+			{
+				throw new ArgumentNullException(nameof(postId));
+			}
+			try
+			{
+				Post postToReturn = _appDbContext.Posts
+				.FirstOrDefault(s => s.Id == postId);
+				return postToReturn;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occured during getting post.");
+				throw;
+			}
+		}
 		public List<Post> GetUserPosts(Guid userId)
 		{
-			_logger.LogDebug("Trying to get user: {userid}", userId);
+			_logger.LogDebug("Trying to get user posts: {userid}", userId);
 			if (userId == Guid.Empty)
 			{
 				throw new ArgumentNullException(nameof(userId));

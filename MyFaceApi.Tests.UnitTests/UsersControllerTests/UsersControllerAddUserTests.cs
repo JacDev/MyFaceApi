@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MyFaceApi.Controllers;
+using MyFaceApi.Entities;
 using MyFaceApi.Models;
 using System;
 using System.Linq;
@@ -20,10 +21,12 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			//Arrange
 			var userToAdd = GetTestUserData().ElementAt(0);
 
-			_mockRepo.Setup(repo => repo.AddUserAcync(userToAdd))
-				.ReturnsAsync(userToAdd);
-			_mockRepo.Setup(repo => repo.CheckIfUserExists(userToAdd.Id))
-				.Returns(false);
+			_mockRepo.Setup(repo => repo.AddUserAcync(It.IsAny<User>()))
+				.ReturnsAsync(userToAdd)
+				.Verifiable();
+			_mockRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
+				.Returns(false)
+				.Verifiable();
 
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 			//Act
@@ -51,7 +54,6 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			//Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
 			Assert.Equal("One or more validation errors occurred.", badRequestResult.Value);
-			_mockRepo.Verify();
 		}
 		[Fact]
 		public async void AddUser_ReturnsConflict_WhenTheUserWithGuidAlreadyExist()
@@ -59,10 +61,9 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			//Arrange
 			var userToAdd = GetTestUserData().ElementAt(0);
 
-			_mockRepo.Setup(repo => repo.AddUserAcync(userToAdd))
-				.ReturnsAsync(userToAdd);
 			_mockRepo.Setup(repo => repo.CheckIfUserExists(userToAdd.Id))
-				.Returns(true);
+				.Returns(true)
+				.Verifiable();
 
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 			//Act
@@ -79,7 +80,8 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			//Arrange
 			var userToAdd = GetTestUserData().ElementAt(0);
 			_mockRepo.Setup(repo => repo.CheckIfUserExists(userToAdd.Id))
-				.Throws(new ArgumentNullException(nameof(userToAdd.Id)));
+				.Throws(new ArgumentNullException(nameof(userToAdd.Id)))
+				.Verifiable();
 
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 

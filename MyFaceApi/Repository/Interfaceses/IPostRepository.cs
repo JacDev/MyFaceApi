@@ -9,6 +9,7 @@ namespace MyFaceApi.Repository.Interfaceses
 	{
 		Task<Post> AddPostAsync(Post post);
 		Task DeletePostAsync(Post postId);
+		Post GetPost(Guid postId);
 		List<Post> GetUserPosts(Guid userId);
 		Task UpdatePostAsync(Post post);
 	}

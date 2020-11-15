@@ -21,7 +21,8 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			//Arrange
 			var userInRepo = GetTestUserData().ElementAt(0);
 			_mockRepo.Setup(repo => repo.GetUserAsync(userInRepo.Id))
-				.ReturnsAsync(userInRepo);
+				.ReturnsAsync(userInRepo)
+				.Verifiable();
 			_mockRepo.Setup(repo => repo.UpdateUserAsync(userInRepo))
 				.Verifiable();
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
@@ -59,7 +60,8 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 		{
 			Guid testUserGuid = new Guid("24610263-CEE4-4231-97DF-904EE6437278");
 			_mockRepo.Setup(repo => repo.GetUserAsync(testUserGuid))
-				.ReturnsAsync((User)null);
+				.ReturnsAsync((User)null)
+				.Verifiable();
 
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 
@@ -76,7 +78,8 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			//Arrange
 			Guid testUserGuid = new Guid("24610263-CEE4-4231-97DF-904EE6437278");
 			_mockRepo.Setup(repo => repo.GetUserAsync(testUserGuid))
-				.Throws(new ArgumentNullException(nameof(testUserGuid)));
+				.Throws(new ArgumentNullException(nameof(testUserGuid)))
+				.Verifiable();
 
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 

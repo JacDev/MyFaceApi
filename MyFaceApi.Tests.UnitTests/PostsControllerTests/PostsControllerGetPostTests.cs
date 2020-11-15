@@ -4,91 +4,79 @@ using Moq;
 using MyFaceApi.Controllers;
 using MyFaceApi.Entities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
 namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 {
-	public class PostsControllerGetPostsTests : PostsControllerPreparation
+	public class PostsControllerGetPostTests : PostsControllerPreparation
 	{
-		public PostsControllerGetPostsTests() : base()
+		public PostsControllerGetPostTests() : base()
 		{
 		}
 		[Fact]
-		public void GetPosts_ReturnsAnActionResult_WithAListOfPosts()
+		public void GetPost_ReturnsAnActionResult_WithAListOfPosts()
 		{
 			//Arrange
 			var user = GetTestUserData().ElementAt(0);
 
-			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
-				.Verifiable();
-			_mockPostRepo.Setup(repo => repo.GetUserPosts(It.IsAny<Guid>()))
-				.Returns(user.Posts.ToList())
+			_mockPostRepo.Setup(repo => repo.GetPost(It.IsAny<Guid>()))
+				.Returns(user.Posts.ElementAt(0))
 				.Verifiable();
 
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPosts(user.Id.ToString());
+			var result = controller.GetPost(user.Posts.ElementAt(0).Id.ToString());
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-			var model = Assert.IsType<List<Post>>(actionResult.Value);
-
-			Assert.Equal(user.Posts.Count, model.Count);
-			_mockUserRepo.Verify();
+			var model = Assert.IsType<Post>(actionResult.Value);
+			Assert.Equal(user.Posts.ElementAt(0), model);
 			_mockPostRepo.Verify();
 		}
 		[Fact]
-		public void GetPosts_ReturnsBadRequestResult_WhenTheUserIdIsInvalid()
+		public void GetPost_ReturnsBadRequestResult_WhenTheUserIdIsInvalid()
 		{
 			//Arrange
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPosts("InvalidGuid");
+			var result = controller.GetPost("InvalidGuid");
 
 			//Assert
 			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
 			Assert.Equal("InvalidGuid is not valid Guid.", badRequestResult.Value);
 		}
 		[Fact]
-		public void GetPosts_ReturnsNotFoundObjectResult_WhenTheUserDoesntExist()
+		public void GetPost_ReturnsNotFoundObjectResult_WhenTheUserDoesntExist()
 		{
 			//Arrange
-			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(false)
+			_mockPostRepo.Setup(repo => repo.GetPost(It.IsAny<Guid>()))
+				.Returns((Post)null)
 				.Verifiable();
 
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPosts(_exaplePostGuid);
+			var result = controller.GetPost(_exaplePostGuid);
 
 			//Assert
-			var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
-			Assert.Equal($"User: {_exaplePostGuid} not found.", notFoundResult.Value);
-			_mockUserRepo.Verify();
+			var notFoundResult = Assert.IsType<NotFoundResult>(result.Result);
 			_mockPostRepo.Verify();
 		}
 		[Fact]
-		public void GetPosts_ReturnsInternalServerError_WhenExceptionThrownInRepository()
+		public void GetPost_ReturnsInternalServerError_WhenExceptionThrownInRepository()
 		{
 			//Arrange
-			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
-				.Verifiable();
-			_mockPostRepo.Setup(repo => repo.GetUserPosts(It.IsAny<Guid>()))
+			_mockPostRepo.Setup(repo => repo.GetPost(It.IsAny<Guid>()))
 				.Throws(new ArgumentNullException(nameof(_exaplePostGuid)))
 				.Verifiable();
-
 
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPosts(_exaplePostGuid);
+			var result = controller.GetPost(_exaplePostGuid);
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);

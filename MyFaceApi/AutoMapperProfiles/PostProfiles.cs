@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using MyFaceApi.Entities;
+using MyFaceApi.Models.PostModels;
 
 namespace MyFaceApi.AutoMapperProfiles
 {
@@ -6,9 +8,9 @@ namespace MyFaceApi.AutoMapperProfiles
 	{
 		public PostProfiles()
 		{
-			//CreateMap<PostToAdd, Post>();
-			//CreateMap<PostToUpdate, Post>();
-			//CreateMap<Post, PostToUpdate>();
+			CreateMap<PostToAdd, Post>();
+			CreateMap<PostToUpdate, Post>();
+			CreateMap<Post, PostToUpdate>();
 		}
 	}
 }
