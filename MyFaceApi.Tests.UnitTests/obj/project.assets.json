@@ -9624,6 +9624,7 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "projectReferences": {
             "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.csproj": {
               "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.csproj"
@@ -9639,6 +9640,7 @@
     },
     "frameworks": {
       "netcoreapp3.1": {
+        "targetAlias": "netcoreapp3.1",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Abstractions": {
             "target": "Package",
@@ -9683,7 +9685,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.403\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

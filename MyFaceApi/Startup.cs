@@ -10,6 +10,7 @@ using System.IO;
 using System.Reflection;
 using AutoMapper;
 using MyFaceApi.Repository;
+using MyFaceApi.Repository.Interfaceses;
 using MyFaceApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;

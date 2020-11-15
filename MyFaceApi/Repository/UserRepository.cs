@@ -5,6 +5,7 @@ using MyFaceApi.Entities;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using MyFaceApi.Repository.Interfaceses;
 
 namespace MyFaceApi.Repository
 {
@@ -22,11 +23,11 @@ namespace MyFaceApi.Repository
 
 		public async Task<User> AddUserAcync(User user)
 		{
+			_logger.LogDebug("Trying to add user: {user}.", user);
 			if (user == null)
 			{
 				throw new ArgumentNullException(nameof(user));
 			}
-			_logger.LogDebug("Trying to add user {user}.", user);
 			try
 			{
 				var savedUser = await _appDbContext.Users.AddAsync(user);
@@ -43,7 +44,7 @@ namespace MyFaceApi.Repository
 
 		public async Task DeleteUserAsync(User user)
 		{
-			_logger.LogDebug("Trying to remove user {user}.", user);
+			_logger.LogDebug("Trying to remove user: {user}.", user);
 			if (user == null)
 			{
 				throw new ArgumentNullException(nameof(user));
@@ -63,11 +64,11 @@ namespace MyFaceApi.Repository
 
 		public async Task<User> GetUserAsync(Guid userId)
 		{
+			_logger.LogDebug("Trying to get user: {userid}", userId);
 			if (userId == Guid.Empty)
 			{
 				throw new ArgumentNullException(nameof(userId));
 			}
-			_logger.LogDebug("Trying to get user {userid}...", userId);
 			try
 			{
 				User user = await _appDbContext.Users
@@ -97,7 +98,7 @@ namespace MyFaceApi.Repository
 
 		public async Task UpdateUserAsync(User user)
 		{
-			_logger.LogDebug("Trying to update user {user}", user);
+			_logger.LogDebug("Trying to update user: {user}", user);
 			try
 			{
 				await _appDbContext.SaveAsync();
@@ -111,11 +112,11 @@ namespace MyFaceApi.Repository
 		}
 		public bool CheckIfUserExists(Guid userId)
 		{
+			_logger.LogDebug("Trying to check if exist user: {userId}", userId);
 			if (userId == Guid.Empty)
 			{
 				throw new ArgumentNullException(nameof(userId));
 			}
-			_logger.LogDebug("Trying to check if exist user {userId}", userId);
 			try
 			{
 				bool wasFound = _appDbContext.Users.Any(a => a.Id == userId);

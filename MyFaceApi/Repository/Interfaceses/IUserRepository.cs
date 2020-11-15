@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace MyFaceApi.Repository
+namespace MyFaceApi.Repository.Interfaceses
 {
 	public interface IUserRepository
 	{

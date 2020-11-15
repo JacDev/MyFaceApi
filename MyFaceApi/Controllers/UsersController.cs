@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
-
-
 using MyFaceApi.Entities;
 using MyFaceApi.Models;
-using MyFaceApi.Repository;
+using MyFaceApi.Repository.Interfaceses;
 
 
 namespace MyFaceApi.Controllers
@@ -40,9 +35,9 @@ namespace MyFaceApi.Controllers
 		/// </summary>
 		/// <param name="userId">User guid as a string </param>
 		/// <returns>Found user</returns>
-		/// <response code="200">Returns the found user</response>
-		/// <response code="400">If parameter is not a valid guid</response>    
-		/// <response code="404">If user not found</response>   
+		/// <response code="200"> Returns the found user</response>
+		/// <response code="400"> If parameter is not a valid guid</response>    
+		/// <response code="404"> If user not found</response>   
 		/// <response code="500"> If internal error occured</response>
 
 		[HttpGet("{userId}", Name = "GetUser")]
@@ -79,17 +74,17 @@ namespace MyFaceApi.Controllers
 		/// <summary>
 		/// Add user to database
 		/// </summary>
-		/// <param name="user"></param>
+		/// <param name="user"> of BasicUserData type</param>
 		/// <returns>
-		/// Returns added user, HttpCode 400 or HttpCode 409
+		/// Returns httpcode 201 if the user has been created
 		/// </returns>
-		/// <response code="200">Returns added user</response>
-		/// <response code="400"> If user is not valid</response>    
-		/// <response code="409"> If user already exist</response>
+		/// <response code="201"> Created if the user has been added</response>
+		/// <response code="400"> If the user is not valid</response>    
+		/// <response code="409"> If the user already exist</response>
 		/// <response code="500"> If internal error occured</response>
 
 		[HttpPost]
-		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status409Conflict)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -131,11 +126,11 @@ namespace MyFaceApi.Controllers
 		/// <param name="userId"></param>
 		/// <param name="patchDocument"></param>
 		/// <returns>
-		/// Returns status 204 no content if user updated
+		/// Returns status 204 no content if the user hase been updated
 		/// </returns>
-		/// <response code="200">Returns added user</response>
-		/// <response code="400"> If user is not valid</response>    
-		/// <response code="409"> If user already exist</response>
+		/// <response code="204"> No content if the user hase been updated</response>
+		/// <response code="400"> If the user is not valid</response>    
+		/// <response code="404"> If the user not found</response>
 		/// <response code="500"> If internal error occured</response>
 
 		[HttpPatch("{userId}")]
@@ -180,11 +175,47 @@ namespace MyFaceApi.Controllers
 				return StatusCode(StatusCodes.Status500InternalServerError);
 			}
 		}
+		/// <summary>
+		/// Uptade user in database
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <returns>
+		/// Returns status 204 no content if the user has been removed
+		/// </returns>
+		/// <response code="204"> No contentif the user has been removed</response>
+		/// <response code="400"> If the user is not valid</response>    
+		/// <response code="404"> If the user not found</response>
+		/// <response code="500"> If internal error occured</response>
 
-		// DELETE api/<ValuesController>/5
-		[HttpDelete("{id}")]
-		public void Delete(int id)
+		[HttpDelete("{userId}")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<ActionResult> DeleteUser(string userId)
 		{
+			try
+			{
+				if (Guid.TryParse(userId, out Guid gUserId))
+				{
+					User userFromRepo = await _userRepository.GetUserAsync(gUserId);
+					if (userFromRepo == null)
+					{
+						return NotFound();
+					}
+					await _userRepository.DeleteUserAsync(userFromRepo);
+					return NoContent();
+				}
+				else
+				{
+					return BadRequest($"{userId} is not valid Guid.");
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occured during removing the user. User id: {user}", userId);
+				return StatusCode(StatusCodes.Status500InternalServerError);
+			}
 		}
 	}
 }

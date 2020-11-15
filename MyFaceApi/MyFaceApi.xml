@@ -4,28 +4,39 @@
         <name>MyFaceApi</name>
     </assembly>
     <members>
+        <member name="M:MyFaceApi.Controllers.PostsController.GetPosts(System.String)">
+            <summary>
+            Return the found user posts
+            </summary>
+            <param name="userId">User guid as a string </param>
+            <returns>Found user</returns>
+            <response code="200"> Returns the found user posts</response>
+            <response code="400"> If parameter is not a valid guid</response>    
+            <response code="404"> If user not found</response>   
+            <response code="500"> If internal error occured</response>
+        </member>
         <member name="M:MyFaceApi.Controllers.UsersController.GetUser(System.String)">
             <summary>
             Return the found user
             </summary>
             <param name="userId">User guid as a string </param>
             <returns>Found user</returns>
-            <response code="200">Returns the found user</response>
-            <response code="400">If parameter is not a valid guid</response>    
-            <response code="404">If user not found</response>   
+            <response code="200"> Returns the found user</response>
+            <response code="400"> If parameter is not a valid guid</response>    
+            <response code="404"> If user not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
         <member name="M:MyFaceApi.Controllers.UsersController.AddUser(MyFaceApi.Models.BasicUserData)">
             <summary>
             Add user to database
             </summary>
-            <param name="user"></param>
+            <param name="user"> of BasicUserData type</param>
             <returns>
-            Returns added user, HttpCode 400 or HttpCode 409
+            Returns httpcode 201 if the user has been created
             </returns>
-            <response code="200">Returns added user</response>
-            <response code="400"> If user is not valid</response>    
-            <response code="409"> If user already exist</response>
+            <response code="201"> Created if the user has been added</response>
+            <response code="400"> If the user is not valid</response>    
+            <response code="409"> If the user already exist</response>
             <response code="500"> If internal error occured</response>
         </member>
         <member name="M:MyFaceApi.Controllers.UsersController.PartiallyUpdateUser(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.BasicUserData})">
@@ -35,11 +46,24 @@
             <param name="userId"></param>
             <param name="patchDocument"></param>
             <returns>
-            Returns status 204 no content if user updated
+            Returns status 204 no content if the user hase been updated
             </returns>
-            <response code="200">Returns added user</response>
-            <response code="400"> If user is not valid</response>    
-            <response code="409"> If user already exist</response>
+            <response code="204"> No content if the user hase been updated</response>
+            <response code="400"> If the user is not valid</response>    
+            <response code="404"> If the user not found</response>
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.UsersController.DeleteUser(System.String)">
+            <summary>
+            Uptade user in database
+            </summary>
+            <param name="userId"></param>
+            <returns>
+            Returns status 204 no content if the user has been removed
+            </returns>
+            <response code="204"> No contentif the user has been removed</response>
+            <response code="400"> If the user is not valid</response>    
+            <response code="404"> If the user not found</response>
             <response code="500"> If internal error occured</response>
         </member>
     </members>
