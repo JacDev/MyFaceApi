@@ -78,7 +78,7 @@
         </member>
         <member name="M:MyFaceApi.Controllers.UsersController.AddUser(MyFaceApi.Models.BasicUserData)">
             <summary>
-            Add user to database
+            Add user to the database
             </summary>
             <param name="user"> of BasicUserData type</param>
             <returns>
@@ -91,7 +91,7 @@
         </member>
         <member name="M:MyFaceApi.Controllers.UsersController.PartiallyUpdateUser(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.BasicUserData})">
             <summary>
-            Uptade user in database
+            Updade user in the database
             </summary>
             <param name="userId"></param>
             <param name="patchDocument"></param>
