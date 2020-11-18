@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Moq;
 using MyFaceApi.AutoMapperProfiles;
@@ -6,6 +7,7 @@ using MyFaceApi.Controllers;
 using MyFaceApi.Entities;
 using MyFaceApi.Models.CommentModels;
 using MyFaceApi.Repository.Interfaceses;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 
@@ -69,6 +71,15 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 				}
 			};
 			return database;
+		}
+		protected JsonPatchDocument<CommentToUpdate> GetJsonPatchDocument()
+		{
+			var jsonobject = new JsonPatchDocument<CommentToUpdate>
+			{
+				ContractResolver = new CamelCasePropertyNamesContractResolver()
+			};
+			jsonobject.Replace(d => d.Text, "Changed");
+			return jsonobject;
 		}
 	}
 }

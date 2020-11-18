@@ -40,6 +40,33 @@
             <response code="404"> If post or comment not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
+        <member name="M:MyFaceApi.Controllers.PostCommentsController.PartiallyUpdateComment(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.CommentModels.CommentToUpdate})">
+            <summary>
+            Update comment in database
+            </summary>
+            <param name="commentId"></param>
+            <param name="patchDocument"></param>
+            <returns>
+            Status 204 no content if the comment has been updated
+            </returns>
+            <response code="204"> No content if the comment has been updated</response>
+            <response code="400"> If the comment is not valid</response>    
+            <response code="404"> If the comment not found</response>
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.PostCommentsController.DeleteComment(System.String)">
+            <summary>
+            Remove a comment from the database
+            </summary>
+            <param name="commentId"></param>
+            <returns>
+            Status 204 no content if the comment has been removed
+            </returns>
+            <response code="204"> No content if the comment has been updated</response>
+            <response code="400"> If the post is not valid</response>    
+            <response code="404"> If the post not found</response>
+            <response code="500"> If internal error occured</response>
+        </member>
         <member name="M:MyFaceApi.Controllers.PostsController.GetPost(System.String)">
             <summary>
             Return the found post
@@ -83,7 +110,7 @@
             <returns>
             Status 204 no content if the post has been updated
             </returns>
-            <response code="204"> No content if the user has been updated</response>
+            <response code="204"> No content if the post has been updated</response>
             <response code="400"> If the post is not valid</response>    
             <response code="404"> If the post not found</response>
             <response code="500"> If internal error occured</response>

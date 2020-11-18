@@ -17,7 +17,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		{
 		}
 		[Fact]
-		public async void DeletePost_ReturnsNoContentResult_WhenTheUserHasBeenRemoved()
+		public async void DeletePost_ReturnsNoContentResult_WhenThePostHasBeenRemoved()
 		{
 			//Arrange
 			var postToRemove = GetTestUserData().ElementAt(0).Posts.ElementAt(0);
@@ -37,7 +37,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			_mockPostRepo.Verify();
 		}
 		[Fact]
-		public async void DeletePost_ReturnsBadRequestResult_WhenTheUserGuidIdIsInvalid()
+		public async void DeletePost_ReturnsBadRequestResult_WhenThePostGuidIdIsInvalid()
 		{
 			//Arrange
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
@@ -50,7 +50,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			Assert.Equal("InvalidGuid is not valid Guid.", badRequestResult.Value);
 		}
 		[Fact]
-		public async void DeletePost_ReturnsNotFoundResult_WhenTheUserDoesntExist()
+		public async void DeletePost_ReturnsNotFoundResult_WhenThePostDoesntExist()
 		{
 			//Arrange
 			_mockPostRepo.Setup(repo => repo.GetPost(It.IsAny<Guid>()))

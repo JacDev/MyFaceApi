@@ -169,7 +169,7 @@ namespace MyFaceApi.Controllers
 		/// <returns>
 		/// Status 204 no content if the post has been updated
 		/// </returns>
-		/// <response code="204"> No content if the user has been updated</response>
+		/// <response code="204"> No content if the post has been updated</response>
 		/// <response code="400"> If the post is not valid</response>    
 		/// <response code="404"> If the post not found</response>
 		/// <response code="500"> If internal error occured</response>

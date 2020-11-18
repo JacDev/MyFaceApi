@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Entities;
@@ -169,6 +170,100 @@ namespace MyFaceApi.Controllers
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Error occured during getting comment: postId: {postId}, commentId: {commentId}", postId, commentId);
+				return StatusCode(StatusCodes.Status500InternalServerError);
+			}
+		}
+		/// <summary>
+		/// Update comment in database
+		/// </summary>
+		/// <param name="commentId"></param>
+		/// <param name="patchDocument"></param>
+		/// <returns>
+		/// Status 204 no content if the comment has been updated
+		/// </returns>
+		/// <response code="204"> No content if the comment has been updated</response>
+		/// <response code="400"> If the comment is not valid</response>    
+		/// <response code="404"> If the comment not found</response>
+		/// <response code="500"> If internal error occured</response>
+		[HttpPatch("{commentId}")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<ActionResult> PartiallyUpdateComment(string commentId, JsonPatchDocument<CommentToUpdate> patchDocument)
+		{
+			try
+			{
+				if (Guid.TryParse(commentId, out Guid gCommentId))
+				{
+					PostComment commentFromRepo = _postCommentRepository.GetComment(gCommentId);
+					if (commentFromRepo == null)
+					{
+						return NotFound();
+					}
+					CommentToUpdate commentToPatch = _mapper.Map<CommentToUpdate>(commentFromRepo);
+					patchDocument.ApplyTo(commentToPatch, ModelState);
+
+					if (!TryValidateModel(commentToPatch))
+					{
+						return ValidationProblem(ModelState);
+					}
+
+					_mapper.Map(commentToPatch, commentFromRepo);
+					await _postCommentRepository.UpdateComment(commentFromRepo);
+					return NoContent();
+				}
+				else
+				{
+					return BadRequest($"{commentId} is not valid Guid.");
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occured during updating the comment. Comment id: {commentId}", commentId);
+				return StatusCode(StatusCodes.Status500InternalServerError);
+
+			}
+		}
+		/// <summary>
+		/// Remove a comment from the database
+		/// </summary>
+		/// <param name="commentId"></param>
+		/// <returns>
+		/// Status 204 no content if the comment has been removed
+		/// </returns>
+		/// <response code="204"> No content if the comment has been updated</response>
+		/// <response code="400"> If the post is not valid</response>    
+		/// <response code="404"> If the post not found</response>
+		/// <response code="500"> If internal error occured</response>
+		[HttpDelete("{postId}")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+		public async Task<ActionResult> DeleteComment(string commentId)
+		{
+			try
+			{
+				if (Guid.TryParse(commentId, out Guid gCommentId))
+				{
+					PostComment commentFromRepo = _postCommentRepository.GetComment(gCommentId);
+					if (commentFromRepo == null)
+					{
+						return NotFound();
+					}
+					await _postCommentRepository.DeleteCommentAsync(commentFromRepo);
+					return NoContent();
+				}
+				else
+				{
+					return BadRequest($"{commentId} is not valid Guid.");
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occured during removing the comment. Coment id: {postId}", commentId);
 				return StatusCode(StatusCodes.Status500InternalServerError);
 			}
 		}

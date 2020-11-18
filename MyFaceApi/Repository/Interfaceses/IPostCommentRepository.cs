@@ -12,6 +12,6 @@ namespace MyFaceApi.Repository.Interfaceses
 		Task DeleteCommentAsync(PostComment comment);
 		List<PostComment> GetComments(Guid postId);
 		PostComment GetComment(Guid commentId);
-		Task UpdateComment(CommentToUpdate postComment);
+		Task UpdateComment(PostComment postComment);
 	}
 }

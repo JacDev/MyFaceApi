@@ -9,6 +9,9 @@ namespace MyFaceApi.AutoMapperProfiles
 		public CommentProfile()
 		{
 			CreateMap<CommentToAdd, PostComment>();
+			CreateMap<PostComment, CommentToAdd>();
+			CreateMap<PostComment, CommentToUpdate>();
+			CreateMap<CommentToUpdate, PostComment>();
 		}
 	}
 }

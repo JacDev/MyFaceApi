@@ -102,7 +102,7 @@ namespace MyFaceApi.Repository
 			}
 		}
 
-		public async Task UpdateComment(CommentToUpdate postComment)
+		public async Task UpdateComment(PostComment postComment)
 		{
 			_logger.LogDebug("Trying to update comment: {postComment}", postComment);
 			try

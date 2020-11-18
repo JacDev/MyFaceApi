@@ -16,7 +16,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		{
 		}
 		[Fact]
-		public async void PartiallyUpdatePost_ReturnsNoContentResult_WhenTheUserHasBeenUpdated()
+		public async void PartiallyUpdatePost_ReturnsNoContentResult_WhenThePostHasBeenUpdated()
 		{
 			//Arrange
 			var post = GetTestUserData().ElementAt(0).Posts.ElementAt(0);
@@ -45,7 +45,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			_mockPostRepo.Verify();
 		}
 		[Fact]
-		public async void PartiallyUpdatePost_ReturnsBadRequestResult_WhenTheUserIdIsInvalid()
+		public async void PartiallyUpdatePost_ReturnsBadRequestResult_WhenThePostIdIsInvalid()
 		{
 			//Arrange
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
