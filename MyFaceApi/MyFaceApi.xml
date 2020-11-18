@@ -4,6 +4,42 @@
         <name>MyFaceApi</name>
     </assembly>
     <members>
+        <member name="M:MyFaceApi.Controllers.PostCommentsController.AddComment(System.String,System.String,MyFaceApi.Models.CommentModels.CommentToAdd)">
+            <summary>
+            Add post to database
+            </summary>
+            <param name="userId">User guid as a string </param>
+            <param name="postId">Post guid as a string</param>
+            <param name="postComment">Comment to add of a type CommentToAdd</param>
+            <returns>Added post</returns>
+            <response code="201"> Return created comment</response>
+            <response code="400"> If parameter is not a valid guid</response>    
+            <response code="404"> If user or post not found</response>   
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.PostCommentsController.GetComments(System.String)">
+            <summary>
+            Return the found post comments
+            </summary>
+            <param name="postId">Post guid as a string </param>
+            <returns>Found post comments</returns>
+            <response code="200"> Returns the found post comments</response>
+            <response code="400"> If parameter is not a valid guid</response>    
+            <response code="404"> If post not found</response>   
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.PostCommentsController.GetComment(System.String,System.String)">
+            <summary>
+            Return the found comment
+            </summary>
+            <param name="postId">Post guid as a string </param>
+            <param name="commentId">Comment guid as a string </param>
+            <returns>Found comment</returns>
+            <response code="200"> Returns the found comments</response>
+            <response code="400"> If parameter is not a valid guid</response>    
+            <response code="404"> If post or comment not found</response>   
+            <response code="500"> If internal error occured</response>
+        </member>
         <member name="M:MyFaceApi.Controllers.PostsController.GetPost(System.String)">
             <summary>
             Return the found post

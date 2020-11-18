@@ -15,7 +15,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		{
 		}
 		[Fact]
-		public void GetPost_ReturnsAnActionResult_WithAListOfPosts()
+		public void GetPost_ReturnsAnActionResult_WithPost()
 		{
 			//Arrange
 			var user = GetTestUserData().ElementAt(0);

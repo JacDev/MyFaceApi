@@ -16,7 +16,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		{
 		}
 		[Fact]
-		public async void AddPost_ReturnsRedirectToAddedUser_WithBasicUserData()
+		public async void AddPost_ReturnsRedirectToAddedUser_WithPostData()
 		{
 			//Arrange
 			var testUser = GetTestUserData().ElementAt(0);
@@ -32,7 +32,8 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			postEntity.Id = new Guid(_exaplePostGuid);
 
 			_mockPostRepo.Setup(repo => repo.AddPostAsync(It.IsAny<Post>()))
-				.ReturnsAsync(postEntity);
+				.ReturnsAsync(postEntity)
+				.Verifiable();
 
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 

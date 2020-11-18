@@ -15,6 +15,7 @@ namespace MyFaceApi.Data
 		DbSet<FriendRelation> Relations { get; set; }
 		DbSet<Post> Posts { get; set; }
 		DbSet<Notification> Notifications { get; set; }
+		DbSet<PostComment> PostComments { get; set; }
 		Task<int> SaveAsync();
 	}
 }

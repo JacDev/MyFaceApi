@@ -43,6 +43,32 @@ namespace MyFaceApi.Repository
 				throw;
 			}
 		}
+		public bool CheckIfPostExists(Guid postId)
+		{
+			if (postId == Guid.Empty)
+			{
+				throw new ArgumentNullException(nameof(postId));
+			}
+			_logger.LogDebug($"Trying to check if the post: {postId} exist");
+			try
+			{
+				bool wasFound = _appDbContext.Posts.Any(a => a.Id == postId);
+				if (wasFound)
+				{
+					_logger.LogTrace("Post {postId} exist.", postId);
+				}
+				else
+				{
+					_logger.LogTrace("Post {postId} does not exist.", postId);
+				}
+				return wasFound;
+			}
+			catch
+			{
+				_logger.LogWarning($"Something went wrong while searching post: {postId}.");
+				throw;
+			}
+		}
 		public async Task DeletePostAsync(Post post)
 		{
 			_logger.LogDebug("Trying to remove post: {post}.", post);
@@ -102,7 +128,6 @@ namespace MyFaceApi.Repository
 				throw;
 			}
 		}
-
 		public async Task UpdatePostAsync(Post post)
 		{
 			_logger.LogDebug("Trying to update post: {post}", post);
