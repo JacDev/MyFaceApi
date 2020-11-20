@@ -15,7 +15,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 		{
 		}
 		[Fact]
-		public void GetComment_ReturnsAnActionResult_WithComment()
+		public void GetComment_ReturnsOkObjectResult_WithCommentData()
 		{
 			//Arrange
 			var comment = GetTestPostData().ElementAt(0);
@@ -29,7 +29,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 
 			//Act
-			var result = controller.GetComment(_examplePostId, _exampleCommentId);
+			var result = controller.GetComment(ConstIds.ExamplePostId, ConstIds.ExampleCommentId);
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -38,84 +38,63 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 			_mockCommentRepo.Verify();
 			_mockPostRepo.Verify();
 		}
-		[Fact]
-		public void GetComment_ReturnsBadRequestResult_WhenThePostIdIsInvalid()
+		[Theory]
+		[InlineData(ConstIds.InvalidGuid, ConstIds.ExampleCommentId)]
+		[InlineData(ConstIds.ExamplePostId, ConstIds.InvalidGuid)]
+		public void GetComment_ReturnsBadRequestObjectResult_WhenThePostOrCommentIdIsInvalid(string testPostId, string testCommentId)
 		{
 			//Arrange
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 
 			//Act
-			var result = controller.GetComment(_invalidGuid, _exampleCommentId);
+			var result = controller.GetComment(testPostId, testCommentId);
 
 			//Assert
-			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-			Assert.Equal($"{_invalidGuid} or {_exampleCommentId} is not valid Guid.", badRequestResult.Value);
+			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+			Assert.Equal($"{testPostId} or {testCommentId} is not valid Guid.", badRequestObjectResult.Value);
 		}
-		[Fact]
-		public void GetComment_ReturnsBadRequestResult_WhenTheCommentIdIsInvalid()
-		{
-			//Arrange
-			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
-
-			//Act
-			var result = controller.GetComment(_examplePostId, _invalidGuid);
-
-			//Assert
-			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-			Assert.Equal($"{_examplePostId} or {_invalidGuid} is not valid Guid.", badRequestResult.Value);
-		}
-		[Fact]
-		public void GetComment_ReturnsNotFoundObjectResult_WhenThePostDoesntExist()
+		[Theory]
+		[InlineData(true, null)]
+		[InlineData(false, null)]
+		public void GetComment_ReturnsNotFoundObjectResult_WhenThePostDoesntExist(bool isPostExists, PostComment testCommentData)
 		{
 			//Arrange
 			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
-				.Returns(false)
-				.Verifiable();
-
-			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
-
-			//Act
-			var result = controller.GetComment(_examplePostId, _exampleCommentId);
-
-			//Assert
-			var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
-			Assert.Equal($"Post: {_examplePostId} not found.", notFoundResult.Value);
-			_mockPostRepo.Verify();
-		}
-		[Fact]
-		public void GetComment_ReturnsNotFoundObjectResult_WhenTheCommentDoesntExist()
-		{
-			//Arrange
-			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.Returns(isPostExists)
 				.Verifiable();
 			_mockCommentRepo.Setup(repo => repo.GetComment(It.IsAny<Guid>()))
-				.Returns((PostComment)null)
+				.Returns(testCommentData)
 				.Verifiable();
-
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 
 			//Act
-			var result = controller.GetComment(_examplePostId, _exampleCommentId);
+			var result = controller.GetComment(ConstIds.ExamplePostId, ConstIds.ExampleCommentId);
 
 			//Assert
 			var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
-			Assert.Equal($"Comment: {_exampleCommentId} not found.", notFoundResult.Value);
+			if (isPostExists)
+			{
+				Assert.Equal($"Comment: {ConstIds.ExampleCommentId} not found.", notFoundResult.Value);
+				_mockCommentRepo.Verify();
+			}
+			else
+			{
+				Assert.Equal($"Post: {ConstIds.ExamplePostId} not found.", notFoundResult.Value);
+			}
 			_mockPostRepo.Verify();
-			_mockCommentRepo.Verify();
 		}
 		[Fact]
-		public void GetComment_ReturnsInternalServerError_WhenExceptionThrownInRepository()
+		public void GetComment_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
 		{
 			//Arrange
 			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
-				.Throws(new ArgumentNullException(nameof(_examplePostId)))
+				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 
 			//Act
-			var result = controller.GetComment(_examplePostId, _exampleCommentId);
+			var result = controller.GetComment(ConstIds.ExamplePostId, ConstIds.ExampleCommentId);
 
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);

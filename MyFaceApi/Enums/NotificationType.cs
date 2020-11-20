@@ -4,7 +4,7 @@
 	{
 		Message,
 		FriendRequiest,
-		Like,
+		Reaction,
 		Comment,
 	}
 }

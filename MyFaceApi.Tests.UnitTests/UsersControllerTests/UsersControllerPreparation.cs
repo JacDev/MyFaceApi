@@ -10,6 +10,7 @@ using MyFaceApi.Repository.Interfaceses;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 {
@@ -18,6 +19,7 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 		protected readonly Mock<IUserRepository> _mockRepo;
 		protected readonly Mock<ILogger<UsersController>> _loggerMock;
 		protected readonly IMapper _mapper;
+		protected readonly BasicUserData _userToAdd;
 		protected UsersControllerPreparation()
 		{
 			//mocking UserRepo
@@ -28,26 +30,18 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			var myProfile = new UserProfiles();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
+			_userToAdd = _mapper.Map<BasicUserData>(GetTestUserData());
 		}
-		protected List<User> GetTestUserData()
+		protected User GetTestUserData()
 		{
-			var database = new List<User>
+
+			return new User()
 			{
-				new User()
-				{
-					Id = new Guid("C48D3E36-2072-4A19-9305-FE5168BFB03D"),
-					FirstName = "Mark",
-					LastName = "Twain",
-					ProfileImagePath = null,
-				},
-				new User()
-				{
-					Id = new Guid("24610263-CEE4-4231-97DF-904EE6437278"),
-					FirstName = "Brad",
-					LastName = "Pit"
-				}
+				Id = new Guid(ConstIds.ExampleUserId),
+				FirstName = "Mark",
+				LastName = "Twain",
+				ProfileImagePath = null,
 			};
-			return database;
 		}
 		protected JsonPatchDocument<BasicUserData> GetJsonPatchDocument()
 		{

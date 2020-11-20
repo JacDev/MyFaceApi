@@ -15,41 +15,41 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		{
 		}
 		[Fact]
-		public void GetPost_ReturnsAnActionResult_WithPost()
+		public void GetPost_ReturnsOkObjectResult_WithPostData()
 		{
 			//Arrange
-			var user = GetTestUserData().ElementAt(0);
+			var post = GetTestUserData().ElementAt(0).Posts.ElementAt(0);
 
 			_mockPostRepo.Setup(repo => repo.GetPost(It.IsAny<Guid>()))
-				.Returns(user.Posts.ElementAt(0))
+				.Returns(post)
 				.Verifiable();
 
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPost(user.Posts.ElementAt(0).Id.ToString());
+			var result = controller.GetPost(ConstIds.ExamplePostId);
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
 			var model = Assert.IsType<Post>(actionResult.Value);
-			Assert.Equal(user.Posts.ElementAt(0), model);
+			Assert.Equal(post, model);
 			_mockPostRepo.Verify();
 		}
 		[Fact]
-		public void GetPost_ReturnsBadRequestResult_WhenTheUserIdIsInvalid()
+		public void GetPost_ReturnsBadRequestObjectResult_WhenThePostIdIsInvalid()
 		{
 			//Arrange
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPost("InvalidGuid");
+			var result = controller.GetPost(ConstIds.InvalidGuid);
 
 			//Assert
-			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-			Assert.Equal("InvalidGuid is not valid Guid.", badRequestResult.Value);
+			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+			Assert.Equal($"{ConstIds.InvalidGuid} is not valid Guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
-		public void GetPost_ReturnsNotFoundObjectResult_WhenTheUserDoesntExist()
+		public void GetPost_ReturnsNotFoundResult_WhenThePostDoesntExist()
 		{
 			//Arrange
 			_mockPostRepo.Setup(repo => repo.GetPost(It.IsAny<Guid>()))
@@ -59,28 +59,27 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPost(_exaplePostGuid);
+			var result = controller.GetPost(ConstIds.ExamplePostId);
 
 			//Assert
 			var notFoundResult = Assert.IsType<NotFoundResult>(result.Result);
 			_mockPostRepo.Verify();
 		}
 		[Fact]
-		public void GetPost_ReturnsInternalServerError_WhenExceptionThrownInRepository()
+		public void GetPost_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
 		{
 			//Arrange
 			_mockPostRepo.Setup(repo => repo.GetPost(It.IsAny<Guid>()))
-				.Throws(new ArgumentNullException(nameof(_exaplePostGuid)))
+				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPost(_exaplePostGuid);
+			var result = controller.GetPost(ConstIds.ExamplePostId);
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockUserRepo.Verify();
 			_mockPostRepo.Verify();
 		}
 	}

@@ -37,7 +37,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 			controller.ObjectValidator = objectValidator.Object;
 
 			//Act
-			var result = await controller.PartiallyUpdateComment(_exampleCommentId, GetJsonPatchDocument());
+			var result = await controller.PartiallyUpdateComment(ConstIds.ExampleCommentId, GetJsonPatchDocument());
 
 			//Assert
 			var noContentResult = Assert.IsType<NoContentResult>(result);
@@ -45,20 +45,20 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 			_mockCommentRepo.Verify();
 		}
 		[Fact]
-		public async void PartiallyUpdateComment_ReturnsBadRequestResult_WhenTheCommentIdIsInvalid()
+		public async void PartiallyUpdateComment_ReturnsBadRequestObjectResult_WhenTheCommentIdIsInvalid()
 		{
 			//Arrange
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 
 			//Act
-			var result = await controller.PartiallyUpdateComment(_invalidGuid, GetJsonPatchDocument());
+			var result = await controller.PartiallyUpdateComment(ConstIds.InvalidGuid, GetJsonPatchDocument());
 
 			//Assert
-			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-			Assert.Equal($"{_invalidGuid} is not valid Guid.", badRequestResult.Value);
+			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+			Assert.Equal($"{ConstIds.InvalidGuid} is not valid Guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
-		public async void PartiallyUpdateComment_NotFoundRequest_WhenTheCommentDataIsNotInTheDatabase()
+		public async void PartiallyUpdateComment_ReturnsNotFoundRequest_WhenTheCommentDataIsNotInTheDatabase()
 		{
 			//Arrange
 			_mockCommentRepo.Setup(repo => repo.GetComment(It.IsAny<Guid>()))
@@ -68,29 +68,29 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 
 			//Act
-			var result = await controller.PartiallyUpdateComment(_exampleCommentId, GetJsonPatchDocument());
+			var result = await controller.PartiallyUpdateComment(ConstIds.ExampleCommentId, GetJsonPatchDocument());
 
 			//Assert
 			var notFoundResult = Assert.IsType<NotFoundResult>(result);
 			_mockCommentRepo.Verify();
 		}
 		[Fact]
-		public async void PartiallyUpdateComment_ReturnsInternalServerError_WhenExceptionThrownInRepository()
+		public async void PartiallyUpdateComment_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
 		{
 			//Arrange
 			_mockCommentRepo.Setup(repo => repo.GetComment(It.IsAny<Guid>()))
-				.Throws(new ArgumentNullException(nameof(_examplePostId)))
+				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 
 			//Act
-			var result = await controller.PartiallyUpdateComment(_exampleCommentId, GetJsonPatchDocument());
+			var result = await controller.PartiallyUpdateComment(ConstIds.ExampleCommentId, GetJsonPatchDocument());
 
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockPostRepo.Verify();
+			_mockCommentRepo.Verify();
 		}
 	}
 }

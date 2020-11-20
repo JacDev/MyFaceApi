@@ -28,24 +28,24 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 			//Act
-			var result = await controller.DeleteComment(_exampleCommentId);
+			var result = await controller.DeleteComment(ConstIds.ExampleCommentId);
 
 			//Act
 			var noContentResult = Assert.IsType<NoContentResult>(result);
 			_mockCommentRepo.Verify();
 		}
 		[Fact]
-		public async void DeleteComment_ReturnsBadRequestResult_WhenTheCommentGuidIdIsInvalid()
+		public async void DeleteComment_ReturnsBadRequestObjectResult_WhenTheCommentGuidIdIsInvalid()
 		{
 			//Arrange
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 
 			//Act
-			var result = await controller.DeleteComment(_invalidGuid);
+			var result = await controller.DeleteComment(ConstIds.InvalidGuid);
 
 			//Assert
-			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-			Assert.Equal($"{_invalidGuid} is not valid Guid.", badRequestResult.Value);
+			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+			Assert.Equal($"{ConstIds.InvalidGuid} is not valid Guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
 		public async void DeleteComment_ReturnsNotFoundResult_WhenTheCommentDoesntExist()
@@ -57,28 +57,28 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 			//Act
-			var result = await controller.DeleteComment(_exampleCommentId);
+			var result = await controller.DeleteComment(ConstIds.ExampleCommentId);
 
 			//Assert
 			var notFoundResult = Assert.IsType<NotFoundResult>(result);
-			_mockPostRepo.Verify();
+			_mockCommentRepo.Verify();
 		}
 		[Fact]
-		public async void DeleteComment_ReturnsInternalServerError_WhenExceptionThrownInRepository()
+		public async void DeleteComment_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
 		{
 			//Arrange
 			_mockCommentRepo.Setup(repo => repo.GetComment(It.IsAny<Guid>()))
-				.Throws(new ArgumentNullException(nameof(_exampleCommentId)))
+				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 			//Act
-			var result = await controller.DeleteComment(_exampleCommentId);
+			var result = await controller.DeleteComment(ConstIds.ExampleCommentId);
 
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockPostRepo.Verify();
+			_mockCommentRepo.Verify();
 		}
 	}
 }

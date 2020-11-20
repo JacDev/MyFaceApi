@@ -19,7 +19,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		protected readonly Mock<IPostRepository> _mockPostRepo;
 		protected readonly Mock<ILogger<PostsController>> _loggerMock;
 		protected readonly IMapper _mapper;
-		protected readonly string _exaplePostGuid;
+		protected readonly PostToAdd _postToAdd;
 		protected PostsControllerPreparation()
 		{
 			//mocking repos
@@ -31,7 +31,11 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			var myProfile = new PostProfiles();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
-			_exaplePostGuid = "0A1A0DAF-0040-4DB5-94C7-141A796C03F9";
+			_postToAdd = new PostToAdd
+			{
+				WhenAdded = DateTime.Now,
+				Text = "Added during test"
+			};
 		}
 		protected List<User> GetTestUserData()
 		{
@@ -39,7 +43,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			{
 				new User()
 				{
-					Id = new Guid("C48D3E36-2072-4A19-9305-FE5168BFB03D"),
+					Id = new Guid(ConstIds.ExampleUserId),
 					FirstName = "Mark",
 					LastName = "Twain",
 					ProfileImagePath = null,
@@ -48,16 +52,16 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 						new Post()
 						{
 							WhenAdded=DateTime.Now,
-							Id = new Guid("9B92C388-C51D-4EF5-997F-A40F3AFB7E9D"),
+							Id = new Guid(ConstIds.ExamplePostId),
 							Text="Example text",
-							UserId = new Guid("C48D3E36-2072-4A19-9305-FE5168BFB03D")
+							UserId = new Guid(ConstIds.ExampleUserId)
 						},
 						new Post()
 						{
 							WhenAdded=DateTime.Now,
 							Id = new Guid("89248BDB-18C6-420F-A51F-332C3DE4D17C"),
 							Text="Example second text",
-							UserId = new Guid("C48D3E36-2072-4A19-9305-FE5168BFB03D")
+							UserId = new Guid(ConstIds.ExampleUserId)
 						},
 					}
 				},

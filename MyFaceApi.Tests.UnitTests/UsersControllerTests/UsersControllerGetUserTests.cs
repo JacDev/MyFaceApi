@@ -16,75 +16,68 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 		{
 		}
 		[Fact]
-		public async void GetUser_ReturnsAnActionResult_WithABasicUserData()
+		public async void GetUser_ReturnsOkObjectResult_WithUserData()
 		{
 			//Arrange
-			Guid testUserGuid = new Guid("24610263-CEE4-4231-97DF-904EE6437278");
-
-			_mockRepo.Setup(repo => repo.GetUserAsync(testUserGuid))
-				.ReturnsAsync(GetTestUserData()
-				.FirstOrDefault(
-				s => s.Id == testUserGuid))
+			_mockRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
+				.ReturnsAsync(GetTestUserData())
 				.Verifiable();
 
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 			//Act
-			var result = await controller.GetUser(testUserGuid.ToString());
+			var result = await controller.GetUser(ConstIds.ExampleUserId);
 
 			//Assert
+			var user = GetTestUserData();
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
 			var model = Assert.IsType<BasicUserData>(actionResult.Value);
-			Assert.Equal("Brad", model.FirstName);
-			Assert.Equal("Pit", model.LastName);
-			Assert.Equal(new Guid("24610263-CEE4-4231-97DF-904EE6437278"), model.Id);
+			Assert.Equal(user.FirstName, model.FirstName);
+			Assert.Equal(user.LastName, model.LastName);
+			Assert.Equal(user.Id, model.Id);
 			_mockRepo.Verify();
 		}
 		[Fact]
-		public async void GetUser_ReturnsBadRequestResult_WhenTheUserIdIsInvalid()
+		public async void GetUser_ReturnsBadRequestObjectResult_WhenTheUserIdIsInvalid()
 		{
 			//Arrange
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 
 			//Act
-			var result = await controller.GetUser("InvalidGuid");
+			var result = await controller.GetUser(ConstIds.InvalidGuid);
 
 			//Assert
-			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-			Assert.Equal("InvalidGuid is not valid Guid.", badRequestResult.Value);
+			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+			Assert.Equal($"{ConstIds.InvalidGuid} is not valid Guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
 		public async void GetUser_ReturnsNotFoundResult_WhenTheUserDoesntExist()
 		{
 			//Arrange
-			Guid testUserGuid = new Guid("24610263-CEE4-4231-97DF-904EE6437278");
-
-			_mockRepo.Setup(repo => repo.GetUserAsync(testUserGuid))
+			_mockRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
 				.ReturnsAsync((User)null)
 				.Verifiable();
 
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 
 			//Act
-			var result = await controller.GetUser(testUserGuid.ToString());
+			var result = await controller.GetUser(ConstIds.ExampleUserId);
 
 			//Assert
 			var notFoundResult = Assert.IsType<NotFoundResult>(result.Result);
 			_mockRepo.Verify();
 		}
 		[Fact]
-		public async void GetUser_ReturnsInternalServerError_WhenExceptionThrownInRepository()
+		public async void GetUser_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
 		{
 			//Arrange
-			Guid testUserGuid = new Guid("24610263-CEE4-4231-97DF-904EE6437278");
-
-			_mockRepo.Setup(repo => repo.GetUserAsync(testUserGuid))
-				.Throws(new ArgumentNullException(nameof(testUserGuid)))
+			_mockRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
+				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 
 			//Act
-			var result = await controller.GetUser("24610263-CEE4-4231-97DF-904EE6437278");
+			var result = await controller.GetUser(ConstIds.ExampleUserId);
 
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);

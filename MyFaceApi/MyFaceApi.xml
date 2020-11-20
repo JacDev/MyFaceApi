@@ -67,6 +67,69 @@
             <response code="404"> If the post not found</response>
             <response code="500"> If internal error occured</response>
         </member>
+        <member name="M:MyFaceApi.Controllers.PostReactionController.AddPostReaction(System.String,System.String,MyFaceApi.Models.PostReactionModels.PostReactionToAdd)">
+            <summary>
+            Add comment to database
+            </summary>
+            <param name="userId">User guid as a string </param>
+            <param name="postId">Post guid as a string</param>
+            <param name="reactionToAdd">Reaction to add of type ReactionToAdd</param>
+            <returns>Added reaction</returns>
+            <response code="201"> Return created reaction</response>
+            <response code="400"> If parameter is not a valid guid</response>    
+            <response code="404"> If user or post not found</response>   
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.PostReactionController.GetPostReactions(System.String)">
+            <summary>
+            Return the found post reaction
+            </summary>
+            <param name="postId">Post guid as a string </param>
+            <returns>Found post reactions</returns>
+            <response code="200"> Returns the found post reactions</response>
+            <response code="400"> If parameter is not a valid guid</response>    
+            <response code="404"> If post not found</response>   
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.PostReactionController.GetPostReaction(System.String,System.String)">
+            <summary>
+            Return the found reaction
+            </summary>
+            <param name="postId">Post guid as a string </param>
+            <param name="reactionId">Reaction guid as a string </param>
+            <returns>Found reaction</returns>
+            <response code="200"> Returns the found reaction</response>
+            <response code="400"> If parameter is not a valid guid</response>    
+            <response code="404"> If post or comment not found</response>   
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.PostReactionController.PartiallyUpdatePostReaction(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.PostReactionModels.PostReactionToUpdate})">
+            <summary>
+            Update reaction in database
+            </summary>
+            <param name="reactionId"></param>
+            <param name="patchDocument"></param>
+            <returns>
+            Status 204 no content if the reaction has been updated
+            </returns>
+            <response code="204"> No content if the reaction has been updated</response>
+            <response code="400"> If the reaction is not valid</response>    
+            <response code="404"> If the reaction not found</response>
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.PostReactionController.DeletePostReaction(System.String)">
+            <summary>
+            Remove a reaction from the database
+            </summary>
+            <param name="reactionId"></param>
+            <returns>
+            Status 204 no content if the reaction has been removed
+            </returns>
+            <response code="204"> No content if the reaction has been removed</response>
+            <response code="400"> If the post is not valid</response>    
+            <response code="404"> If the post not found</response>
+            <response code="500"> If internal error occured</response>
+        </member>
         <member name="M:MyFaceApi.Controllers.PostsController.GetPost(System.String)">
             <summary>
             Return the found post
@@ -123,7 +186,7 @@
             <returns>
             Status 204 no content if the post has been removed
             </returns>
-            <response code="204"> No content if the post has been updated</response>
+            <response code="204"> No content if the post has been removed</response>
             <response code="400"> If the post is not valid</response>    
             <response code="404"> If the post not found</response>
             <response code="500"> If internal error occured</response>

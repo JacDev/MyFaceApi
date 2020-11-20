@@ -16,7 +16,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		{
 		}
 		[Fact]
-		public void GetPosts_ReturnsAnActionResult_WithAListOfPosts()
+		public void GetPosts_ReturnsOkObjectResult_WithAListOfPostsData()
 		{
 			//Arrange
 			var user = GetTestUserData().ElementAt(0);
@@ -31,7 +31,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPosts(user.Id.ToString());
+			var result = controller.GetPosts(ConstIds.ExampleUserId);
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -42,17 +42,17 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			_mockPostRepo.Verify();
 		}
 		[Fact]
-		public void GetPosts_ReturnsBadRequestResult_WhenTheUserIdIsInvalid()
+		public void GetPosts_ReturnsBadRequestObjectResult_WhenTheUserIdIsInvalid()
 		{
 			//Arrange
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPosts("InvalidGuid");
+			var result = controller.GetPosts(ConstIds.InvalidGuid);
 
 			//Assert
-			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-			Assert.Equal("InvalidGuid is not valid Guid.", badRequestResult.Value);
+			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+			Assert.Equal($"{ConstIds.InvalidGuid} is not valid Guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
 		public void GetPosts_ReturnsNotFoundObjectResult_WhenTheUserDoesntExist()
@@ -65,35 +65,29 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPosts(_exaplePostGuid);
+			var result = controller.GetPosts(ConstIds.ExampleUserId);
 
 			//Assert
-			var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
-			Assert.Equal($"User: {_exaplePostGuid} not found.", notFoundResult.Value);
+			var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
+			Assert.Equal($"User: {ConstIds.ExampleUserId} not found.", notFoundObjectResult.Value);
 			_mockUserRepo.Verify();
-			_mockPostRepo.Verify();
 		}
 		[Fact]
-		public void GetPosts_ReturnsInternalServerError_WhenExceptionThrownInRepository()
+		public void GetPosts_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
-			_mockPostRepo.Setup(repo => repo.GetUserPosts(It.IsAny<Guid>()))
-				.Throws(new ArgumentNullException(nameof(_exaplePostGuid)))
-				.Verifiable();
-
 
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetPosts(_exaplePostGuid);
+			var result = controller.GetPosts(ConstIds.ExampleUserId);
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
 			_mockUserRepo.Verify();
-			_mockPostRepo.Verify();
 		}
 	}
 }

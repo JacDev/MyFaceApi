@@ -1,4 +1,5 @@
 ﻿using MyFaceApi.Models.PostModels;
+using MyFaceApi.Models.PostReactionModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,9 +14,17 @@ namespace MyFaceApi.Entities
 		[Required]
 		public Guid UserId { get; set; }
 		public virtual ICollection<PostComment> PostComments { get; set; }
+		public virtual ICollection<PostReaction> PostReactions { get; set; }
+
+		public object ElementAt(int v)
+		{
+			throw new NotImplementedException();
+		}
+
 		public Post()
 		{
 			PostComments = new List<PostComment>();
+			PostReactions = new List<PostReaction>();
 		}
 	}
 }

@@ -128,7 +128,6 @@ namespace MyFaceApi.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
 		public async Task<ActionResult<Post>> AddPost(string userId, PostToAdd post)
 		{
 			try
@@ -221,7 +220,7 @@ namespace MyFaceApi.Controllers
 		/// <returns>
 		/// Status 204 no content if the post has been removed
 		/// </returns>
-		/// <response code="204"> No content if the post has been updated</response>
+		/// <response code="204"> No content if the post has been removed</response>
 		/// <response code="400"> If the post is not valid</response>    
 		/// <response code="404"> If the post not found</response>
 		/// <response code="500"> If internal error occured</response>
@@ -230,7 +229,6 @@ namespace MyFaceApi.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
 		public async Task<ActionResult> DeletePost(string postId)
 		{
 			try

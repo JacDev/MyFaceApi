@@ -20,10 +20,6 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 		protected readonly Mock<IPostRepository> _mockPostRepo;
 		protected readonly Mock<ILogger<PostCommentsController>> _loggerMock;
 		protected readonly IMapper _mapper;
-		protected readonly string _exampleUserId;
-		protected readonly string _examplePostId;
-		protected readonly string _exampleCommentId;
-		protected readonly string _invalidGuid;
 		protected readonly CommentToAdd _commentToAdd;
 		protected PostCommentsControllerPreparation()
 		{
@@ -37,15 +33,11 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 			var myProfile = new CommentProfile();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
-			_exampleUserId = "ABE3668C-F60F-426F-B20D-B764E1373352";
-			_examplePostId = "0A1A0DAF-0040-4DB5-94C7-141A796C03F9";
-			_exampleCommentId = "9B92C388-C51D-4EF5-997F-A40F3AFB7E9D";
-			_invalidGuid = "InvalidGuid";
 			_commentToAdd = new CommentToAdd()
 			{
 				WhenAdded = DateTime.Now,
-				FromWho = new Guid(_exampleUserId),
-				PostId = new Guid(_examplePostId),
+				FromWho = new Guid(ConstIds.ExampleUserId),
+				PostId = new Guid(ConstIds.ExamplePostId),
 				Text = "Example text"
 			};
 		}
@@ -56,18 +48,18 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 				new PostComment()
 				{
 				WhenAdded = DateTime.Now,
-				Id = new Guid(_exampleCommentId),
+				Id = new Guid(ConstIds.ExampleCommentId),
 				Text = "Example text",
-				FromWho = new Guid("C48D3E36-2072-4A19-9305-FE5168BFB03D"),
-				PostId = new Guid(_examplePostId)
+				FromWho = new Guid(ConstIds.ExampleFromWhoId),
+				PostId = new Guid(ConstIds.ExamplePostId)
 				},
 				new PostComment()
 				{
 				WhenAdded = DateTime.Now,
 				Id = new Guid("A5A276EE-4936-4162-A2AC-880E525BD992"),
 				Text = "Example text",
-				FromWho = new Guid("603FD8C9-21CB-4348-8EE9-D768008F5FFE"),
-				PostId = new Guid(_examplePostId)
+				FromWho = new Guid(ConstIds.ExampleFromWhoId),
+				PostId = new Guid(ConstIds.ExamplePostId)
 				}
 			};
 			return database;

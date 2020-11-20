@@ -18,40 +18,39 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 		public async void DeleteUser_ReturnsNoContentResult_WhenTheUserHasBeenRemoved()
 		{
 			//Arrange
-			var userToRemove = GetTestUserData().ElementAt(0);
-			_mockRepo.Setup(repo => repo.GetUserAsync(userToRemove.Id))
+			var userToRemove = GetTestUserData();
+			_mockRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
 				.ReturnsAsync(userToRemove)
 				.Verifiable();
-			_mockRepo.Setup(repo => repo.DeleteUserAsync(userToRemove))
+			_mockRepo.Setup(repo => repo.DeleteUserAsync(It.IsAny<User>()))
 				.Verifiable();
+
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 
 			//Act
-			var result = await controller.DeleteUser(userToRemove.Id.ToString());
+			var result = await controller.DeleteUser(ConstIds.ExampleUserId);
 
 			//Assert
 			var noContentResult = Assert.IsType<NoContentResult>(result);
 			_mockRepo.Verify();
 		}
 		[Fact]
-		public async void DeleteUser_ReturnsBadRequestResult_WhenTheUserGuidIdIsInvalid()
+		public async void DeleteUser_ReturnsBadRequestObjectResult_WhenTheUserGuidIdIsInvalid()
 		{
 			//Arrange
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 
 			//Act
-			var result = await controller.DeleteUser("InvalidGuid");
+			var result = await controller.DeleteUser(ConstIds.InvalidGuid);
 
 			//Assert
-			var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-			Assert.Equal("InvalidGuid is not valid Guid.", badRequestResult.Value);
+			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+			Assert.Equal($"{ConstIds.InvalidGuid} is not valid Guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
 		public async void DeleteUser_ReturnsNotFoundResult_WhenTheUserDoesntExist()
 		{
 			//Arrange
-			Guid testUserGuid = new Guid("24610263-CEE4-4231-97DF-904EE6437278");
-
 			_mockRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
 				.ReturnsAsync((User)null)
 				.Verifiable();
@@ -59,26 +58,24 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 
 			//Act
-			var result = await controller.DeleteUser(testUserGuid.ToString());
+			var result = await controller.DeleteUser(ConstIds.ExampleUserId);
 
 			//Assert
 			var notFoundResult = Assert.IsType<NotFoundResult>(result);
 			_mockRepo.Verify();
 		}
 		[Fact]
-		public async void DeleteUser_ReturnsInternalServerError_WhenExceptionThrownInRepository()
+		public async void DeleteUser_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
 		{
 			//Arrange
-			Guid testUserGuid = new Guid("24610263-CEE4-4231-97DF-904EE6437278");
-
-			_mockRepo.Setup(repo => repo.GetUserAsync(testUserGuid))
-				.Throws(new ArgumentNullException(nameof(testUserGuid)))
+			_mockRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
+				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
 			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
 
 			//Act
-			var result = await controller.DeleteUser(testUserGuid.ToString());
+			var result = await controller.DeleteUser(ConstIds.ExampleUserId);
 
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result);
