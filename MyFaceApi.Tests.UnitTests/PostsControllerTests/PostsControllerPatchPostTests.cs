@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Moq;
 using MyFaceApi.Controllers;
-using MyFaceApi.Entities;
+using MyFaceApi.DataAccess.Entities;
 using System;
 using System.Linq;
 using Xunit;

@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.Entities;
-using MyFaceApi.Models;
-using MyFaceApi.Repository.Interfaceses;
+using MyFaceApi.DataAccess.Entities;
+using MyFaceApi.DataAccess.ModelsBasicInfo;
+using MyFaceApi.Repository.Interfaces;
 
 
 namespace MyFaceApi.Controllers

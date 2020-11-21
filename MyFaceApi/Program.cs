@@ -6,7 +6,6 @@ using System;
 
 namespace MyFaceApi
 {
-#pragma warning disable CS1591
 	public class Program
 	{
 		public static void Main(string[] args)
@@ -43,5 +42,4 @@ namespace MyFaceApi
 					webBuilder.UseStartup<Startup>();
 				});
 	}
-#pragma warning disable CS1591
 }

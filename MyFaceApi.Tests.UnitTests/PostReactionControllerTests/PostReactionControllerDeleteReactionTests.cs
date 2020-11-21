@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MyFaceApi.Controllers;
-using MyFaceApi.Entities;
+using MyFaceApi.DataAccess.Entities;
 using System;
 using System.Linq;
 using Xunit;

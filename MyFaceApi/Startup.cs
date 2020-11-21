@@ -3,20 +3,18 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System;
 using System.IO;
 using System.Reflection;
 using AutoMapper;
-using MyFaceApi.Repository;
-using MyFaceApi.Repository.Interfaceses;
-using MyFaceApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using MyFaceApi.Entities;
 using Newtonsoft.Json.Serialization;
-
+using MyFaceApi.DataAccess.Data;
+using MyFaceApi.DataAccess.Entities;
+using MyFaceApi.Repository.Interfaces;
+using MyFaceApi.Repository;
 
 namespace MyFaceApi
 {
@@ -48,7 +46,10 @@ namespace MyFaceApi
 			});
 
 			services.AddDbContext<AppDbContext>(
-				options => options.UseSqlServer(Configuration.GetConnectionString("MyFaceApi")));
+				options => {
+					options.UseSqlServer(Configuration.GetConnectionString("MyFaceApi"),
+					b => b.MigrationsAssembly("MyFaceApi"));
+					});
 
 			services.AddIdentity<User, IdentityRole<Guid>>(config =>
 			{

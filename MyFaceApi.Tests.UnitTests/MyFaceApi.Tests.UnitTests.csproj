@@ -16,6 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MyFaceApi.Models\MyFaceApi.Models.csproj" />
+    <ProjectReference Include="..\MyFaceApi.Repository\MyFaceApi.Repository.csproj" />
     <ProjectReference Include="..\MyFaceApi\MyFaceApi.csproj" />
   </ItemGroup>
 

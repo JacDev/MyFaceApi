@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MyFaceApi.DataAccess.Entities;
 using Moq;
 using MyFaceApi.Controllers;
-using MyFaceApi.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MyFaceApi.Data;
+using MyFaceApi.DataAccess.Data;
 
 namespace MyFaceApi.Migrations
 {
@@ -148,7 +148,7 @@ namespace MyFaceApi.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("MyFaceApi.Entities.FriendRelation", b =>
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.FriendRelation", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -164,7 +164,7 @@ namespace MyFaceApi.Migrations
                     b.ToTable("Relations");
                 });
 
-            modelBuilder.Entity("MyFaceApi.Entities.Notification", b =>
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.Notification", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -195,7 +195,7 @@ namespace MyFaceApi.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("MyFaceApi.Entities.Post", b =>
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.Post", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -208,7 +208,6 @@ namespace MyFaceApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Text")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserId")
@@ -224,7 +223,58 @@ namespace MyFaceApi.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("MyFaceApi.Entities.User", b =>
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.PostComment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FromWho")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("WhenAdded")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostComments");
+                });
+
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.PostReaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FromWho")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Reaction")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("WhenAdded")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostReactions");
+                });
+
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -313,7 +363,7 @@ namespace MyFaceApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("MyFaceApi.Entities.User", null)
+                    b.HasOne("MyFaceApi.DataAccess.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -322,7 +372,7 @@ namespace MyFaceApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("MyFaceApi.Entities.User", null)
+                    b.HasOne("MyFaceApi.DataAccess.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -337,7 +387,7 @@ namespace MyFaceApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFaceApi.Entities.User", null)
+                    b.HasOne("MyFaceApi.DataAccess.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -346,39 +396,64 @@ namespace MyFaceApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("MyFaceApi.Entities.User", null)
+                    b.HasOne("MyFaceApi.DataAccess.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFaceApi.Entities.FriendRelation", b =>
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.FriendRelation", b =>
                 {
-                    b.HasOne("MyFaceApi.Entities.User", null)
+                    b.HasOne("MyFaceApi.DataAccess.Entities.User", null)
                         .WithMany("Relations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFaceApi.Entities.Notification", b =>
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.Notification", b =>
                 {
-                    b.HasOne("MyFaceApi.Entities.User", null)
+                    b.HasOne("MyFaceApi.DataAccess.Entities.User", null)
                         .WithMany("Notifications")
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("MyFaceApi.Entities.Post", b =>
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.Post", b =>
                 {
-                    b.HasOne("MyFaceApi.Entities.User", null)
+                    b.HasOne("MyFaceApi.DataAccess.Entities.User", null)
                         .WithMany("Posts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFaceApi.Entities.User", b =>
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.PostComment", b =>
+                {
+                    b.HasOne("MyFaceApi.DataAccess.Entities.Post", null)
+                        .WithMany("PostComments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.PostReaction", b =>
+                {
+                    b.HasOne("MyFaceApi.DataAccess.Entities.Post", null)
+                        .WithMany("PostReactions")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.Post", b =>
+                {
+                    b.Navigation("PostComments");
+
+                    b.Navigation("PostReactions");
+                });
+
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.User", b =>
                 {
                     b.Navigation("Notifications");
 

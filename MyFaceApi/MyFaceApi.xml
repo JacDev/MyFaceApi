@@ -202,7 +202,7 @@
             <response code="404"> If user not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.UsersController.AddUser(MyFaceApi.Models.BasicUserData)">
+        <member name="M:MyFaceApi.Controllers.UsersController.AddUser(MyFaceApi.DataAccess.ModelsBasicInfo.BasicUserData)">
             <summary>
             Add user to the database
             </summary>
@@ -215,7 +215,7 @@
             <response code="409"> If the user already exist</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.UsersController.PartiallyUpdateUser(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.BasicUserData})">
+        <member name="M:MyFaceApi.Controllers.UsersController.PartiallyUpdateUser(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.DataAccess.ModelsBasicInfo.BasicUserData})">
             <summary>
             Updade user in the database
             </summary>

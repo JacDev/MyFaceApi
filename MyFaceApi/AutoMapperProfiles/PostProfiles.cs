@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using MyFaceApi.Entities;
+using MyFaceApi.DataAccess.Entities;
 using MyFaceApi.Models.PostModels;
 
 namespace MyFaceApi.AutoMapperProfiles

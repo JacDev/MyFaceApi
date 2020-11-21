@@ -3,12 +3,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.Entities;
+using MyFaceApi.DataAccess.Entities;
 using MyFaceApi.Models.CommentModels;
-using MyFaceApi.Repository.Interfaceses;
+using MyFaceApi.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyFaceApi.Controllers

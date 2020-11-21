@@ -4,7 +4,7 @@ using System.Linq;
 using MyFaceApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using MyFaceApi.Entities;
+using MyFaceApi.DataAccess.Entities;
 using Microsoft.AspNetCore.Http;
 
 namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
