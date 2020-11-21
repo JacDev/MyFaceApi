@@ -4,9 +4,9 @@ using MyFaceApi.Models.PostReactionModels;
 
 namespace MyFaceApi.AutoMapperProfiles
 {
-	public class ReactionProfile : Profile
+	public class ReactionProfiles : Profile
 	{
-		public ReactionProfile()
+		public ReactionProfiles()
 		{
 			CreateMap<PostReaction, PostReactionToAdd>();
 			CreateMap<PostReactionToAdd, PostReaction>();

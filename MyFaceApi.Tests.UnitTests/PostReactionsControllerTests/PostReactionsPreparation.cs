@@ -11,26 +11,26 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 
-namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
+namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 {
-	public class PostReactionPreparation
+	public class PostReactionsPreparation
 	{
 		protected readonly Mock<IUserRepository> _mockUserRepo;
 		protected readonly Mock<IPostRepository> _mockPostRepo;
 		protected readonly Mock<IPostReactionRepository> _mockReactionRepo;
-		protected readonly Mock<ILogger<PostReactionController>> _loggerMock;
+		protected readonly Mock<ILogger<PostReactionsController>> _loggerMock;
 		protected readonly IMapper _mapper;
 		protected readonly PostReactionToAdd _postReactionToAdd;
-		protected PostReactionPreparation()
+		protected PostReactionsPreparation()
 		{
 			//mocking repos
 			_mockUserRepo = new Mock<IUserRepository>();
 			_mockPostRepo = new Mock<IPostRepository>();
 			_mockReactionRepo = new Mock<IPostReactionRepository>();
 			//mocking logger
-			_loggerMock = new Mock<ILogger<PostReactionController>>();
+			_loggerMock = new Mock<ILogger<PostReactionsController>>();
 			//mocking automapper
-			var myProfile = new ReactionProfile();
+			var myProfile = new ReactionProfiles();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
 			_postReactionToAdd = new PostReactionToAdd

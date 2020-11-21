@@ -11,7 +11,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 
-namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
+namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 {
 	public class PostCommentsControllerPreparation
 	{
@@ -30,7 +30,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 			//mocking logger
 			_loggerMock = new Mock<ILogger<PostCommentsController>>();
 			//mocking automapper
-			var myProfile = new CommentProfile();
+			var myProfile = new CommentProfiles();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
 			_commentToAdd = new CommentToAdd()

@@ -68,6 +68,9 @@ namespace MyFaceApi
 
 			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 			services.AddScoped<IUserRepository, UserRepository>();
+			services.AddScoped<IPostRepository, PostRepository>();
+			services.AddScoped<IPostReactionRepository, PostReactionRepository>();
+			services.AddScoped<IPostCommentRepository, PostCommentRepository>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

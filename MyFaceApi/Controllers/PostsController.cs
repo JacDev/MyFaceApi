@@ -161,7 +161,7 @@ namespace MyFaceApi.Controllers
 			}
 		}
 		/// <summary>
-		/// Update post in database
+		/// Update post in the database
 		/// </summary>
 		/// <param name="postId"></param>
 		/// <param name="patchDocument"></param>
@@ -169,7 +169,7 @@ namespace MyFaceApi.Controllers
 		/// Status 204 no content if the post has been updated
 		/// </returns>
 		/// <response code="204"> No content if the post has been updated</response>
-		/// <response code="400"> If the post is not valid</response>    
+		/// <response code="400"> If the postId is not valid guid</response>    
 		/// <response code="404"> If the post not found</response>
 		/// <response code="500"> If internal error occured</response>
 		[HttpPatch("{postId}")]
@@ -214,7 +214,7 @@ namespace MyFaceApi.Controllers
 			}
 		}
 		/// <summary>
-		/// Remove a post from the database
+		/// Remove the post from the database
 		/// </summary>
 		/// <param name="postId"></param>
 		/// <returns>

@@ -4,9 +4,9 @@ using MyFaceApi.Models.CommentModels;
 
 namespace MyFaceApi.AutoMapperProfiles
 {
-	public class CommentProfile : Profile
+	public class CommentProfiles : Profile
 	{
-		public CommentProfile()
+		public CommentProfiles()
 		{
 			CreateMap<CommentToAdd, PostComment>();
 			CreateMap<PostComment, CommentToAdd>();

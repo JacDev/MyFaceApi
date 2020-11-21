@@ -6,11 +6,11 @@ using MyFaceApi.DataAccess.Entities;
 using System;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
+namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 {
-	public class PostReactionControllerAddReactionTests : PostReactionPreparation
+	public class PostReactionsControllerAddReactionTests : PostReactionsPreparation
 	{
-		public PostReactionControllerAddReactionTests() : base()
+		public PostReactionsControllerAddReactionTests() : base()
 		{
 		}
 		[Fact]
@@ -32,7 +32,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 				.ReturnsAsync(reactionEntity)
 				.Verifiable();
 
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
 			var result = await controller.AddPostReaction(ConstIds.ExampleUserId, ConstIds.ExamplePostId, _postReactionToAdd);
@@ -54,7 +54,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 		public async void AddPostReaction_ReturnsBadRequestObjectResult_WhenTheUserOrPostIdIsInvalid(string userTestId, string postTestId)
 		{
 			//Arrange
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
 			var result = await controller.AddPostReaction(userTestId, postTestId, _postReactionToAdd);
@@ -77,7 +77,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 				.Returns(doesTheUserExists)
 				.Verifiable();
 
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
 			var result = await controller.AddPostReaction(ConstIds.ExampleUserId, ConstIds.ExamplePostId, _postReactionToAdd);
@@ -101,7 +101,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
 			var result = await controller.AddPostReaction(ConstIds.ExampleUserId, ConstIds.ExamplePostId, _postReactionToAdd);

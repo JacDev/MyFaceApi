@@ -8,21 +8,20 @@ using MyFaceApi.Models.PostReactionModels;
 using MyFaceApi.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyFaceApi.Controllers
 {
 	[Route("api/users/{userId}/posts/{postId}/reactions")]
 	[ApiController]
-	public class PostReactionController : ControllerBase
+	public class PostReactionsController : ControllerBase
 	{
-		private readonly ILogger<PostReactionController> _logger;
+		private readonly ILogger<PostReactionsController> _logger;
 		private readonly IPostRepository _postRepository;
 		private readonly IUserRepository _userRepository;
 		private readonly IPostReactionRepository _postReactionRepository;
 		private readonly IMapper _mapper;
-		public PostReactionController(ILogger<PostReactionController> logger,
+		public PostReactionsController(ILogger<PostReactionsController> logger,
 			IPostRepository postRepository,
 			IUserRepository userRepository,
 			IMapper mapper,

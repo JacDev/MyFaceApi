@@ -4,6 +4,70 @@
         <name>MyFaceApi</name>
     </assembly>
     <members>
+        <member name="M:MyFaceApi.Controllers.NotificationsController.GetNotification(System.String,System.String)">
+            <summary>
+            Return the found notification
+            </summary>
+            <param name="userId"></param>
+            <param name="notificationId">Notification guid as a string </param>
+            <returns>Found notification</returns>
+            <response code="200"> Returns the found notification</response>
+            <response code="400"> If parameter is not a valid guid</response>    
+            <response code="404"> If notification not found</response>   
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.NotificationsController.GetNotifications(System.String)">
+            <summary>
+            Return the found user notifications
+            </summary>
+            <param name="userId">User guid as a string </param>
+            <returns>Found user notifications</returns>
+            <response code="200"> Returns the found user notifications</response>
+            <response code="400"> If parameter is not a valid guid</response>    
+            <response code="404"> If user or notifications not found</response>   
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.NotificationsController.AddNotification(System.String,MyFaceApi.Models.NotificationModels.NotificationToAdd)">
+            <summary>
+            Add notification to database
+            </summary>
+            <param name="userId">User guid as a string </param>
+            <param name="notificationToAdd"></param>
+            <returns>Added reaction</returns>
+            <response code="201"> Return created notification</response>
+            <response code="400"> If parameter is not a valid guid</response>    
+            <response code="404"> If user not found</response>   
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.NotificationsController.PartiallyUpdateNotification(System.String,System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.NotificationModels.NotificationToUpdate})">
+            <summary>
+            Update notification in the database
+            </summary>
+            <param name="userId"></param>
+            <param name="notificationId"></param>
+            <param name="patchDocument"></param>
+            <returns>
+            Status 204 no content if the notification has been updated
+            </returns>
+            <response code="204"> No content if the notification has been updated</response>
+            <response code="400"> If the notificationId is not valid guid</response>    
+            <response code="404"> If the notification not found</response>
+            <response code="500"> If internal error occured</response>
+        </member>
+        <member name="M:MyFaceApi.Controllers.NotificationsController.DeleteNotification(System.String,System.String)">
+            <summary>
+            Remove the notification from the database
+            </summary>
+            <param name="userId"></param>
+            <param name="notificationId"></param>
+            <returns>
+            Status 204 no content if the notification has been removed
+            </returns>
+            <response code="204"> No content if the notification has been removed</response>
+            <response code="400"> If the notificationId is not valid guid</response>    
+            <response code="404"> If the notification not found</response>
+            <response code="500"> If internal error occured</response>
+        </member>
         <member name="M:MyFaceApi.Controllers.PostCommentsController.AddComment(System.String,System.String,MyFaceApi.Models.CommentModels.CommentToAdd)">
             <summary>
             Add post to database
@@ -67,7 +131,7 @@
             <response code="404"> If the post not found</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostReactionController.AddPostReaction(System.String,System.String,MyFaceApi.Models.PostReactionModels.PostReactionToAdd)">
+        <member name="M:MyFaceApi.Controllers.PostReactionsController.AddPostReaction(System.String,System.String,MyFaceApi.Models.PostReactionModels.PostReactionToAdd)">
             <summary>
             Add comment to database
             </summary>
@@ -80,7 +144,7 @@
             <response code="404"> If user or post not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostReactionController.GetPostReactions(System.String)">
+        <member name="M:MyFaceApi.Controllers.PostReactionsController.GetPostReactions(System.String)">
             <summary>
             Return the found post reaction
             </summary>
@@ -91,7 +155,7 @@
             <response code="404"> If post not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostReactionController.GetPostReaction(System.String,System.String)">
+        <member name="M:MyFaceApi.Controllers.PostReactionsController.GetPostReaction(System.String,System.String)">
             <summary>
             Return the found reaction
             </summary>
@@ -103,7 +167,7 @@
             <response code="404"> If post or comment not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostReactionController.PartiallyUpdatePostReaction(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.PostReactionModels.PostReactionToUpdate})">
+        <member name="M:MyFaceApi.Controllers.PostReactionsController.PartiallyUpdatePostReaction(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.PostReactionModels.PostReactionToUpdate})">
             <summary>
             Update reaction in database
             </summary>
@@ -117,7 +181,7 @@
             <response code="404"> If the reaction not found</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostReactionController.DeletePostReaction(System.String)">
+        <member name="M:MyFaceApi.Controllers.PostReactionsController.DeletePostReaction(System.String)">
             <summary>
             Remove a reaction from the database
             </summary>
@@ -166,7 +230,7 @@
         </member>
         <member name="M:MyFaceApi.Controllers.PostsController.PartiallyUpdatePost(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.PostModels.PostToUpdate})">
             <summary>
-            Update post in database
+            Update post in the database
             </summary>
             <param name="postId"></param>
             <param name="patchDocument"></param>
@@ -174,13 +238,13 @@
             Status 204 no content if the post has been updated
             </returns>
             <response code="204"> No content if the post has been updated</response>
-            <response code="400"> If the post is not valid</response>    
+            <response code="400"> If the postId is not valid guid</response>    
             <response code="404"> If the post not found</response>
             <response code="500"> If internal error occured</response>
         </member>
         <member name="M:MyFaceApi.Controllers.PostsController.DeletePost(System.String)">
             <summary>
-            Remove a post from the database
+            Remove the post from the database
             </summary>
             <param name="postId"></param>
             <returns>

@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
+namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 {
 	public class PostCommentsControllerGetCommentTests : PostCommentsControllerPreparation
 	{
@@ -56,11 +56,11 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 		[Theory]
 		[InlineData(true, null)]
 		[InlineData(false, null)]
-		public void GetComment_ReturnsNotFoundObjectResult_WhenThePostDoesntExist(bool isPostExists, PostComment testCommentData)
+		public void GetComment_ReturnsNotFoundObjectResult_WhenThePostDoesntExist(bool doesThePostExists, PostComment testCommentData)
 		{
 			//Arrange
 			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
-				.Returns(isPostExists)
+				.Returns(doesThePostExists)
 				.Verifiable();
 			_mockCommentRepo.Setup(repo => repo.GetComment(It.IsAny<Guid>()))
 				.Returns(testCommentData)
@@ -72,7 +72,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 
 			//Assert
 			var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
-			if (isPostExists)
+			if (doesThePostExists)
 			{
 				Assert.Equal($"Comment: {ConstIds.ExampleCommentId} not found.", notFoundResult.Value);
 				_mockCommentRepo.Verify();

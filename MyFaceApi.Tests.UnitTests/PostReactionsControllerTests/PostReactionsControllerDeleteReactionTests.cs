@@ -7,11 +7,11 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
+namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 {
-	public class PostReactionControllerDeleteReactionTests : PostReactionPreparation
+	public class PostReactionsControllerDeleteReactionTests : PostReactionsPreparation
 	{
-		public PostReactionControllerDeleteReactionTests() : base()
+		public PostReactionsControllerDeleteReactionTests() : base()
 		{
 		}
 		[Fact]
@@ -25,7 +25,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 			_mockReactionRepo.Setup(repo => repo.DeletePostReactionAsync(It.IsAny<PostReaction>()))
 				.Verifiable();
 
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
 			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId);
@@ -38,7 +38,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 		public async void DeletePostReaction_ReturnsBadRequestObjectResult_WhenThePostReactionGuidIdIsInvalid()
 		{
 			//Arrange
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
 			var result = await controller.DeletePostReaction(ConstIds.InvalidGuid);
@@ -55,7 +55,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 				.Returns((PostReaction)null)
 				.Verifiable();
 
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
 			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId);
@@ -72,7 +72,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
 			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId);

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MyFaceApi.Tests.UnitTests
+﻿namespace MyFaceApi.Tests.UnitTests
 {
 	public static class ConstIds
 	{
@@ -11,6 +7,8 @@ namespace MyFaceApi.Tests.UnitTests
 		public const string ExampleCommentId = "c5e341e7-9b87-47a2-a6b8-2d367c2bdfa1";
 		public const string ExampleReactionId = "9b92b388-c51d-4ef5-997f-a40f3afb7e9d";
 		public const string ExampleFromWhoId = "48698e3f-e07d-416e-9b9e-355d733c0579";
+		public const string ExampleNotificationId = "3ed39d2f-bc65-496f-89cd-d3023194d34a";
+		public const string ExampleEventId = "60dac9a5-4b0a-4981-b443-0f27ba582dd2";
 		public const string InvalidGuid = "InvalidGuid";
 	}
 }

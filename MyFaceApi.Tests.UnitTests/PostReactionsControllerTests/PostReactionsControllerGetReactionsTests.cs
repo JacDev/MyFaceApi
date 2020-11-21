@@ -9,11 +9,11 @@ using System.Linq;
 using System.Text;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
+namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 {
-	public class PostReactionControllerGetReactionsTests : PostReactionPreparation
+	public class PostReactionsControllerGetReactionsTests : PostReactionsPreparation
 	{
-		public PostReactionControllerGetReactionsTests() : base()
+		public PostReactionsControllerGetReactionsTests() : base()
 		{
 		}
 		[Fact]
@@ -30,7 +30,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 				.Returns(reactions)
 				.Verifiable();
 
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
 			var result = controller.GetPostReactions(ConstIds.ExamplePostId);
@@ -46,7 +46,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 		public void GetPostReactions_ReturnsBadRequestObjectResult_WhenThePostIdIsInvalid()
 		{
 			//Arrange
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 			//Act
 			var result = controller.GetPostReactions(ConstIds.InvalidGuid);
 
@@ -62,7 +62,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 				.Returns(false)
 				.Verifiable();
 
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
 			var result = controller.GetPostReactions(ConstIds.ExamplePostId);
@@ -80,7 +80,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
 			var result = controller.GetPostReactions(ConstIds.ExamplePostId);

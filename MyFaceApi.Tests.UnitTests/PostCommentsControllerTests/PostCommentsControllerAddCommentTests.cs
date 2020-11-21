@@ -6,7 +6,7 @@ using MyFaceApi.DataAccess.Entities;
 using System;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
+namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 {
 	public class PostCommentsControllerAddCommentTests : PostCommentsControllerPreparation
 	{

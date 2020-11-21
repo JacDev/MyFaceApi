@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Moq;
 using MyFaceApi.Controllers;
 using MyFaceApi.DataAccess.Entities;
@@ -7,48 +8,57 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
+namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 {
-	public class PostCommentsControllerDeleteCommentTests : PostCommentsControllerPreparation
+	public class PostCommentsControllerPatchCommentTests: PostCommentsControllerPreparation
 	{
-		public PostCommentsControllerDeleteCommentTests() : base()
+		public PostCommentsControllerPatchCommentTests() : base()
 		{
 		}
 		[Fact]
-		public async void DeleteComment_ReturnsNoContentResult_WhenTheCommentHasBeenRemoved()
+		public async void PartiallyUpdateComment_ReturnsNoContentResult_WhenTheCommentHasBeenUpdated()
 		{
 			//Arrange
-			var commentToRemove = GetTestPostData().ElementAt(0);
-			_mockCommentRepo.Setup(repo => repo.GetComment(It.IsAny<Guid>()))
-				.Returns(commentToRemove)
-				.Verifiable();
+			var comment = GetTestPostData().ElementAt(0);
 
-			_mockCommentRepo.Setup(repo => repo.DeleteCommentAsync(It.IsAny<PostComment>()))
+			_mockCommentRepo.Setup(repo => repo.GetComment(It.IsAny<Guid>()))
+				.Returns(comment)
+				.Verifiable();
+			_mockCommentRepo.Setup(repo => repo.UpdateComment(It.IsAny<PostComment>()))
 				.Verifiable();
 
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
-			//Act
-			var result = await controller.DeleteComment(ConstIds.ExampleCommentId);
+
+			var objectValidator = new Mock<IObjectModelValidator>();
+			objectValidator.Setup(o => o.Validate(It.IsAny<ActionContext>(),
+											  It.IsAny<ValidationStateDictionary>(),
+											  It.IsAny<string>(),
+											  It.IsAny<Object>()));
+			controller.ObjectValidator = objectValidator.Object;
 
 			//Act
+			var result = await controller.PartiallyUpdateComment(ConstIds.ExampleCommentId, GetJsonPatchDocument());
+
+			//Assert
 			var noContentResult = Assert.IsType<NoContentResult>(result);
+			Assert.Equal("Changed", comment.Text);
 			_mockCommentRepo.Verify();
 		}
 		[Fact]
-		public async void DeleteComment_ReturnsBadRequestObjectResult_WhenTheCommentGuidIdIsInvalid()
+		public async void PartiallyUpdateComment_ReturnsBadRequestObjectResult_WhenTheCommentIdIsInvalid()
 		{
 			//Arrange
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 
 			//Act
-			var result = await controller.DeleteComment(ConstIds.InvalidGuid);
+			var result = await controller.PartiallyUpdateComment(ConstIds.InvalidGuid, GetJsonPatchDocument());
 
 			//Assert
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
 			Assert.Equal($"{ConstIds.InvalidGuid} is not valid Guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
-		public async void DeleteComment_ReturnsNotFoundResult_WhenTheCommentDoesntExist()
+		public async void PartiallyUpdateComment_ReturnsNotFoundRequest_WhenTheCommentDataIsNotInTheDatabase()
 		{
 			//Arrange
 			_mockCommentRepo.Setup(repo => repo.GetComment(It.IsAny<Guid>()))
@@ -56,15 +66,16 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 				.Verifiable();
 
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
+
 			//Act
-			var result = await controller.DeleteComment(ConstIds.ExampleCommentId);
+			var result = await controller.PartiallyUpdateComment(ConstIds.ExampleCommentId, GetJsonPatchDocument());
 
 			//Assert
 			var notFoundResult = Assert.IsType<NotFoundResult>(result);
 			_mockCommentRepo.Verify();
 		}
 		[Fact]
-		public async void DeleteComment_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
+		public async void PartiallyUpdateComment_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
 		{
 			//Arrange
 			_mockCommentRepo.Setup(repo => repo.GetComment(It.IsAny<Guid>()))
@@ -72,8 +83,9 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentControllerTests
 				.Verifiable();
 
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
+
 			//Act
-			var result = await controller.DeleteComment(ConstIds.ExampleCommentId);
+			var result = await controller.PartiallyUpdateComment(ConstIds.ExampleCommentId, GetJsonPatchDocument());
 
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result);

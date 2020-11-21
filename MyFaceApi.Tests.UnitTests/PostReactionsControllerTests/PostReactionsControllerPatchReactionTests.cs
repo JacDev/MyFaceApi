@@ -9,11 +9,11 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
+namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 {
-	public class PostReactionControllerPatchReactionTests : PostReactionPreparation
+	public class PostReactionsControllerPatchReactionTests : PostReactionsPreparation
 	{
-		public PostReactionControllerPatchReactionTests() : base()
+		public PostReactionsControllerPatchReactionTests() : base()
 		{
 		}
 		[Fact]
@@ -28,7 +28,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 			_mockReactionRepo.Setup(repo => repo.UpdatePostReactionAsync(It.IsAny<PostReaction>()))
 				.Verifiable();
 
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			var objectValidator = new Mock<IObjectModelValidator>();
 			objectValidator.Setup(o => o.Validate(It.IsAny<ActionContext>(),
@@ -49,7 +49,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 		public async void PartiallyUpdatePostReaction_ReturnsBadRequestObjectResult_WhenTheReactionIdIsInvalid()
 		{
 			//Arrange
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
 			var result = await controller.PartiallyUpdatePostReaction(ConstIds.InvalidGuid, GetJsonPatchDocument());
@@ -66,7 +66,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 				.Returns((PostReaction)null)
 				.Verifiable();
 
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
 			var result = await controller.PartiallyUpdatePostReaction(ConstIds.ExampleReactionId, GetJsonPatchDocument());
@@ -83,7 +83,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionControllerTests
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostReactionController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
 			var result = await controller.PartiallyUpdatePostReaction(ConstIds.ExampleReactionId, GetJsonPatchDocument());
