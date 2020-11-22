@@ -20,12 +20,12 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 		{
 			//Arrange
 			var userInRepo = GetTestUserData();
-			_mockRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
+			_mockUserRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
 				.ReturnsAsync(userInRepo)
 				.Verifiable();
-			_mockRepo.Setup(repo => repo.UpdateUserAsync(It.IsAny<User>()))
+			_mockUserRepo.Setup(repo => repo.UpdateUserAsync(It.IsAny<User>()))
 				.Verifiable();
-			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
+			var controller = new UsersController(_loggerMock.Object, _mockUserRepo.Object, _mapper);
 
 			var objectValidator = new Mock<IObjectModelValidator>();
 			objectValidator.Setup(o => o.Validate(It.IsAny<ActionContext>(),
@@ -40,13 +40,13 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			//Assert
 			var noContentResult = Assert.IsType<NoContentResult>(result);
 			Assert.Equal("Changed", userInRepo.FirstName);
-			_mockRepo.Verify();
+			_mockUserRepo.Verify();
 		}
 		[Fact]
 		public async void PartiallyUpdateUser_ReturnsBadRequestObjectResult_WhenTheUserIdIsInvalid()
 		{
 			//Arrange
-			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
+			var controller = new UsersController(_loggerMock.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
 			var result = await controller.PartiallyUpdateUser(ConstIds.InvalidGuid, GetJsonPatchDocument());
@@ -58,28 +58,28 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 		[Fact]
 		public async void PartiallyUpdateUser_NotFoundRequest_WhenTheUserDataIsNotInTheDatabase()
 		{
-			_mockRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
+			_mockUserRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
 				.ReturnsAsync((User)null)
 				.Verifiable();
 
-			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
+			var controller = new UsersController(_loggerMock.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
 			var result = await controller.PartiallyUpdateUser(ConstIds.ExampleUserId, GetJsonPatchDocument());
 
 			//Assert
 			var notFoundResult = Assert.IsType<NotFoundResult>(result);
-			_mockRepo.Verify();
+			_mockUserRepo.Verify();
 		}
 		[Fact]
 		public async void PartiallyUpdateUser_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
 		{
 			//Arrange
-			_mockRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
+			_mockUserRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
+			var controller = new UsersController(_loggerMock.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
 			var result = await controller.PartiallyUpdateUser(ConstIds.ExampleUserId, GetJsonPatchDocument());
@@ -87,7 +87,7 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockRepo.Verify();
+			_mockUserRepo.Verify();
 		}
 	}
 }

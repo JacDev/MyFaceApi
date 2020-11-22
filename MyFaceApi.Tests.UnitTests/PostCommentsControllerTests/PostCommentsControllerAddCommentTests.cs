@@ -3,15 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MyFaceApi.Controllers;
 using MyFaceApi.DataAccess.Entities;
+using MyFaceApi.Models.CommentModels;
 using System;
 using Xunit;
+using AutoFixture;
 
 namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 {
 	public class PostCommentsControllerAddCommentTests : PostCommentsControllerPreparation
 	{
+		protected readonly CommentToAdd _commentToAdd;
 		public PostCommentsControllerAddCommentTests() : base()
 		{
+			_commentToAdd = _fixture.Create<CommentToAdd>();
 		}
 		[Fact]
 		public async void AddComment_ReturnsCreatedAtRouteResult_WithPostCommentData()
@@ -39,7 +43,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 			//Assert
 			var redirectToActionResult = Assert.IsType<CreatedAtRouteResult>(result.Result);
 			Assert.Equal(ConstIds.ExampleUserId, redirectToActionResult.RouteValues["userId"].ToString());
-			Assert.Equal(ConstIds.ExamplePostId, redirectToActionResult.RouteValues["postId"].ToString());
+			Assert.Equal(_commentToAdd.PostId.ToString(), redirectToActionResult.RouteValues["postId"].ToString());
 			Assert.Equal(ConstIds.ExampleCommentId, redirectToActionResult.RouteValues["commentId"].ToString());
 			Assert.Equal("GetComment", redirectToActionResult.RouteName);
 			_mockCommentRepo.Verify();

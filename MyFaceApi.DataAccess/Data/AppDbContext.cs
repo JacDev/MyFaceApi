@@ -12,7 +12,7 @@ namespace MyFaceApi.DataAccess.Data
 		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
 		{
 		}
-		public DbSet<FriendRelation> Relations { get; set; }
+		public DbSet<FriendsRelation> Relations { get; set; }
 		public DbSet<Post> Posts { get; set; }
 		public DbSet<Notification> Notifications { get; set; }
 		public DbSet<PostComment> PostComments { get; set; }
@@ -20,7 +20,7 @@ namespace MyFaceApi.DataAccess.Data
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
-			modelBuilder.Entity<FriendRelation>().HasKey(s => new { s.UserId, s.FriendId });
+			modelBuilder.Entity<FriendsRelation>().HasKey(s => new { s.UserId, s.FriendId });
 		}
 		public async Task<int> SaveAsync()
 		{

@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace MyFaceApi.DataAccess.Entities
+namespace MyFaceApi.DataAccess.ModelsBasicInfo
 {
-	public class FriendRelation
+	public class BasicFriendsRelationInfo
 	{
-		public Guid UserId { get; set; }
 		public Guid FriendId { get; set; }
 		public DateTime SinceWhen { get; set; }
 	}

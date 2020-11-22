@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoFixture.AutoMoq;
+using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -20,7 +22,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 		protected readonly Mock<IPostRepository> _mockPostRepo;
 		protected readonly Mock<ILogger<PostCommentsController>> _loggerMock;
 		protected readonly IMapper _mapper;
-		protected readonly CommentToAdd _commentToAdd;
+		protected readonly IFixture _fixture;
 		protected PostCommentsControllerPreparation()
 		{
 			//mocking repos
@@ -33,13 +35,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 			var myProfile = new CommentProfiles();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
-			_commentToAdd = new CommentToAdd()
-			{
-				WhenAdded = DateTime.Now,
-				FromWho = new Guid(ConstIds.ExampleUserId),
-				PostId = new Guid(ConstIds.ExamplePostId),
-				Text = "Example text"
-			};
+			_fixture = new Fixture().Customize(new AutoMoqCustomization());
 		}
 		protected List<PostComment> GetTestPostData()
 		{

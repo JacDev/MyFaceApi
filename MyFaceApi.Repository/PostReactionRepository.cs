@@ -24,7 +24,7 @@ namespace MyFaceApi.Repository
 		public async Task<PostReaction> AddPostReactionAsync(PostReaction postReaction)
 		{
 			_logger.LogDebug("Trying to add reaction {postReaction}.", postReaction);
-			if (postReaction == null)
+			if (postReaction is null)
 			{
 				throw new ArgumentNullException(nameof(PostReaction));
 			}
@@ -47,7 +47,7 @@ namespace MyFaceApi.Repository
 
 		public async Task DeletePostReactionAsync(PostReaction postReaction)
 		{
-			_logger.LogDebug("Trying to remove Reaction: {postReaction}.", postReaction);
+			_logger.LogDebug("Trying to remove reaction: {postReaction}.", postReaction);
 			if (postReaction is null)
 			{
 				throw new ArgumentNullException(nameof(PostReaction));
@@ -80,7 +80,7 @@ namespace MyFaceApi.Repository
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Error occured during getting the Reaction.");
+				_logger.LogError(ex, "Error occured during getting the reaction.");
 				throw;
 			}
 		}

@@ -71,6 +71,7 @@ namespace MyFaceApi
 			services.AddScoped<IPostRepository, PostRepository>();
 			services.AddScoped<IPostReactionRepository, PostReactionRepository>();
 			services.AddScoped<IPostCommentRepository, PostCommentRepository>();
+			services.AddScoped<IFriendsRelationRepository, FriendsRelationRepository>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

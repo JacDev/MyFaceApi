@@ -8,7 +8,7 @@ namespace MyFaceApi.DataAccess.ModelsBasicInfo
 		public Guid Id { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
-		[AllowNull]
 		public string ProfileImagePath { get; set; }
+		public DateTime DateOfBirht { get; set; }
 	}
 }

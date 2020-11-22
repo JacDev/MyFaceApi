@@ -4,29 +4,36 @@ using Moq;
 using MyFaceApi.Controllers;
 using MyFaceApi.DataAccess.Entities;
 using MyFaceApi.DataAccess.ModelsBasicInfo;
-using MyFaceApi.Models;
 using System;
 using Xunit;
+using AutoFixture;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 {
 	public class UsersControllerAddUserTests : UsersControllerPreparation
 	{
+		protected readonly BasicUserData _userToAdd;
 		public UsersControllerAddUserTests() : base()
 		{
+			_userToAdd = _fixture.Create<BasicUserData>();
 		}
 		[Fact]
 		public async void AddUser_ReturnsCreatedAtRouteResult_WithUserData()
 		{
 			//Arrange
-			_mockRepo.Setup(repo => repo.AddUserAcync(It.IsAny<User>()))
-				.ReturnsAsync(GetTestUserData())
-				.Verifiable();
-			_mockRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(false)
+			_mockUserRepo.Setup(repo => repo.AddUserAcync(It.IsAny<User>()))
+				.ReturnsAsync(_mapper.Map<User>(_userToAdd))
 				.Verifiable();
 
-			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
+			var controller = new UsersController(_loggerMock.Object, _mockUserRepo.Object, _mapper);
+
+			var objectValidator = new Mock<IObjectModelValidator>();
+			objectValidator.Setup(o => o.Validate(It.IsAny<ActionContext>(),
+											  It.IsAny<ValidationStateDictionary>(),
+											  It.IsAny<string>(),
+											  It.IsAny<Object>()));
+			controller.ObjectValidator = objectValidator.Object;
 			//Act
 			var result = await controller.AddUser(_userToAdd);
 
@@ -34,51 +41,24 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			var redirectToActionResult = Assert.IsType<CreatedAtRouteResult>(result.Result);
 			Assert.Equal(_userToAdd.Id, redirectToActionResult.RouteValues["userId"]);
 			Assert.Equal("GetUser", redirectToActionResult.RouteName);
-			_mockRepo.Verify();
-		}
-		[Fact]
-		public async void AddUser_ReturnsBadRequestObjectResult_WhenTheUserDataAreIncomplete()
-		{
-			//Arrange
-			var userToAdd = new BasicUserData
-			{
-				FirstName = "Incomplete"
-			};
-
-			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
-			//Act
-			var result = await controller.AddUser(userToAdd);
-
-			//Assert
-			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-			Assert.Equal("One or more validation errors occurred.", badRequestObjectResult.Value);
-		}
-		[Fact]
-		public async void AddUser_ReturnsConflictObjectResult_WhenTheUserWithGuidAlreadyExist()
-		{
-			//Arrange
-			_mockRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
-				.Verifiable();
-
-			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
-			//Act
-			var result = await controller.AddUser(_userToAdd);
-
-			//Assert
-			var conflictObjectResult = Assert.IsType<ConflictObjectResult>(result.Result);
-			Assert.Equal($"{ConstIds.ExampleUserId} already exist.", conflictObjectResult.Value);
-			_mockRepo.Verify();
+			_mockUserRepo.Verify();
 		}
 		[Fact]
 		public async void AddUser_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
 		{
 			//Arrange
-			_mockRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Throws(new ArgumentNullException(nameof(Guid)))
+			_mockUserRepo.Setup(repo => repo.AddUserAcync(It.IsAny<User>()))
+				.Throws(new ArgumentNullException(nameof(User)))
 				.Verifiable();
 
-			var controller = new UsersController(_loggerMock.Object, _mockRepo.Object, _mapper);
+			var controller = new UsersController(_loggerMock.Object, _mockUserRepo.Object, _mapper);
+
+			var objectValidator = new Mock<IObjectModelValidator>();
+			objectValidator.Setup(o => o.Validate(It.IsAny<ActionContext>(),
+											  It.IsAny<ValidationStateDictionary>(),
+											  It.IsAny<string>(),
+											  It.IsAny<Object>()));
+			controller.ObjectValidator = objectValidator.Object;
 
 			//Act
 			var result = await controller.AddUser(_userToAdd);
@@ -86,7 +66,7 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockRepo.Verify();
+			_mockUserRepo.Verify();
 		}
 	}
 }

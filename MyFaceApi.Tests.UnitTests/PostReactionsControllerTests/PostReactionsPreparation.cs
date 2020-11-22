@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoFixture.AutoMoq;
+using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -20,7 +22,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 		protected readonly Mock<IPostReactionRepository> _mockReactionRepo;
 		protected readonly Mock<ILogger<PostReactionsController>> _loggerMock;
 		protected readonly IMapper _mapper;
-		protected readonly PostReactionToAdd _postReactionToAdd;
+		protected readonly IFixture _fixture;
 		protected PostReactionsPreparation()
 		{
 			//mocking repos
@@ -33,12 +35,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			var myProfile = new ReactionProfiles();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
-			_postReactionToAdd = new PostReactionToAdd
-			{
-				WhenAdded = DateTime.Now,
-				FromWho = new Guid(ConstIds.ExampleFromWhoId),
-				Reaction = DataAccess.Enums.ReactionType.Like
-			};
+			_fixture = new Fixture().Customize(new AutoMoqCustomization());
 		}
 		protected Post GetTestPostData()
 		{

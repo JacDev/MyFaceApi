@@ -3,15 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MyFaceApi.Controllers;
 using MyFaceApi.DataAccess.Entities;
+using MyFaceApi.Models.PostModels;
 using System;
 using Xunit;
+using AutoFixture;
 
 namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 {
 	public class PostsControllerAddPostTests : PostsControllerPreparation
 	{
+		protected readonly PostToAdd _postToAdd;
 		public PostsControllerAddPostTests() : base()
 		{
+			_postToAdd = _fixture.Create<PostToAdd>();
 		}
 		[Fact]
 		public async void AddPost_ReturnsCreatedAtRouteResult_WithPostData()
@@ -37,6 +41,8 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			Assert.Equal(ConstIds.ExampleUserId, redirectToActionResult.RouteValues["userId"].ToString());
 			Assert.Equal(ConstIds.ExamplePostId, redirectToActionResult.RouteValues["postId"].ToString());
 			Assert.Equal("GetPost", redirectToActionResult.RouteName);
+			Assert.IsType<Post>(redirectToActionResult.Value);
+
 			_mockUserRepo.Verify();
 			_mockPostRepo.Verify();
 		}
@@ -76,9 +82,6 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
-				.Verifiable();
-			_mockPostRepo.Setup(repo => repo.AddPostAsync(It.IsAny<Post>()))
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
@@ -90,7 +93,6 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
 			_mockUserRepo.Verify();
-			_mockPostRepo.Verify();
 		}
 	}
 }

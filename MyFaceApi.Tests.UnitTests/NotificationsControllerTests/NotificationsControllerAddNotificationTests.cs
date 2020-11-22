@@ -3,15 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MyFaceApi.Controllers;
 using MyFaceApi.DataAccess.Entities;
+using MyFaceApi.Models.NotificationModels;
 using System;
 using Xunit;
+using AutoFixture;
 
 namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 {
 	public class NotificationsControllerAddNotificationTests : NotificationsControllerPreparation
 	{
+		protected readonly NotificationToAdd _notificationToAdd;
 		public NotificationsControllerAddNotificationTests() : base()
 		{
+			_notificationToAdd = _fixture.Create<NotificationToAdd>();
 		}
 		[Fact]
 		public async void AddNotification_ReturnsCreatedAtRouteResult_WithNotificationData()

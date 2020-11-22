@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoFixture.AutoMoq;
+using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -11,7 +13,6 @@ using MyFaceApi.Repository.Interfaces;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 {
@@ -21,7 +22,8 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 		protected readonly Mock<INotificationRepository> _mockNotificationRepo;
 		protected readonly Mock<ILogger<NotificationsController>> _loggerMock;
 		protected readonly IMapper _mapper;
-		protected readonly NotificationToAdd _notificationToAdd;
+		protected readonly IFixture _fixture;
+
 		protected NotificationsControllerPreparation()
 		{
 			//mocking repos
@@ -33,7 +35,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 			var myProfile = new NotificationProfiles();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
-			_notificationToAdd = _mapper.Map<NotificationToAdd>(GetTestNotificationData().ElementAt(0));
+			_fixture = new Fixture().Customize(new AutoMoqCustomization());
 		}
 		protected List<Notification> GetTestNotificationData()
 		{

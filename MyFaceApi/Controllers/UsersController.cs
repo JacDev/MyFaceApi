@@ -51,10 +51,6 @@ namespace MyFaceApi.Controllers
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
 					User userFromRepo = await _userRepository.GetUserAsync(gUserId);
-					if (userFromRepo == null)
-					{
-						return NotFound();
-					}
 					return Ok(_mapper.Map<BasicUserData>(userFromRepo));
 				}
 				else
@@ -88,21 +84,12 @@ namespace MyFaceApi.Controllers
 		{
 			try
 			{
-				//ModelState.IsValid dosent work during testing
-				if (user.Id == null || user.FirstName == null || user.LastName == null)
+				if (!ModelState.IsValid)
 				{
 					return BadRequest("One or more validation errors occurred.");
 				}
 				User userEntity = _mapper.Map<User>(user);
-				if (!_userRepository.CheckIfUserExists(user.Id))
-				{
-					await _userRepository.AddUserAcync(userEntity);
-				}
-				else
-				{
-					return Conflict($"{user.Id} already exist.");
-				}
-
+				await _userRepository.AddUserAcync(userEntity);
 				BasicUserData userToReturn = _mapper.Map<BasicUserData>(userEntity);
 
 				return CreatedAtRoute("GetUser",
@@ -195,7 +182,7 @@ namespace MyFaceApi.Controllers
 					User userFromRepo = await _userRepository.GetUserAsync(gUserId);
 					if (userFromRepo == null)
 					{
-						return NotFound();
+						return NotFound($"User: {userId} not found.");
 					}
 					await _userRepository.DeleteUserAsync(userFromRepo);
 					return NoContent();

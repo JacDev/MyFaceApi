@@ -3,15 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MyFaceApi.Controllers;
 using MyFaceApi.DataAccess.Entities;
+using MyFaceApi.Models.PostReactionModels;
 using System;
 using Xunit;
+using AutoFixture;
 
 namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 {
 	public class PostReactionsControllerAddReactionTests : PostReactionsPreparation
 	{
+		protected readonly PostReactionToAdd _postReactionToAdd;
 		public PostReactionsControllerAddReactionTests() : base()
 		{
+			_postReactionToAdd = _fixture.Create<PostReactionToAdd>();
 		}
 		[Fact]
 		public async void AddPostReaction_ReturnsCreatedAtRouteResult_WithReactionData()
