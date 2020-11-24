@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MyFaceApi.DataAccess.Entities
 {
-	public class Post : BasicPostInfo
+	public class Post : BasicPostData
 	{
 		[Key]
 		public Guid Id { get; set; }

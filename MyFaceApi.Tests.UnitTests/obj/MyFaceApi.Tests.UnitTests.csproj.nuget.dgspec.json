@@ -224,8 +224,8 @@
               "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Repository.csproj": {
                 "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Repository.csproj"
               },
-              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.csproj": {
-                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.csproj"
+              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.Api.csproj": {
+                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.Api.csproj"
               }
             }
           }
@@ -295,12 +295,12 @@
         }
       }
     },
-    "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.csproj": {
+    "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.csproj",
-        "projectName": "MyFaceApi",
-        "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.csproj",
+        "projectUniqueName": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.Api.csproj",
+        "projectName": "MyFaceApi.Api",
+        "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.Api.csproj",
         "packagesPath": "C:\\Users\\lenovo\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\obj\\",
         "projectStyle": "PackageReference",
@@ -341,6 +341,14 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "AutoFixture": {
+              "target": "Package",
+              "version": "[4.14.0, )"
+            },
+            "AutoFixture.AutoMoq": {
+              "target": "Package",
+              "version": "[4.14.0, )"
+            },
             "AutoMapper": {
               "target": "Package",
               "version": "[10.1.1, )"

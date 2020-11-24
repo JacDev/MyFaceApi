@@ -2,7 +2,7 @@
 
 namespace MyFaceApi.Models.PostModels
 {
-	public class PostToUpdate : BasicPostInfo
+	public class PostToUpdate : BasicPostData
 	{
 	}
 }

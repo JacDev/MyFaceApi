@@ -2,7 +2,7 @@
 
 namespace MyFaceApi.Models.CommentModels
 {
-	public class CommentToAdd : BasicCommentInfo
+	public class CommentToAdd : BasicCommentData
 	{
 	}
 }

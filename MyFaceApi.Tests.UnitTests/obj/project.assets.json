@@ -3112,10 +3112,12 @@
           "build/netcoreapp1.0/xunit.runner.visualstudio.props": {}
         }
       },
-      "MyFaceApi/1.0.0": {
+      "MyFaceApi.Api/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v3.1",
         "dependencies": {
+          "AutoFixture": "4.14.0",
+          "AutoFixture.AutoMoq": "4.14.0",
           "AutoMapper": "10.1.1",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "8.1.0",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "5.0.0",
@@ -3139,10 +3141,10 @@
           "xunit": "2.4.1"
         },
         "compile": {
-          "bin/placeholder/MyFaceApi.dll": {}
+          "bin/placeholder/MyFaceApi.Api.dll": {}
         },
         "runtime": {
-          "bin/placeholder/MyFaceApi.dll": {}
+          "bin/placeholder/MyFaceApi.Api.dll": {}
         },
         "frameworkReferences": [
           "Microsoft.AspNetCore.App"
@@ -9722,10 +9724,10 @@
         "xunit.runner.visualstudio.nuspec"
       ]
     },
-    "MyFaceApi/1.0.0": {
+    "MyFaceApi.Api/1.0.0": {
       "type": "project",
-      "path": "../MyFaceApi/MyFaceApi.csproj",
-      "msbuildProject": "../MyFaceApi/MyFaceApi.csproj"
+      "path": "../MyFaceApi/MyFaceApi.Api.csproj",
+      "msbuildProject": "../MyFaceApi/MyFaceApi.Api.csproj"
     },
     "MyFaceApi.DataAccess/1.0.0": {
       "type": "project",
@@ -9750,7 +9752,7 @@
       "Microsoft.AspNetCore.Mvc.Abstractions >= 2.2.0",
       "Microsoft.NET.Test.Sdk >= 16.5.0",
       "Moq >= 4.14.7",
-      "MyFaceApi >= 1.0.0",
+      "MyFaceApi.Api >= 1.0.0",
       "MyFaceApi.Models >= 1.0.0",
       "MyFaceApi.Repository >= 1.0.0",
       "coverlet.collector >= 1.2.0",
@@ -9791,8 +9793,8 @@
             "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Repository.csproj": {
               "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Repository.csproj"
             },
-            "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.csproj": {
-              "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.csproj"
+            "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.Api.csproj": {
+              "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.Api.csproj"
             }
           }
         }

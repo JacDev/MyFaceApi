@@ -3,7 +3,7 @@ using System;
 
 namespace MyFaceApi.DataAccess.ModelsBasicInfo
 {
-	public class BasicNotificationInfo
+	public class BasicNotificationData
 	{
 		public DateTime WhenAdded { get; set; }
 		public bool HasSeen { get; set; }

@@ -12,6 +12,8 @@ namespace MyFaceApi.DataAccess.Data
 		DbSet<Notification> Notifications { get; set; }
 		DbSet<PostComment> PostComments { get; set; }
 		DbSet<PostReaction> PostReactions { get; set; }
+		DbSet<Conversation> Conversations { get; set; }
+		DbSet<Message> Messages { get; set; }
 		Task<int> SaveAsync();
 	}
 }

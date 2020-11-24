@@ -63,7 +63,7 @@ namespace MyFaceApi.Controllers
 				}
 				else
 				{
-					return BadRequest($"{postId} is not valid Guid.");
+					return BadRequest($"{postId} is not valid guid.");
 				}
 			}
 			catch (Exception ex)
@@ -104,7 +104,7 @@ namespace MyFaceApi.Controllers
 				}
 				else
 				{
-					return BadRequest($"{userId} is not valid Guid.");
+					return BadRequest($"{userId} is not valid guid.");
 				}
 			}
 			catch (Exception ex)
@@ -151,7 +151,7 @@ namespace MyFaceApi.Controllers
 				}
 				else
 				{
-					return BadRequest($"{userId} is not valid Guid.");
+					return BadRequest($"{userId} is not valid guid.");
 				}
 			}
 			catch (Exception ex)
@@ -203,7 +203,7 @@ namespace MyFaceApi.Controllers
 				}
 				else
 				{
-					return BadRequest($"{postId} is not valid Guid.");
+					return BadRequest($"{postId} is not valid guid.");
 				}
 			}
 			catch (Exception ex)
@@ -245,7 +245,7 @@ namespace MyFaceApi.Controllers
 				}
 				else
 				{
-					return BadRequest($"{postId} is not valid Guid.");
+					return BadRequest($"{postId} is not valid guid.");
 				}
 			}
 			catch (Exception ex)

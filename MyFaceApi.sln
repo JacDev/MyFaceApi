@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi", "MyFaceApi\MyFaceApi.csproj", "{FDFFE7A3-36AC-47A2-A780-8B26A8A1DDB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.Api", "MyFaceApi\MyFaceApi.Api.csproj", "{FDFFE7A3-36AC-47A2-A780-8B26A8A1DDB1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.Tests.UnitTests", "MyFaceApi.Tests.UnitTests\MyFaceApi.Tests.UnitTests.csproj", "{D75898B6-87C2-46BE-AB67-800AF13AEE12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFaceApi.Repository", "MyFaceApi.Repository\MyFaceApi.Repository.csproj", "{F2FE0EDB-38D7-4994-BB44-5C3C98AC25A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.Repository", "MyFaceApi.Repository\MyFaceApi.Repository.csproj", "{F2FE0EDB-38D7-4994-BB44-5C3C98AC25A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFaceApi.Models", "MyFaceApi.Models\MyFaceApi.Models.csproj", "{415E34AA-6A2A-4DDF-8B52-D99F3A2DB8FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.Models", "MyFaceApi.Models\MyFaceApi.Models.csproj", "{415E34AA-6A2A-4DDF-8B52-D99F3A2DB8FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFaceApi.DataAccess", "MyFaceApi.DataAccess\MyFaceApi.DataAccess.csproj", "{A54EE7D7-8FB6-469A-8D6E-02E08B87520E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.DataAccess", "MyFaceApi.DataAccess\MyFaceApi.DataAccess.csproj", "{A54EE7D7-8FB6-469A-8D6E-02E08B87520E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -17,6 +17,8 @@ namespace MyFaceApi.DataAccess.Data
 		public DbSet<Notification> Notifications { get; set; }
 		public DbSet<PostComment> PostComments { get; set; }
 		public DbSet<PostReaction> PostReactions { get; set; }
+		public DbSet<Conversation> Conversations { get; set; }
+		public DbSet<Message> Messages { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);

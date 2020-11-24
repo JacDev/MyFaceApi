@@ -1,6 +1,6 @@
 ﻿namespace MyFaceApi.DataAccess.ModelsBasicInfo
 {
-	public class BasicPostInfo
+	public class BasicPostData
 	{
 		public string Text { get; set; }
 		public string ImagePath { get; set; }

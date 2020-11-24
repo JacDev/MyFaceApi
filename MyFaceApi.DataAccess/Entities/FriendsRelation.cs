@@ -3,7 +3,7 @@ using System;
 
 namespace MyFaceApi.DataAccess.Entities
 {
-	public class FriendsRelation : BasicFriendsRelationInfo
+	public class FriendsRelation : BasicFriendsRelationData
 	{
 		public Guid UserId { get; set; }
 	}

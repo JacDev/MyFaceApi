@@ -2,7 +2,7 @@
 
 namespace MyFaceApi.Models.PostReactionModels
 {
-	public class PostReactionToAdd : BasicReactionInfo
+	public class PostReactionToAdd : BasicReactionData
 	{
 	}
 }

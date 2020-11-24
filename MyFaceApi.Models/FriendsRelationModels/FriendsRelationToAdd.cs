@@ -2,7 +2,7 @@
 
 namespace MyFaceApi.Models.FriendsRelationModels
 {
-	public class FriendsRelationToAdd : BasicFriendsRelationInfo
+	public class FriendsRelationToAdd : BasicFriendsRelationData
 	{
 	}
 }

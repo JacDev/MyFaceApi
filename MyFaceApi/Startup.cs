@@ -48,7 +48,7 @@ namespace MyFaceApi
 			services.AddDbContext<AppDbContext>(
 				options => {
 					options.UseSqlServer(Configuration.GetConnectionString("MyFaceApi"),
-					b => b.MigrationsAssembly("MyFaceApi"));
+					b => b.MigrationsAssembly("MyFaceApi.Api"));
 					});
 
 			services.AddIdentity<User, IdentityRole<Guid>>(config =>
@@ -72,6 +72,7 @@ namespace MyFaceApi
 			services.AddScoped<IPostReactionRepository, PostReactionRepository>();
 			services.AddScoped<IPostCommentRepository, PostCommentRepository>();
 			services.AddScoped<IFriendsRelationRepository, FriendsRelationRepository>();
+			services.AddScoped<IMessageRepository, MessageRepository>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

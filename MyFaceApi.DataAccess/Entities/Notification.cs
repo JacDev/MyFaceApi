@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MyFaceApi.DataAccess.Entities
 {
-	public class Notification : BasicNotificationInfo
+	public class Notification : BasicNotificationData
 	{
 		[Key]
 		public Guid Id { get; set; }

@@ -2,7 +2,7 @@
 
 namespace MyFaceApi.Models.NotificationModels
 {
-	public class NotificationToAdd : BasicNotificationInfo
+	public class NotificationToAdd : BasicNotificationData
 	{
 	}
 }

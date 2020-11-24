@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>MyFaceApi</name>
+        <name>MyFaceApi.Api</name>
     </assembly>
     <members>
         <member name="M:MyFaceApi.Controllers.NotificationsController.GetNotification(System.String,System.String)">

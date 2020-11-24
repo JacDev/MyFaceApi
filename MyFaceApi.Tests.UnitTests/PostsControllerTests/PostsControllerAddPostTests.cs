@@ -57,7 +57,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 
 			//Assert
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-			Assert.Equal($"{ConstIds.InvalidGuid} is not valid Guid.", badRequestObjectResult.Value);
+			Assert.Equal($"{ConstIds.InvalidGuid} is not valid guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
 		public async void AddPost_ReturnsNotFoundObjectResult_WhenTheUserDoesntExist()

@@ -9,6 +9,7 @@
 		public const string ExampleFromWhoId = "48698e3f-e07d-416e-9b9e-355d733c0579";
 		public const string ExampleNotificationId = "3ed39d2f-bc65-496f-89cd-d3023194d34a";
 		public const string ExampleEventId = "60dac9a5-4b0a-4981-b443-0f27ba582dd2";
+		public const string ExampleMessageId = "60dac9a5-4b0a-4981-b443-0f27ba582dd2";
 		public const string InvalidGuid = "InvalidGuid";
 	}
 }

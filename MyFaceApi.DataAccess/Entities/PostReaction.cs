@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MyFaceApi.DataAccess.Entities
 {
-	public class PostReaction : BasicReactionInfo
+	public class PostReaction : BasicReactionData
 	{
 		[Key]
 		public Guid Id { get; set; }

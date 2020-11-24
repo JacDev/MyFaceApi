@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyFaceApi.DataAccess.Data;
 
-namespace MyFaceApi.Migrations
+namespace MyFaceApi.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -148,7 +148,24 @@ namespace MyFaceApi.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.FriendRelation", b =>
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.Conversation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FirstUser")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SecondUser")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.FriendsRelation", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -162,6 +179,34 @@ namespace MyFaceApi.Migrations
                     b.HasKey("UserId", "FriendId");
 
                     b.ToTable("Relations");
+                });
+
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.Message", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ConversationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FromWho")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ToWho")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("When")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("MyFaceApi.DataAccess.Entities.Notification", b =>
@@ -187,6 +232,9 @@ namespace MyFaceApi.Migrations
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("WhenAdded")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -403,11 +451,20 @@ namespace MyFaceApi.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.FriendRelation", b =>
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.FriendsRelation", b =>
                 {
                     b.HasOne("MyFaceApi.DataAccess.Entities.User", null)
                         .WithMany("Relations")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.Message", b =>
+                {
+                    b.HasOne("MyFaceApi.DataAccess.Entities.Conversation", null)
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -444,6 +501,11 @@ namespace MyFaceApi.Migrations
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFaceApi.DataAccess.Entities.Conversation", b =>
+                {
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("MyFaceApi.DataAccess.Entities.Post", b =>
