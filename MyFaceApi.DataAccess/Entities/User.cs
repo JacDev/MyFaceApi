@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace MyFaceApi.DataAccess.Entities
+namespace MyFaceApi.Api.DataAccess.Entities
 {
 	public class User : IdentityUser<Guid>
 	{

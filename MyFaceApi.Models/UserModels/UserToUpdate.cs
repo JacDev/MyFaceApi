@@ -1,6 +1,6 @@
-﻿using MyFaceApi.DataAccess.ModelsBasicInfo;
+﻿using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 
-namespace MyFaceApi.Models.UserModels
+namespace MyFaceApi.Api.Models.UserModels
 {
 	public class UserToUpdate : BasicUserData
 	{

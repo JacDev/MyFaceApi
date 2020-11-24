@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.DataAccess.ModelsBasicInfo;
-using MyFaceApi.Repository.Interfaces;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
+using MyFaceApi.Api.IdentityServerAccess;
+using MyFaceApi.Api.Models.UserModels;
+using MyFaceApi.Api.Repository.Interfaces;
 
 
-namespace MyFaceApi.Controllers
+namespace MyFaceApi.Api.Controllers
 {
 	[Produces("application/json")]
 	[Route("api/[controller]")]
@@ -20,13 +22,17 @@ namespace MyFaceApi.Controllers
 		private readonly ILogger<UsersController> _logger;
 		private readonly IUserRepository _userRepository;
 		private readonly IMapper _mapper;
+		private readonly IUserIdentityServerAccess _userIdentityServerAccess;
+
 		public UsersController(ILogger<UsersController> logger,
 			IUserRepository userRepository,
-			IMapper mapper)
+			IMapper mapper,
+			IUserIdentityServerAccess userIdentityServerAccess)
 		{
 			_logger = logger;
 			_userRepository = userRepository;
 			_mapper = mapper;
+			_userIdentityServerAccess = userIdentityServerAccess;
 			_logger.LogTrace("UserController created");
 		}
 
@@ -50,8 +56,10 @@ namespace MyFaceApi.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					User userFromRepo = await _userRepository.GetUserAsync(gUserId);
-					return Ok(_mapper.Map<BasicUserData>(userFromRepo));
+					//	User userFromRepo = await _userRepository.GetUserAsync(gUserId);
+					var user = await _userIdentityServerAccess.GetUser(userId);
+					//return Ok(_mapper.Map<BasicUserData>(userFromRepo));
+					return user;
 				}
 				else
 				{

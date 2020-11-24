@@ -1,6 +1,6 @@
-﻿using MyFaceApi.DataAccess.ModelsBasicInfo;
+﻿using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 
-namespace MyFaceApi.Models.CommentModels
+namespace MyFaceApi.Api.Models.CommentModels
 {
 	public class CommentToAdd : BasicCommentData
 	{

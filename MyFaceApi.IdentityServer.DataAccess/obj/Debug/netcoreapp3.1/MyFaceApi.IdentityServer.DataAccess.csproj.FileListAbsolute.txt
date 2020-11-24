@@ -1,0 +1,9 @@
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.IdentityServer.DataAccess\bin\Debug\netcoreapp3.1\MyFaceApi.IdentityServer.DataAccess.deps.json
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.IdentityServer.DataAccess\bin\Debug\netcoreapp3.1\MyFaceApi.IdentityServer.DataAccess.dll
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.IdentityServer.DataAccess\bin\Debug\netcoreapp3.1\MyFaceApi.IdentityServer.DataAccess.pdb
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.IdentityServer.DataAccess\obj\Debug\netcoreapp3.1\MyFaceApi.IdentityServer.DataAccess.csprojAssemblyReference.cache
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.IdentityServer.DataAccess\obj\Debug\netcoreapp3.1\MyFaceApi.IdentityServer.DataAccess.AssemblyInfoInputs.cache
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.IdentityServer.DataAccess\obj\Debug\netcoreapp3.1\MyFaceApi.IdentityServer.DataAccess.AssemblyInfo.cs
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.IdentityServer.DataAccess\obj\Debug\netcoreapp3.1\MyFaceApi.IdentityServer.DataAccess.csproj.CoreCompileInputs.cache
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.IdentityServer.DataAccess\obj\Debug\netcoreapp3.1\MyFaceApi.IdentityServer.DataAccess.dll
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.IdentityServer.DataAccess\obj\Debug\netcoreapp3.1\MyFaceApi.IdentityServer.DataAccess.pdb

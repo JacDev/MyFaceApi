@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MyFaceApi.DataAccess.ModelsBasicInfo
+namespace MyFaceApi.Api.DataAccess.ModelsBasicInfo
 {
 	public class BasicMessageData
 	{

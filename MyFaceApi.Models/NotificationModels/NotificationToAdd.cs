@@ -1,6 +1,6 @@
-﻿using MyFaceApi.DataAccess.ModelsBasicInfo;
+﻿using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 
-namespace MyFaceApi.Models.NotificationModels
+namespace MyFaceApi.Api.Models.NotificationModels
 {
 	public class NotificationToAdd : BasicNotificationData
 	{

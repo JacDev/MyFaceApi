@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 
-namespace MyFaceApi.DataAccess.ModelsBasicInfo
+namespace MyFaceApi.Api.DataAccess.ModelsBasicInfo
 {
 	public class BasicUserData
 	{

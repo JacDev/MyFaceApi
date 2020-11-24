@@ -1,6 +1,6 @@
-﻿using MyFaceApi.DataAccess.ModelsBasicInfo;
+﻿using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 
-namespace MyFaceApi.Models.MessageModels
+namespace MyFaceApi.Api.Models.MessageModels
 {
 	public class MessageToAdd : BasicMessageData
 	{

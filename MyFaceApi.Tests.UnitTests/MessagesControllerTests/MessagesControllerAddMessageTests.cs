@@ -1,10 +1,10 @@
-﻿using MyFaceApi.Models.MessageModels;
+﻿using MyFaceApi.Api.Models.MessageModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using AutoFixture;
 using Xunit;
-using MyFaceApi.DataAccess.Entities;
+using MyFaceApi.Api.DataAccess.Entities;
 using Moq;
 using MyFaceApi.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyFaceApi.Models.CommentModels
+namespace MyFaceApi.Api.Models.CommentModels
 {
 	public class CommentToUpdate
 	{

@@ -4,12 +4,12 @@
     "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Tests.UnitTests\\MyFaceApi.Tests.UnitTests.csproj": {}
   },
   "projects": {
-    "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.DataAccess.csproj": {
+    "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.Api.DataAccess.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.DataAccess.csproj",
-        "projectName": "MyFaceApi.DataAccess",
-        "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.DataAccess.csproj",
+        "projectUniqueName": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.Api.DataAccess.csproj",
+        "projectName": "MyFaceApi.Api.DataAccess",
+        "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.Api.DataAccess.csproj",
         "packagesPath": "C:\\Users\\lenovo\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\obj\\",
         "projectStyle": "PackageReference",
@@ -72,12 +72,12 @@
         }
       }
     },
-    "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\MyFaceApi.Models.csproj": {
+    "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\MyFaceApi.Api.Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\MyFaceApi.Models.csproj",
-        "projectName": "MyFaceApi.Models",
-        "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\MyFaceApi.Models.csproj",
+        "projectUniqueName": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\MyFaceApi.Api.Models.csproj",
+        "projectName": "MyFaceApi.Api.Models",
+        "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\MyFaceApi.Api.Models.csproj",
         "packagesPath": "C:\\Users\\lenovo\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\obj\\",
         "projectStyle": "PackageReference",
@@ -96,8 +96,8 @@
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
             "projectReferences": {
-              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.DataAccess.csproj": {
-                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.DataAccess.csproj"
+              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.Api.DataAccess.csproj": {
+                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.Api.DataAccess.csproj"
               }
             }
           }
@@ -130,12 +130,12 @@
         }
       }
     },
-    "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Repository.csproj": {
+    "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Api.Repository.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Repository.csproj",
-        "projectName": "MyFaceApi.Repository",
-        "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Repository.csproj",
+        "projectUniqueName": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Api.Repository.csproj",
+        "projectName": "MyFaceApi.Api.Repository",
+        "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Api.Repository.csproj",
         "packagesPath": "C:\\Users\\lenovo\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\obj\\",
         "projectStyle": "PackageReference",
@@ -154,8 +154,8 @@
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
             "projectReferences": {
-              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.DataAccess.csproj": {
-                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.DataAccess.csproj"
+              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.Api.DataAccess.csproj": {
+                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.Api.DataAccess.csproj"
               }
             }
           }
@@ -218,11 +218,11 @@
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
             "projectReferences": {
-              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\MyFaceApi.Models.csproj": {
-                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\MyFaceApi.Models.csproj"
+              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.Api.DataAccess.csproj": {
+                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.Api.DataAccess.csproj"
               },
-              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Repository.csproj": {
-                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Repository.csproj"
+              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\MyFaceApi.Api.Models.csproj": {
+                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\MyFaceApi.Api.Models.csproj"
               },
               "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.Api.csproj": {
                 "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi\\MyFaceApi.Api.csproj"
@@ -319,14 +319,14 @@
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
             "projectReferences": {
-              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.DataAccess.csproj": {
-                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.DataAccess.csproj"
+              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.Api.DataAccess.csproj": {
+                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.DataAccess\\MyFaceApi.Api.DataAccess.csproj"
               },
-              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\MyFaceApi.Models.csproj": {
-                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\MyFaceApi.Models.csproj"
+              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\MyFaceApi.Api.Models.csproj": {
+                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Models\\MyFaceApi.Api.Models.csproj"
               },
-              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Repository.csproj": {
-                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Repository.csproj"
+              "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Api.Repository.csproj": {
+                "projectPath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Repository\\MyFaceApi.Api.Repository.csproj"
               }
             }
           }

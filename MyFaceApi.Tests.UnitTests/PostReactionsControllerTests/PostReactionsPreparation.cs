@@ -5,13 +5,14 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Moq;
 using MyFaceApi.AutoMapperProfiles;
-using MyFaceApi.Controllers;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Models.PostReactionModels;
-using MyFaceApi.Repository.Interfaces;
+using MyFaceApi.Api.Controllers;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Models.PostReactionModels;
+using MyFaceApi.Api.Repository.Interfaces;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using MyFaceApi.Api.DataAccess.Enums;
 
 namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 {
@@ -53,7 +54,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 						WhenAdded = DateTime.Now,
 						FromWho = new Guid(ConstIds.ExampleFromWhoId),
 						PostId = new Guid(ConstIds.ExamplePostId),
-						Reaction = DataAccess.Enums.ReactionType.Like
+						Reaction = ReactionType.Like
 
 					},
 					new PostReaction
@@ -62,7 +63,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 						WhenAdded = DateTime.Now,
 						FromWho = new Guid("4CEEB904-E88C-46AD-853D-0DADCF3C7C29"),
 						PostId = new Guid(ConstIds.ExamplePostId),
-						Reaction = DataAccess.Enums.ReactionType.Like
+						Reaction = ReactionType.Like
 					}
 				}
 			};
@@ -74,7 +75,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			{
 				ContractResolver = new CamelCasePropertyNamesContractResolver()
 			};
-			jsonobject.Replace(d => d.Reaction, DataAccess.Enums.ReactionType.Haha);
+			jsonobject.Replace(d => d.Reaction, ReactionType.Haha);
 			return jsonobject;
 		}
 	}

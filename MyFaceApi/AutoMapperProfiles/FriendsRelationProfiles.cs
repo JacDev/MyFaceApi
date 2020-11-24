@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Models.FriendsRelationModels;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Models.FriendsRelationModels;
 
 namespace MyFaceApi.AutoMapperProfiles
 {

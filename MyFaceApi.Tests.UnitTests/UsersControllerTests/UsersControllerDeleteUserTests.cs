@@ -1,9 +1,9 @@
 ﻿using System;
 using Xunit;
-using MyFaceApi.Controllers;
+using MyFaceApi.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using MyFaceApi.DataAccess.Entities;
+using MyFaceApi.Api.DataAccess.Entities;
 using Microsoft.AspNetCore.Http;
 
 namespace MyFaceApi.Tests.UnitTests.UsersControllerTests

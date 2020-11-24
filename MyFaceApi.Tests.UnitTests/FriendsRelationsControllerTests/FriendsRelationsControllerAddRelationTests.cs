@@ -1,10 +1,10 @@
-﻿using MyFaceApi.Models.FriendsRelationModels;
+﻿using MyFaceApi.Api.Models.FriendsRelationModels;
 using System;
 using Xunit;
 using AutoFixture;
 using Moq;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Controllers;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 

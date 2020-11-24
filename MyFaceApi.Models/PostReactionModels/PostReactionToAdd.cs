@@ -1,6 +1,6 @@
-﻿using MyFaceApi.DataAccess.ModelsBasicInfo;
+﻿using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 
-namespace MyFaceApi.Models.PostReactionModels
+namespace MyFaceApi.Api.Models.PostReactionModels
 {
 	public class PostReactionToAdd : BasicReactionData
 	{

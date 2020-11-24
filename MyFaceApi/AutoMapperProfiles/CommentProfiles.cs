@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Models.CommentModels;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Models.CommentModels;
 
 namespace MyFaceApi.AutoMapperProfiles
 {

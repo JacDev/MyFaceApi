@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "lIs/0PEgeTMLki8egAS1HbvgFfGgYw0IrW2wng95DOSEmVLUFFhHg2BN+WmzDc25Wzxyn4Ztqyj0U6D1Am/Kqg==",
+  "dgSpecHash": "/9uGJDKUbYggYj1lhb5nPTY5uVspD6cdV5Hx92/7xeY9HT1P2DEXKMfY6THDMame+Th+w8TWR86eeA8CYVLG+Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Tests.UnitTests\\MyFaceApi.Tests.UnitTests.csproj",
+  "projectFilePath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.Tests.UnitTests\\MyFaceApi.Api.Tests.UnitTests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\lenovo\\.nuget\\packages\\autofixture\\4.14.0\\autofixture.4.14.0.nupkg.sha512",
     "C:\\Users\\lenovo\\.nuget\\packages\\autofixture.automoq\\4.14.0\\autofixture.automoq.4.14.0.nupkg.sha512",
@@ -11,6 +11,7 @@
     "C:\\Users\\lenovo\\.nuget\\packages\\castle.core\\4.4.0\\castle.core.4.4.0.nupkg.sha512",
     "C:\\Users\\lenovo\\.nuget\\packages\\coverlet.collector\\1.2.0\\coverlet.collector.1.2.0.nupkg.sha512",
     "C:\\Users\\lenovo\\.nuget\\packages\\fare\\2.1.1\\fare.2.1.1.nupkg.sha512",
+    "C:\\Users\\lenovo\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\3.1.10\\microsoft.aspnetcore.authentication.jwtbearer.3.1.10.nupkg.sha512",
     "C:\\Users\\lenovo\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\5.0.0\\microsoft.aspnetcore.cryptography.internal.5.0.0.nupkg.sha512",
     "C:\\Users\\lenovo\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\5.0.0\\microsoft.aspnetcore.cryptography.keyderivation.5.0.0.nupkg.sha512",
     "C:\\Users\\lenovo\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.2.0\\microsoft.aspnetcore.http.abstractions.2.2.0.nupkg.sha512",

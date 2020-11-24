@@ -1,6 +1,6 @@
-﻿using MyFaceApi.DataAccess.ModelsBasicInfo;
+﻿using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 
-namespace MyFaceApi.Models.FriendsRelationModels
+namespace MyFaceApi.Api.Models.FriendsRelationModels
 {
 	public class FriendsRelationToAdd : BasicFriendsRelationData
 	{

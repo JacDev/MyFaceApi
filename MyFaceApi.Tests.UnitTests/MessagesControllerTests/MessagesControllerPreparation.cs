@@ -6,7 +6,7 @@ using Moq;
 using MyFaceApi.Api.AutoMapperProfiles;
 using MyFaceApi.Api.Controllers;
 using MyFaceApi.AutoMapperProfiles;
-using MyFaceApi.Repository.Interfaces;
+using MyFaceApi.Api.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;

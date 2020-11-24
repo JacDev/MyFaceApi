@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Models.NotificationModels;
-using MyFaceApi.Repository.Interfaces;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Models.NotificationModels;
+using MyFaceApi.Api.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MyFaceApi.Controllers
+namespace MyFaceApi.Api.Controllers
 {
 	[Route("api/users/{userId}/notifications")]
 	[ApiController]

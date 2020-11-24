@@ -4,7 +4,7 @@
         <name>MyFaceApi.Api</name>
     </assembly>
     <members>
-        <member name="M:MyFaceApi.Controllers.NotificationsController.GetNotification(System.String,System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.NotificationsController.GetNotification(System.String,System.String)">
             <summary>
             Return the found notification
             </summary>
@@ -16,7 +16,7 @@
             <response code="404"> If notification not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.NotificationsController.GetNotifications(System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.NotificationsController.GetNotifications(System.String)">
             <summary>
             Return the found user notifications
             </summary>
@@ -27,7 +27,7 @@
             <response code="404"> If user or notifications not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.NotificationsController.AddNotification(System.String,MyFaceApi.Models.NotificationModels.NotificationToAdd)">
+        <member name="M:MyFaceApi.Api.Controllers.NotificationsController.AddNotification(System.String,MyFaceApi.Api.Models.NotificationModels.NotificationToAdd)">
             <summary>
             Add notification to database
             </summary>
@@ -39,7 +39,7 @@
             <response code="404"> If user not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.NotificationsController.PartiallyUpdateNotification(System.String,System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.NotificationModels.NotificationToUpdate})">
+        <member name="M:MyFaceApi.Api.Controllers.NotificationsController.PartiallyUpdateNotification(System.String,System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Api.Models.NotificationModels.NotificationToUpdate})">
             <summary>
             Update notification in the database
             </summary>
@@ -54,7 +54,7 @@
             <response code="404"> If the notification not found</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.NotificationsController.DeleteNotification(System.String,System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.NotificationsController.DeleteNotification(System.String,System.String)">
             <summary>
             Remove the notification from the database
             </summary>
@@ -68,7 +68,7 @@
             <response code="404"> If the notification not found</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostCommentsController.AddComment(System.String,System.String,MyFaceApi.Models.CommentModels.CommentToAdd)">
+        <member name="M:MyFaceApi.Api.Controllers.PostCommentsController.AddComment(System.String,System.String,MyFaceApi.Api.Models.CommentModels.CommentToAdd)">
             <summary>
             Add post to database
             </summary>
@@ -81,7 +81,7 @@
             <response code="404"> If user or post not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostCommentsController.GetComments(System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.PostCommentsController.GetComments(System.String)">
             <summary>
             Return the found post comments
             </summary>
@@ -92,7 +92,7 @@
             <response code="404"> If post not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostCommentsController.GetComment(System.String,System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.PostCommentsController.GetComment(System.String,System.String)">
             <summary>
             Return the found comment
             </summary>
@@ -104,7 +104,7 @@
             <response code="404"> If post or comment not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostCommentsController.PartiallyUpdateComment(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.CommentModels.CommentToUpdate})">
+        <member name="M:MyFaceApi.Api.Controllers.PostCommentsController.PartiallyUpdateComment(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Api.Models.CommentModels.CommentToUpdate})">
             <summary>
             Update comment in database
             </summary>
@@ -118,7 +118,7 @@
             <response code="404"> If the comment not found</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostCommentsController.DeleteComment(System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.PostCommentsController.DeleteComment(System.String)">
             <summary>
             Remove a comment from the database
             </summary>
@@ -131,7 +131,7 @@
             <response code="404"> If the post not found</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostReactionsController.AddPostReaction(System.String,System.String,MyFaceApi.Models.PostReactionModels.PostReactionToAdd)">
+        <member name="M:MyFaceApi.Api.Controllers.PostReactionsController.AddPostReaction(System.String,System.String,MyFaceApi.Api.Models.PostReactionModels.PostReactionToAdd)">
             <summary>
             Add comment to database
             </summary>
@@ -144,7 +144,7 @@
             <response code="404"> If user or post not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostReactionsController.GetPostReactions(System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.PostReactionsController.GetPostReactions(System.String)">
             <summary>
             Return the found post reaction
             </summary>
@@ -155,7 +155,7 @@
             <response code="404"> If post not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostReactionsController.GetPostReaction(System.String,System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.PostReactionsController.GetPostReaction(System.String,System.String)">
             <summary>
             Return the found reaction
             </summary>
@@ -167,7 +167,7 @@
             <response code="404"> If post or comment not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostReactionsController.PartiallyUpdatePostReaction(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.PostReactionModels.PostReactionToUpdate})">
+        <member name="M:MyFaceApi.Api.Controllers.PostReactionsController.PartiallyUpdatePostReaction(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Api.Models.PostReactionModels.PostReactionToUpdate})">
             <summary>
             Update reaction in database
             </summary>
@@ -181,7 +181,7 @@
             <response code="404"> If the reaction not found</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostReactionsController.DeletePostReaction(System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.PostReactionsController.DeletePostReaction(System.String)">
             <summary>
             Remove a reaction from the database
             </summary>
@@ -194,7 +194,7 @@
             <response code="404"> If the post not found</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostsController.GetPost(System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.PostsController.GetPost(System.String)">
             <summary>
             Return the found post
             </summary>
@@ -205,7 +205,7 @@
             <response code="404"> If post not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostsController.GetPosts(System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.PostsController.GetPosts(System.String)">
             <summary>
             Return the found user posts
             </summary>
@@ -216,7 +216,7 @@
             <response code="404"> If user not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostsController.AddPost(System.String,MyFaceApi.Models.PostModels.PostToAdd)">
+        <member name="M:MyFaceApi.Api.Controllers.PostsController.AddPost(System.String,MyFaceApi.Api.Models.PostModels.PostToAdd)">
             <summary>
             Add post to database
             </summary>
@@ -228,7 +228,7 @@
             <response code="404"> If user not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostsController.PartiallyUpdatePost(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Models.PostModels.PostToUpdate})">
+        <member name="M:MyFaceApi.Api.Controllers.PostsController.PartiallyUpdatePost(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Api.Models.PostModels.PostToUpdate})">
             <summary>
             Update post in the database
             </summary>
@@ -242,7 +242,7 @@
             <response code="404"> If the post not found</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.PostsController.DeletePost(System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.PostsController.DeletePost(System.String)">
             <summary>
             Remove the post from the database
             </summary>
@@ -255,7 +255,7 @@
             <response code="404"> If the post not found</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.UsersController.GetUser(System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.UsersController.GetUser(System.String)">
             <summary>
             Return the found user
             </summary>
@@ -266,7 +266,7 @@
             <response code="404"> If user not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.UsersController.AddUser(MyFaceApi.DataAccess.ModelsBasicInfo.BasicUserData)">
+        <member name="M:MyFaceApi.Api.Controllers.UsersController.AddUser(MyFaceApi.Api.DataAccess.ModelsBasicInfo.BasicUserData)">
             <summary>
             Add user to the database
             </summary>
@@ -279,7 +279,7 @@
             <response code="409"> If the user already exist</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.UsersController.PartiallyUpdateUser(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.DataAccess.ModelsBasicInfo.BasicUserData})">
+        <member name="M:MyFaceApi.Api.Controllers.UsersController.PartiallyUpdateUser(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Api.DataAccess.ModelsBasicInfo.BasicUserData})">
             <summary>
             Updade user in the database
             </summary>
@@ -293,7 +293,7 @@
             <response code="404"> If the user not found</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Controllers.UsersController.DeleteUser(System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.UsersController.DeleteUser(System.String)">
             <summary>
             Remove a user from the database
             </summary>

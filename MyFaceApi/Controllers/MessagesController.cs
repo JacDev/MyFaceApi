@@ -4,9 +4,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Repository.Helpers;
-using MyFaceApi.Repository.Interfaces;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Repository.Helpers;
+using MyFaceApi.Api.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using MyFaceApi.Api.Extensions;
 using MyFaceApi.Api.Helpers;
-using MyFaceApi.Models.MessageModels;
+using MyFaceApi.Api.Models.MessageModels;
 
 namespace MyFaceApi.Api.Controllers
 {
