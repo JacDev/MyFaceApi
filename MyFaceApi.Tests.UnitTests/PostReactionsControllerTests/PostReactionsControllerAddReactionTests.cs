@@ -25,7 +25,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 				.Returns(true)
 				.Verifiable();
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 
 			PostReaction reactionEntity = _mapper.Map<PostReaction>(_postReactionToAdd);
@@ -78,7 +78,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 				.Verifiable();
 
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(doesTheUserExists)
+				.ReturnsAsync(doesTheUserExists)
 				.Verifiable();
 
 			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);

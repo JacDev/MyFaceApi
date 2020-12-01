@@ -20,7 +20,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 			//Arrange
 			var notification = GetTestNotificationData().ElementAt(0);
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 			_mockNotificationRepo.Setup(repo => repo.GetNotification(It.IsAny<Guid>()))
 				.Returns(notification)
@@ -60,7 +60,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(doesTheUserExists)
+				.ReturnsAsync(doesTheUserExists)
 				.Verifiable();
 			_mockNotificationRepo.Setup(repo => repo.GetNotification(It.IsAny<Guid>()))
 				.Returns(testNotificationData)

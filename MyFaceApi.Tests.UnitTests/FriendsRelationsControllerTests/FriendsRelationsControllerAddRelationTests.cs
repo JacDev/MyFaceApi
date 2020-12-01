@@ -22,7 +22,7 @@ namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 
 			FriendsRelation relationEntity = _mapper.Map<FriendsRelation>(_relationToAdd);
@@ -67,12 +67,12 @@ namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(new Guid(ConstIds.ExampleUserId)))
-				.Returns(doesTheUserExist)
+				.ReturnsAsync(doesTheUserExist)
 				.Verifiable();
 			if (doesTheUserExist)
 			{
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsNotIn<Guid>(new Guid(ConstIds.ExampleUserId))))
-				.Returns(doesTheFriendExist)
+				.ReturnsAsync(doesTheFriendExist)
 				.Verifiable();
 			}
 

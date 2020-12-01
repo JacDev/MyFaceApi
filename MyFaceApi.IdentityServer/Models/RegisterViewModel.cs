@@ -25,7 +25,7 @@ namespace MyFaceApi.IdentityServer.Models
 
         [DataType(DataType.Password)]
         [Required(ErrorMessage = "Enter your password.")]
-        [StringLength(20, MinimumLength = 8, ErrorMessage = "Passwords must be at least 8 characters.")]
+        //[StringLength(20, MinimumLength = 8, ErrorMessage = "Passwords must be at least 8 characters.")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]

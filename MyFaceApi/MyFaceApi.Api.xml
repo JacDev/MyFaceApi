@@ -266,19 +266,6 @@
             <response code="404"> If user not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Api.Controllers.UsersController.AddUser(MyFaceApi.Api.DataAccess.ModelsBasicInfo.BasicUserData)">
-            <summary>
-            Add user to the database
-            </summary>
-            <param name="user"> of BasicUserData type</param>
-            <returns>
-            Returns httpcode 201 if the user has been created
-            </returns>
-            <response code="201"> Created if the user has been added</response>
-            <response code="400"> If the user is not valid</response>    
-            <response code="409"> If the user already exist</response>
-            <response code="500"> If internal error occured</response>
-        </member>
         <member name="M:MyFaceApi.Api.Controllers.UsersController.PartiallyUpdateUser(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Api.DataAccess.ModelsBasicInfo.BasicUserData})">
             <summary>
             Updade user in the database
@@ -289,19 +276,6 @@
             Returns status 204 no content if the user hase been updated
             </returns>
             <response code="204"> No content if the user hase been updated</response>
-            <response code="400"> If the user is not valid</response>    
-            <response code="404"> If the user not found</response>
-            <response code="500"> If internal error occured</response>
-        </member>
-        <member name="M:MyFaceApi.Api.Controllers.UsersController.DeleteUser(System.String)">
-            <summary>
-            Remove a user from the database
-            </summary>
-            <param name="userId"></param>
-            <returns>
-            Status 204 no content if the user has been removed
-            </returns>
-            <response code="204"> No content if the user has been removed</response>
             <response code="400"> If the user is not valid</response>    
             <response code="404"> If the user not found</response>
             <response code="500"> If internal error occured</response>

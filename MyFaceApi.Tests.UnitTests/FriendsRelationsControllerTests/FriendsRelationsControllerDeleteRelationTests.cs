@@ -20,7 +20,7 @@ namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 			//Arrange
 			var relationToRemove = GetTestRelationData().ElementAt(0);
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 			_mockRelationRepo.Setup(repo => repo.GetFriendRelation(It.IsAny<Guid>(), It.IsAny<Guid>()))
 				.Returns(relationToRemove)
@@ -60,12 +60,12 @@ namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(new Guid(ConstIds.ExampleUserId)))
-				.Returns(doesTheUserExist)
+				.ReturnsAsync(doesTheUserExist)
 				.Verifiable();
 			if (doesTheUserExist)
 			{
 				_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsNotIn<Guid>(new Guid(ConstIds.ExampleUserId))))
-					.Returns(doesTheFriendExist)
+					.ReturnsAsync(doesTheFriendExist)
 					.Verifiable();
 			}
 

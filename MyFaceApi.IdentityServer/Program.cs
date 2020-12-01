@@ -14,42 +14,7 @@ namespace MyFaceApi.IdentityServer
 		{
 			var host = CreateHostBuilder(args).Build();
 
-			using (var scope = host.Services.CreateScope())
-			{
-
-				scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
-
-				var context = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-
-				context.Database.Migrate();
-
-				if (!context.Clients.Any())
-				{
-					foreach (var client in Configuration.GetClients())
-					{
-						context.Clients.Add(client.ToEntity());
-					}
-					context.SaveChanges();
-				}
-
-				if (!context.IdentityResources.Any())
-				{
-					foreach (var resource in Configuration.GetIdentityResources())
-					{
-						context.IdentityResources.Add(resource.ToEntity());
-					}
-					context.SaveChanges();
-				}
-
-				if (!context.ApiResources.Any())
-				{
-					foreach (var resource in Configuration.GetApis())
-					{
-						context.ApiResources.Add(resource.ToEntity());
-					}
-					context.SaveChanges();
-				}
-			}
+			
 			host.Run();
 		}
 
@@ -60,4 +25,5 @@ namespace MyFaceApi.IdentityServer
 					webBuilder.UseStartup<Startup>();
 				});
 	}
+
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using MyFaceApi.Api.Models.PostModels;
 using MyFaceApi.Api.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Controllers
@@ -86,13 +88,15 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<List<Post>> GetPosts(string userId)
+		public async Task<ActionResult<List<Post>>> GetPosts(string userId)
 		{
 			try
 			{
+				var claims = User.Claims.ToList();
+				claims.ForEach(x => _logger.LogInformation("type: {type}, value: {value}", x.Type, x.Value));
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId))
+					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
 						List<Post> userPosts = _postRepository.GetUserPosts(gUserId);
 						return Ok(userPosts);
@@ -134,7 +138,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId))
+					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
 						Post postEntity = _mapper.Map<Post>(post);
 						postEntity.UserId = gUserId;

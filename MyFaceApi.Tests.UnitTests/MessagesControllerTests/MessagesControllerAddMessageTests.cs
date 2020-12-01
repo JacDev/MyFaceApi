@@ -24,7 +24,7 @@ namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 			Message messageEntity = _mapper.Map<Message>(_messageToAdd);
 			messageEntity.Id = new Guid(ConstIds.ExampleMessageId);
@@ -66,7 +66,7 @@ namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(false)
+				.ReturnsAsync(false)
 				.Verifiable();
 
 			var controller = new MessagesController(_loggerMock.Object, _mockMessagesRepo.Object, _mockUserRepo.Object, _mapper);

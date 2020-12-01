@@ -31,9 +31,9 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			_mapper = new Mapper(configuration);
 			_fixture = new Fixture().Customize(new AutoMoqCustomization());
 		}
-		protected User GetTestUserData()
+		protected BasicUserData GetTestUserData()
 		{
-			return _fixture.Create<User>();
+			return _fixture.Create<BasicUserData>();
 		}
 		protected JsonPatchDocument<BasicUserData> GetJsonPatchDocument()
 		{

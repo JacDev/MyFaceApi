@@ -22,7 +22,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 			//Arrange
 			var notificationToRemove = GetTestNotificationData().ElementAt(0);
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 			_mockNotificationRepo.Setup(repo => repo.GetNotification(It.IsAny<Guid>()))
 				.Returns(notificationToRemove)
@@ -63,7 +63,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(doesTheUserExists);
+				.ReturnsAsync(doesTheUserExists);
 			_mockNotificationRepo.Setup(repo => repo.GetNotification(It.IsAny<Guid>()))
 				.Returns(testNotificationData)
 				.Verifiable();

@@ -56,7 +56,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (_postRepository.CheckIfPostExists(gPostId) && _userRepository.CheckIfUserExists(gUserId))
+					if (_postRepository.CheckIfPostExists(gPostId) && await _userRepository.CheckIfUserExists(gUserId))
 					{
 						PostComment commentEntity = _mapper.Map<PostComment>(postComment);
 						commentEntity = await _postCommentRepository.AddCommentAsync(commentEntity);

@@ -8,7 +8,6 @@ namespace MyFaceApi.Api.Repository
 	{
 		public static IServiceCollection AddRepositories(this IServiceCollection services)
 		{
-			services.AddTransient<IUserRepository, UserRepository>();
 			services.AddTransient<IPostRepository, PostRepository>();
 			services.AddTransient<IPostReactionRepository, PostReactionRepository>();
 			services.AddTransient<IPostCommentRepository, PostCommentRepository>();

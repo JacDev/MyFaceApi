@@ -25,7 +25,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 				.Returns(true)
 				.Verifiable();
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 
 			PostComment commentEntity = _mapper.Map<PostComment>(_commentToAdd);
@@ -75,7 +75,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 				.Returns(doesThePostExists)
 				.Verifiable();
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(doesTheUserExists)
+				.ReturnsAsync(doesTheUserExists)
 				.Verifiable();
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 

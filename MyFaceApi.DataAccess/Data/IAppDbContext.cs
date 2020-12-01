@@ -6,7 +6,6 @@ namespace MyFaceApi.Api.DataAccess.Data
 {
 	public interface IAppDbContext
 	{
-		DbSet<User> Users { get; set; }
 		DbSet<FriendsRelation> Relations { get; set; }
 		DbSet<Post> Posts { get; set; }
 		DbSet<Notification> Notifications { get; set; }

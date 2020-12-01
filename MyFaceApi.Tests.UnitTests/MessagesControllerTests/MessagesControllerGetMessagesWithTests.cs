@@ -35,7 +35,7 @@ namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
 				_paginationParams.PageSize,
 				_paginationParams.Skip);
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 			_mockMessagesRepo.Setup(repo => repo.GetUserMessagesWith(It.IsAny<Guid>(), It.IsAny<Guid>(), _paginationParams))
 				.Returns(pagedList)
@@ -54,10 +54,11 @@ namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
 			var controllerContextMock = new Mock<ControllerContext>();
 			controllerContextMock.Object.HttpContext = httpContextMock.Object;
 
-			var controller = new MessagesController(_loggerMock.Object, _mockMessagesRepo.Object, _mockUserRepo.Object, _mapper);
-			controller.ControllerContext = controllerContextMock.Object;
-
-			controller.Url = mockUrlHelper.Object;
+			var controller = new MessagesController(_loggerMock.Object, _mockMessagesRepo.Object, _mockUserRepo.Object, _mapper)
+			{
+				ControllerContext = controllerContextMock.Object,
+				Url = mockUrlHelper.Object
+			};
 			//Act
 			var result = controller.GetMessagesWith(ConstIds.ExampleUserId, ConstIds.ExampleFromWhoId, _paginationParams);
 
@@ -93,12 +94,12 @@ namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(doesTheUserExist)
+				.ReturnsAsync(doesTheUserExist)
 				.Verifiable();
 			if (doesTheUserExist)
 			{
 				_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsNotIn<Guid>(new Guid(ConstIds.ExampleUserId))))
-					.Returns(doesTheFriendExist)
+					.ReturnsAsync(doesTheFriendExist)
 					.Verifiable();
 			}
 			var controller = new MessagesController(_loggerMock.Object, _mockMessagesRepo.Object, _mockUserRepo.Object, _mapper);

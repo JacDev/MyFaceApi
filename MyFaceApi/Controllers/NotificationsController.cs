@@ -47,13 +47,13 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<Post> GetNotification(string userId, string notificationId)
+		public async Task<ActionResult<Post>> GetNotification(string userId, string notificationId)
 		{
 			try
 			{
 				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(notificationId, out Guid gNotificationId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId))
+					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
 						Notification notificationToReturn = _notificationRepository.GetNotification(gNotificationId);
 						if (notificationToReturn is null)
@@ -95,13 +95,13 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<List<Post>> GetNotifications(string userId)
+		public async Task<ActionResult<List<Post>>> GetNotifications(string userId)
 		{
 			try
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId))
+					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
 						List<Notification> notificationsToReturn = _notificationRepository.GetUserNotifications(gUserId);
 						if(notificationsToReturn is null)
@@ -150,7 +150,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId))
+					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
 						Notification notificationEntity = _mapper.Map<Notification>(notificationToAdd);
 						notificationEntity.ToWhoId = gUserId;
@@ -204,7 +204,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(notificationId, out Guid gNotificationId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId))
+					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
 						Notification notificationFromRepo = _notificationRepository.GetNotification(gNotificationId);
 						if (notificationFromRepo is null)
@@ -263,7 +263,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(notificationId, out Guid gNotificationId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId))
+					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
 						Notification notificationToRemove = _notificationRepository.GetNotification(gNotificationId);
 						if (notificationToRemove is null)

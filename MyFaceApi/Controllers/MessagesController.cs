@@ -90,13 +90,13 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<PagedList<Message>> GetMessagesWith(string userId, string friendId, [FromQuery] PaginationParams paginationParams)
+		public async Task<ActionResult<PagedList<Message>>> GetMessagesWith(string userId, string friendId, [FromQuery] PaginationParams paginationParams)
 		{
 			try
 			{
 				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(friendId, out Guid gFriendId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId) && _userRepository.CheckIfUserExists(gFriendId))
+					if (await _userRepository.CheckIfUserExists(gUserId) && await _userRepository.CheckIfUserExists(gFriendId))
 					{
 						PagedList<Message> messagesToReturn = _messageRepository.GetUserMessagesWith(gUserId, gFriendId, paginationParams);
 						if (messagesToReturn != null)
@@ -139,7 +139,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId))
+					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
 						Message messageEntity = _mapper.Map<Message>(messageToAdd);
 

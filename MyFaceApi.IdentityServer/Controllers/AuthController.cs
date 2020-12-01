@@ -1,4 +1,6 @@
-﻿using IdentityServer4.Services;
+﻿using IdentityModel;
+using IdentityServer4.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyFaceApi.IdentityServer.DataAccess.Entities;
@@ -39,7 +41,6 @@ namespace MyFaceApi.IdentityServer.Controllers
                 var result = await _signInManager.PasswordSignInAsync(loginViewModel.Login, loginViewModel.Password, false, false);
                 if (result.Succeeded)
                 {
-                    var x = User.Claims.FirstOrDefault(x => x.Type == "LastName");
                     return Redirect(loginViewModel.ReturnUrl);
                 }
             }
@@ -59,6 +60,7 @@ namespace MyFaceApi.IdentityServer.Controllers
 
             return Redirect(logoutRequest.PostLogoutRedirectUri);
         }
+        
 
         [HttpGet]
         public IActionResult Register(string returnUrl)
@@ -80,22 +82,15 @@ namespace MyFaceApi.IdentityServer.Controllers
                 UserName = registerViewModel.Login,
                 Email = registerViewModel.Email,
                 FirstName = registerViewModel.FirstName,
-                LastName = registerViewModel.LastName
+                LastName = registerViewModel.LastName,
+                ProfileImagePath = "",
+                DateOfBirht = DateTime.Now
             };
 
-            var result = await _userManager.CreateAsync(user, registerViewModel.Password);
-
-            if (result.Succeeded)
-            {
-                List<Claim> claims = new List<Claim> {
-                    new Claim("FirstName", user.FirstName),
-                    new Claim("LastName", user.LastName),
-                    new Claim("ProfileImagePath", user.ProfileImagePath),
-                    new Claim("DateOfBirht", user.DateOfBirht.ToString()),
-                };
-                await _userManager.AddClaimsAsync(user, claims);
-            }         
-            return RedirectToAction("Login");
+            var result = await _userManager.CreateAsync(user, registerViewModel.Password);        
+ 
+            return RedirectToAction("Login", new {
+                returnUrl = registerViewModel.ReturnUrl});
         }
     }
 }

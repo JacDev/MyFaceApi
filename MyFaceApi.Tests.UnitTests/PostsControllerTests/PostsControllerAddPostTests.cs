@@ -22,7 +22,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 			Post postEntity = _mapper.Map<Post>(_postToAdd);
 			postEntity.Id = new Guid(ConstIds.ExamplePostId);
@@ -64,7 +64,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(false)
+				.ReturnsAsync(false)
 				.Verifiable();
 
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);

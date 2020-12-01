@@ -1,4 +1,5 @@
 ﻿using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 using System;
 using System.Threading.Tasks;
 
@@ -8,8 +9,8 @@ namespace MyFaceApi.Api.Repository.Interfaces
 	{
 		Task<User> AddUserAcync(User user);
 		Task DeleteUserAsync(User user);
-		Task<User> GetUserAsync(Guid userId);
+		Task<BasicUserData> GetUserAsync(Guid userId);
 		Task UpdateUserAsync(User user);
-		bool CheckIfUserExists(Guid userId);
+		Task<bool> CheckIfUserExists(Guid userId);
 	}
 }

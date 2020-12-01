@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
@@ -26,12 +27,13 @@ namespace MyFaceApi.IdentityServer.Controllers
 			_mapper = mapper;
 			_userManager = userManager;
 		}
+
 		[HttpGet("users/{userId}")]
 		public ActionResult<BasicUserData> GetUser(string userId)
 		{
 			if(Guid.TryParse(userId, out Guid gUserId))
 			{
-				DataAccess.Entities.AppUser user = _identityServerDbContext.Users.FirstOrDefault(x => x.Id == gUserId);
+				AppUser user = _identityServerDbContext.Users.FirstOrDefault(x => x.Id == gUserId);
 				return _mapper.Map<BasicUserData>(user);
 			}
 			else

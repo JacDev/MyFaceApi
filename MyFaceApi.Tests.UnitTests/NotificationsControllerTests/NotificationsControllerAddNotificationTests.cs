@@ -22,7 +22,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 			Notification notificationEntity = _mapper.Map<Notification>(_notificationToAdd);
 			notificationEntity.Id = new Guid(ConstIds.ExampleNotificationId);
@@ -62,7 +62,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(false)
+				.ReturnsAsync(false)
 				.Verifiable();
 
 			var controller = new NotificationsController(_loggerMock.Object, _mockNotificationRepo.Object, _mapper, _mockUserRepo.Object);

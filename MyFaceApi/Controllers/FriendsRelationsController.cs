@@ -63,13 +63,13 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<List<FriendsRelation>> GetUserRelations(string userId)
+		public async Task<ActionResult<List<FriendsRelation>>> GetUserRelations(string userId)
 		{
 			try
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId))
+					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
 						var userRelations = _relationRepository.GetUserRelationships(gUserId);
 						return Ok(userRelations);
@@ -101,7 +101,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId) && _userRepository.CheckIfUserExists(relationToAdd.FriendId))
+					if (await _userRepository.CheckIfUserExists(gUserId) && await _userRepository.CheckIfUserExists(relationToAdd.FriendId))
 					{
 						FriendsRelation friendsRelationEntity = _mapper.Map<FriendsRelation>(relationToAdd);
 						friendsRelationEntity.UserId = gUserId;
@@ -138,7 +138,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(friendId, out Guid gFriendId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId) && _userRepository.CheckIfUserExists(gFriendId))
+					if (await _userRepository.CheckIfUserExists(gUserId) && await _userRepository.CheckIfUserExists(gFriendId))
 					{
 						var relationFromRepo = _relationRepository.GetFriendRelation(gUserId, gFriendId);
 						if (relationFromRepo is null)
