@@ -1,4 +1,4 @@
-﻿namespace MyFaceApi.DataAccess.Enums
+﻿namespace MyFaceApi.Api.DataAccess.Enums
 {
 	public enum ReactionType
 	{

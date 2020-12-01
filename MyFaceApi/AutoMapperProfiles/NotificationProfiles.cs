@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Models.NotificationModels;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Models.NotificationModels;
 
 namespace MyFaceApi.AutoMapperProfiles
 {

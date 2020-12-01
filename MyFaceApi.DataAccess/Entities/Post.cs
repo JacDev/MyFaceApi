@@ -1,9 +1,9 @@
-﻿using MyFaceApi.DataAccess.ModelsBasicInfo;
+﻿using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace MyFaceApi.DataAccess.Entities
+namespace MyFaceApi.Api.DataAccess.Entities
 {
 	public class Post : BasicPostData
 	{

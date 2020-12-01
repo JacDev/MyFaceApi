@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Moq;
-using MyFaceApi.Controllers;
-using MyFaceApi.DataAccess.Entities;
+using MyFaceApi.Api.Controllers;
+using MyFaceApi.Api.DataAccess.Entities;
 using System;
 using System.Linq;
 using Xunit;
@@ -22,7 +22,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 			var notification = GetTestNotificationData().ElementAt(0);
 
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 			_mockNotificationRepo.Setup(repo => repo.GetNotification(It.IsAny<Guid>()))
 				.Returns(notification)
@@ -70,7 +70,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(doesTheUserExists)
+				.ReturnsAsync(doesTheUserExists)
 				.Verifiable();
 			_mockNotificationRepo.Setup(repo => repo.GetNotification(It.IsAny<Guid>()))
 				.Returns(testNotificationData)

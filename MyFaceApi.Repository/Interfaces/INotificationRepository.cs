@@ -1,9 +1,9 @@
-﻿using MyFaceApi.DataAccess.Entities;
+﻿using MyFaceApi.Api.DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MyFaceApi.Repository.Interfaces
+namespace MyFaceApi.Api.Repository.Interfaces
 {
 	public interface INotificationRepository
 	{

@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Moq;
-using MyFaceApi.Controllers;
-using MyFaceApi.DataAccess.Entities;
+using MyFaceApi.Api.Controllers;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 using System;
 using System.Linq;
 using Xunit;
@@ -59,7 +60,7 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 		public async void PartiallyUpdateUser_NotFoundRequest_WhenTheUserDataIsNotInTheDatabase()
 		{
 			_mockUserRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
-				.ReturnsAsync((User)null)
+				.ReturnsAsync((BasicUserData)null)
 				.Verifiable();
 
 			var controller = new UsersController(_loggerMock.Object, _mockUserRepo.Object, _mapper);

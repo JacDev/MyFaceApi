@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using MyFaceApi.Controllers;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Models.NotificationModels;
+using MyFaceApi.Api.Controllers;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Models.NotificationModels;
 using System;
 using Xunit;
 using AutoFixture;
@@ -22,7 +22,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 			Notification notificationEntity = _mapper.Map<Notification>(_notificationToAdd);
 			notificationEntity.Id = new Guid(ConstIds.ExampleNotificationId);
@@ -62,7 +62,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(false)
+				.ReturnsAsync(false)
 				.Verifiable();
 
 			var controller = new NotificationsController(_loggerMock.Object, _mockNotificationRepo.Object, _mapper, _mockUserRepo.Object);

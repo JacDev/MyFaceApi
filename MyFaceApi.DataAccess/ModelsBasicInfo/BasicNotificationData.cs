@@ -1,7 +1,7 @@
-﻿using MyFaceApi.DataAccess.Enums;
+﻿using MyFaceApi.Api.DataAccess.Enums;
 using System;
 
-namespace MyFaceApi.DataAccess.ModelsBasicInfo
+namespace MyFaceApi.Api.DataAccess.ModelsBasicInfo
 {
 	public class BasicNotificationData
 	{

@@ -4,9 +4,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Repository.Helpers;
-using MyFaceApi.Repository.Interfaces;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Repository.Helpers;
+using MyFaceApi.Api.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using MyFaceApi.Api.Extensions;
 using MyFaceApi.Api.Helpers;
-using MyFaceApi.Models.MessageModels;
+using MyFaceApi.Api.Models.MessageModels;
 
 namespace MyFaceApi.Api.Controllers
 {
@@ -90,13 +90,13 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<PagedList<Message>> GetMessagesWith(string userId, string friendId, [FromQuery] PaginationParams paginationParams)
+		public async Task<ActionResult<PagedList<Message>>> GetMessagesWith(string userId, string friendId, [FromQuery] PaginationParams paginationParams)
 		{
 			try
 			{
 				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(friendId, out Guid gFriendId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId) && _userRepository.CheckIfUserExists(gFriendId))
+					if (await _userRepository.CheckIfUserExists(gUserId) && await _userRepository.CheckIfUserExists(gFriendId))
 					{
 						PagedList<Message> messagesToReturn = _messageRepository.GetUserMessagesWith(gUserId, gFriendId, paginationParams);
 						if (messagesToReturn != null)
@@ -139,7 +139,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId))
+					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
 						Message messageEntity = _mapper.Map<Message>(messageToAdd);
 

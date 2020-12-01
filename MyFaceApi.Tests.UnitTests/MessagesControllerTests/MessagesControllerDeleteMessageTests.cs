@@ -1,4 +1,4 @@
-﻿using MyFaceApi.DataAccess.Entities;
+﻿using MyFaceApi.Api.DataAccess.Entities;
 using System;
 using Xunit;
 using AutoFixture;

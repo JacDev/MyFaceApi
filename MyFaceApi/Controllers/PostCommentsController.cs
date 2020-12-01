@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Models.CommentModels;
-using MyFaceApi.Repository.Interfaces;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Models.CommentModels;
+using MyFaceApi.Api.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MyFaceApi.Controllers
+namespace MyFaceApi.Api.Controllers
 {
 	[Route("api/users/{userId}/posts/{postId}/comments")]
 	[ApiController]
@@ -56,7 +56,7 @@ namespace MyFaceApi.Controllers
 			{
 				if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (_postRepository.CheckIfPostExists(gPostId) && _userRepository.CheckIfUserExists(gUserId))
+					if (_postRepository.CheckIfPostExists(gPostId) && await _userRepository.CheckIfUserExists(gUserId))
 					{
 						PostComment commentEntity = _mapper.Map<PostComment>(postComment);
 						commentEntity = await _postCommentRepository.AddCommentAsync(commentEntity);

@@ -1,10 +1,10 @@
-﻿using MyFaceApi.Models.FriendsRelationModels;
+﻿using MyFaceApi.Api.Models.FriendsRelationModels;
 using System;
 using Xunit;
 using AutoFixture;
 using Moq;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Controllers;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 
@@ -22,7 +22,7 @@ namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 
 			FriendsRelation relationEntity = _mapper.Map<FriendsRelation>(_relationToAdd);
@@ -67,12 +67,12 @@ namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(new Guid(ConstIds.ExampleUserId)))
-				.Returns(doesTheUserExist)
+				.ReturnsAsync(doesTheUserExist)
 				.Verifiable();
 			if (doesTheUserExist)
 			{
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsNotIn<Guid>(new Guid(ConstIds.ExampleUserId))))
-				.Returns(doesTheFriendExist)
+				.ReturnsAsync(doesTheFriendExist)
 				.Verifiable();
 			}
 

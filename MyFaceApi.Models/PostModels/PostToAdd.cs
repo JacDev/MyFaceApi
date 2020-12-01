@@ -1,7 +1,7 @@
-﻿using MyFaceApi.DataAccess.ModelsBasicInfo;
+﻿using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 using System;
 
-namespace MyFaceApi.Models.PostModels
+namespace MyFaceApi.Api.Models.PostModels
 {
 	public class PostToAdd : BasicPostData
 	{

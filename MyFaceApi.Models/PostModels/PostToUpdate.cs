@@ -1,6 +1,6 @@
-﻿using MyFaceApi.DataAccess.ModelsBasicInfo;
+﻿using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 
-namespace MyFaceApi.Models.PostModels
+namespace MyFaceApi.Api.Models.PostModels
 {
 	public class PostToUpdate : BasicPostData
 	{

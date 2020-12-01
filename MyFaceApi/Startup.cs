@@ -1,20 +1,25 @@
+using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MyFaceApi.Api.DataAccess.Data;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.IdentityServerAccess;
+using MyFaceApi.Api.Repository;
+using MyFaceApi.Api.Repository.Interfaces;
+using MyFaceApi.Api.Servieces;
+using Newtonsoft.Json.Serialization;
 using Serilog;
 using System;
 using System.IO;
 using System.Reflection;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json.Serialization;
-using MyFaceApi.DataAccess.Data;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Repository.Interfaces;
-using MyFaceApi.Repository;
 
 namespace MyFaceApi
 {
@@ -29,9 +34,39 @@ namespace MyFaceApi
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddCors(options =>
+			{
+				// this defines a CORS policy called "default"
+				options.AddPolicy("default", policy =>
+				{
+					policy.WithOrigins("http://localhost:4200")
+						.AllowAnyHeader()
+						.AllowAnyMethod();
+						//.AllowCredentials();
+					//.AllowAnyOrigin();
+				});
+			});
+
+
+			IConfigurationSection identityServerConf = Configuration.GetSection("IdentityServerConfiguration");
+			var identityServerUrl = identityServerConf.GetValue<string>("IdentityServerUri");
+			var audienceName = identityServerConf.GetValue<string>("AudienceName");
+
+			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+			.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+			{
+				options.Authority = identityServerUrl;
+				options.Audience = audienceName;
+			});
+
 			services.AddControllers(options =>
 			{
 				options.ReturnHttpNotAcceptable = true;
+				var policy = new AuthorizationPolicyBuilder()
+				.RequireAuthenticatedUser()
+				.Build();
+
+				options.Filters.Add(new AuthorizeFilter(policy));
 			})
 				.AddNewtonsoftJson(setupAction =>
 				{
@@ -51,28 +86,19 @@ namespace MyFaceApi
 					b => b.MigrationsAssembly("MyFaceApi.Api"));
 					});
 
-			services.AddIdentity<User, IdentityRole<Guid>>(config =>
-			{
-				config.Password.RequiredLength = 1;
-				config.Password.RequireDigit = false;
-				config.Password.RequireNonAlphanumeric = false;
-				config.Password.RequireUppercase = false;
-				config.Password.RequiredUniqueChars = 0;
-				config.Password.RequireLowercase = false;
-				config.SignIn.RequireConfirmedEmail = true;
-
-			})
-				.AddEntityFrameworkStores<AppDbContext>();
 
 			services.AddScoped<IAppDbContext>(provider => provider.GetService<AppDbContext>());
-
+		
 			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-			services.AddScoped<IUserRepository, UserRepository>();
-			services.AddScoped<IPostRepository, PostRepository>();
-			services.AddScoped<IPostReactionRepository, PostReactionRepository>();
-			services.AddScoped<IPostCommentRepository, PostCommentRepository>();
-			services.AddScoped<IFriendsRelationRepository, FriendsRelationRepository>();
-			services.AddScoped<IMessageRepository, MessageRepository>();
+
+			services.AddRepositories();
+
+			services.AddHttpClient();
+			services.AddScoped<IIdentityServerHttpService, IdentityServerHttpService>();
+			
+			
+			services.AddScoped<IUserRepository, UserIdentityServerAccess>();
+			
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -91,6 +117,7 @@ namespace MyFaceApi
 			});
 
 
+
 			app.UseHttpsRedirection();
 
 			//przy ka¿dym zapytaniu http zapisuje logi
@@ -98,6 +125,9 @@ namespace MyFaceApi
 
 			app.UseRouting();
 
+			app.UseCors("default");
+
+			app.UseAuthentication();
 			app.UseAuthorization();
 
 			app.UseEndpoints(endpoints =>

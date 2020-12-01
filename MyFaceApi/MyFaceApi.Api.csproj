@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -14,6 +14,7 @@
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.14.0" />
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.10" />
@@ -37,9 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MyFaceApi.DataAccess\MyFaceApi.DataAccess.csproj" />
-    <ProjectReference Include="..\MyFaceApi.Models\MyFaceApi.Models.csproj" />
-    <ProjectReference Include="..\MyFaceApi.Repository\MyFaceApi.Repository.csproj" />
+    <ProjectReference Include="..\MyFaceApi.DataAccess\MyFaceApi.Api.DataAccess.csproj" />
+    <ProjectReference Include="..\MyFaceApi.Models\MyFaceApi.Api.Models.csproj" />
+    <ProjectReference Include="..\MyFaceApi.Repository\MyFaceApi.Api.Repository.csproj" />
   </ItemGroup>
 
 

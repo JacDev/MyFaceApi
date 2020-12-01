@@ -1,10 +1,10 @@
-﻿using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Repository.Helpers;
+﻿using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Repository.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MyFaceApi.Repository.Interfaces
+namespace MyFaceApi.Api.Repository.Interfaces
 {
 	public interface IMessageRepository
 	{

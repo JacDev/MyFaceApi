@@ -1,4 +1,4 @@
-﻿namespace MyFaceApi.Repository.Helpers
+﻿namespace MyFaceApi.Api.Repository.Helpers
 {
 	public class PaginationMetadata
 	{

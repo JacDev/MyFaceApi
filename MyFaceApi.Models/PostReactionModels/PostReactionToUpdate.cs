@@ -1,6 +1,6 @@
-﻿using MyFaceApi.DataAccess.Enums;
+﻿using MyFaceApi.Api.DataAccess.Enums;
 
-namespace MyFaceApi.Models.PostReactionModels
+namespace MyFaceApi.Api.Models.PostReactionModels
 {
 	public class PostReactionToUpdate
 	{

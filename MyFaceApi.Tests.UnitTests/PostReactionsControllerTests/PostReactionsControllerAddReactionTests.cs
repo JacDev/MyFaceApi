@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using MyFaceApi.Controllers;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Models.PostReactionModels;
+using MyFaceApi.Api.Controllers;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Models.PostReactionModels;
 using System;
 using Xunit;
 using AutoFixture;
@@ -25,7 +25,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 				.Returns(true)
 				.Verifiable();
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 
 			PostReaction reactionEntity = _mapper.Map<PostReaction>(_postReactionToAdd);
@@ -78,7 +78,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 				.Verifiable();
 
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(doesTheUserExists)
+				.ReturnsAsync(doesTheUserExists)
 				.Verifiable();
 
 			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);

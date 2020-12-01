@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MyFaceApi.DataAccess.Entities;
+using MyFaceApi.Api.DataAccess.Entities;
 using System.Threading.Tasks;
 
-namespace MyFaceApi.DataAccess.Data
+namespace MyFaceApi.Api.DataAccess.Data
 {
 	public interface IAppDbContext
 	{
-		DbSet<User> Users { get; set; }
 		DbSet<FriendsRelation> Relations { get; set; }
 		DbSet<Post> Posts { get; set; }
 		DbSet<Notification> Notifications { get; set; }

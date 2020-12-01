@@ -1,7 +1,7 @@
-﻿using MyFaceApi.DataAccess.ModelsBasicInfo;
+﻿using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 using System;
 
-namespace MyFaceApi.DataAccess.Entities
+namespace MyFaceApi.Api.DataAccess.Entities
 {
 	public class FriendsRelation : BasicFriendsRelationData
 	{

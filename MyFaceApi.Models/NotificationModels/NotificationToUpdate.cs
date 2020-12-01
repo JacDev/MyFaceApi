@@ -1,4 +1,4 @@
-﻿namespace MyFaceApi.Models.NotificationModels
+﻿namespace MyFaceApi.Api.Models.NotificationModels
 {
 	public class NotificationToUpdate
 	{

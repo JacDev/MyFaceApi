@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MyFaceApi.DataAccess.Entities
+namespace MyFaceApi.Api.DataAccess.Entities
 {
 	public class Conversation
 	{

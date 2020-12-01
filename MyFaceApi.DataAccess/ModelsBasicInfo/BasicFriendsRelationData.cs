@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyFaceApi.DataAccess.ModelsBasicInfo
+namespace MyFaceApi.Api.DataAccess.ModelsBasicInfo
 {
 	public class BasicFriendsRelationData
 	{

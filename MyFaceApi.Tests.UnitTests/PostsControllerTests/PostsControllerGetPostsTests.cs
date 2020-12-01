@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using MyFaceApi.Controllers;
-using MyFaceApi.DataAccess.Entities;
+using MyFaceApi.Api.Controllers;
+using MyFaceApi.Api.DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +22,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			var user = GetTestUserData().ElementAt(0);
 
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 			_mockPostRepo.Setup(repo => repo.GetUserPosts(It.IsAny<Guid>()))
 				.Returns(user.Posts.ToList())
@@ -59,7 +59,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(false)
+				.ReturnsAsync(false)
 				.Verifiable();
 
 			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);

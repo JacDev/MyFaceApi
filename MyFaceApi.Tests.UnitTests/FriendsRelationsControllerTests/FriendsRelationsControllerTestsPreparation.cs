@@ -4,9 +4,9 @@ using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Moq;
 using MyFaceApi.AutoMapperProfiles;
-using MyFaceApi.Controllers;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Repository.Interfaces;
+using MyFaceApi.Api.Controllers;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Repository.Interfaces;
 using System.Collections.Generic;
 
 namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using MyFaceApi.Controllers;
-using MyFaceApi.DataAccess.Entities;
+using MyFaceApi.Api.Controllers;
+using MyFaceApi.Api.DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -21,7 +21,7 @@ namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 			var userRelations = GetTestRelationData();
 
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(true)
+				.ReturnsAsync(true)
 				.Verifiable();
 			_mockRelationRepo.Setup(repo => repo.GetUserRelationships(It.IsAny<Guid>()))
 				.Returns(userRelations)
@@ -57,7 +57,7 @@ namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
-				.Returns(false)
+				.ReturnsAsync(false)
 				.Verifiable();
 
 			var controller = new FriendsRelationsController(_loggerMock.Object, _mockRelationRepo.Object, _mapper, _mockUserRepo.Object);

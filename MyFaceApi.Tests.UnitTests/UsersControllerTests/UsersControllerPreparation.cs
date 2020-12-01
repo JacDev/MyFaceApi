@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Moq;
 using MyFaceApi.AutoMapperProfiles;
-using MyFaceApi.Controllers;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.DataAccess.ModelsBasicInfo;
-using MyFaceApi.Repository.Interfaces;
+using MyFaceApi.Api.Controllers;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
+using MyFaceApi.Api.Repository.Interfaces;
 using Newtonsoft.Json.Serialization;
 
 namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
@@ -31,9 +31,9 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			_mapper = new Mapper(configuration);
 			_fixture = new Fixture().Customize(new AutoMoqCustomization());
 		}
-		protected User GetTestUserData()
+		protected BasicUserData GetTestUserData()
 		{
-			return _fixture.Create<User>();
+			return _fixture.Create<BasicUserData>();
 		}
 		protected JsonPatchDocument<BasicUserData> GetJsonPatchDocument()
 		{

@@ -1,8 +1,8 @@
-﻿using MyFaceApi.DataAccess.Enums;
+﻿using MyFaceApi.Api.DataAccess.Enums;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace MyFaceApi.DataAccess.ModelsBasicInfo
+namespace MyFaceApi.Api.DataAccess.ModelsBasicInfo
 {
 	public class BasicReactionData
 	{

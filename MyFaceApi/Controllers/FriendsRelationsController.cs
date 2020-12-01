@@ -2,14 +2,14 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.DataAccess.Entities;
-using MyFaceApi.Models.FriendsRelationModels;
-using MyFaceApi.Repository.Interfaces;
+using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Models.FriendsRelationModels;
+using MyFaceApi.Api.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MyFaceApi.Controllers
+namespace MyFaceApi.Api.Controllers
 {
 	[Route("api/users/{userId}/friends")]
 	[ApiController]
@@ -63,13 +63,13 @@ namespace MyFaceApi.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<List<FriendsRelation>> GetUserRelations(string userId)
+		public async Task<ActionResult<List<FriendsRelation>>> GetUserRelations(string userId)
 		{
 			try
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId))
+					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
 						var userRelations = _relationRepository.GetUserRelationships(gUserId);
 						return Ok(userRelations);
@@ -101,7 +101,7 @@ namespace MyFaceApi.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId) && _userRepository.CheckIfUserExists(relationToAdd.FriendId))
+					if (await _userRepository.CheckIfUserExists(gUserId) && await _userRepository.CheckIfUserExists(relationToAdd.FriendId))
 					{
 						FriendsRelation friendsRelationEntity = _mapper.Map<FriendsRelation>(relationToAdd);
 						friendsRelationEntity.UserId = gUserId;
@@ -138,7 +138,7 @@ namespace MyFaceApi.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(friendId, out Guid gFriendId))
 				{
-					if (_userRepository.CheckIfUserExists(gUserId) && _userRepository.CheckIfUserExists(gFriendId))
+					if (await _userRepository.CheckIfUserExists(gUserId) && await _userRepository.CheckIfUserExists(gFriendId))
 					{
 						var relationFromRepo = _relationRepository.GetFriendRelation(gUserId, gFriendId);
 						if (relationFromRepo is null)
