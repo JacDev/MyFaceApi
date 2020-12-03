@@ -5,11 +5,16 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.DboModels;
+using MyFaceApi.Api.Extensions;
+using MyFaceApi.Api.Helpers;
 using MyFaceApi.Api.Models.PostModels;
+using MyFaceApi.Api.Repository.Helpers;
 using MyFaceApi.Api.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Controllers
@@ -22,15 +27,18 @@ namespace MyFaceApi.Api.Controllers
 		private readonly IPostRepository _postRepository;
 		private readonly IUserRepository _userRepository;
 		private readonly IMapper _mapper;
+		private readonly IFriendsRelationRepository _friendsRelationRepository;
 		public PostsController(ILogger<PostsController> logger,
 			IPostRepository postRepository,
 			IUserRepository userRepository,
-			IMapper mapper)
+			IMapper mapper,
+			IFriendsRelationRepository friendsRelationRepository)
 		{
 			_logger = logger;
 			_postRepository = postRepository;
 			_userRepository = userRepository;
 			_mapper = mapper;
+			_friendsRelationRepository = friendsRelationRepository;
 			_logger.LogTrace("PostsController created");
 		}
 		/// <summary>
@@ -57,7 +65,7 @@ namespace MyFaceApi.Api.Controllers
 					if (postToReturn != null)
 					{
 						return Ok(postToReturn);
-					}					
+					}
 					else
 					{
 						return NotFound();
@@ -72,34 +80,104 @@ namespace MyFaceApi.Api.Controllers
 			{
 				_logger.LogError(ex, "Error occured during getting the post. Post id: {postId}", postId);
 				return StatusCode(StatusCodes.Status500InternalServerError);
-			}		
+			}
 		}
 		/// <summary>
 		/// Return the found user posts
 		/// </summary>
 		/// <param name="userId">User guid as a string </param>
+		/// <param name="paginationParams"></param>
 		/// <returns>Found user posts</returns>
 		/// <response code="200"> Returns the found user posts</response>
 		/// <response code="400"> If parameter is not a valid guid</response>    
 		/// <response code="404"> If user not found</response>   
 		/// <response code="500"> If internal error occured</response>
-		[HttpGet]
+		[AllowAnonymous]
+		[HttpGet(Name = "GetPosts")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<List<Post>>> GetPosts(string userId)
+		public async Task<ActionResult<CollectionWithPaginationData<Post>>> GetPosts(string userId, [FromQuery] PaginationParams paginationParams)
 		{
 			try
 			{
-				var claims = User.Claims.ToList();
-				claims.ForEach(x => _logger.LogInformation("type: {type}, value: {value}", x.Type, x.Value));
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
 					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
-						List<Post> userPosts = _postRepository.GetUserPosts(gUserId);
-						return Ok(userPosts);
+						PagedList<Post> postsToReturn = _postRepository.GetUserPosts(gUserId, paginationParams);
+						PaginationMetadata pagination = new PaginationMetadata();
+						if (postsToReturn != null)
+						{
+							postsToReturn.PreviousPageLink = postsToReturn.HasPrevious ?
+								this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetPosts") : null;
+
+							postsToReturn.NextPageLink = postsToReturn.HasNext ?
+								this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetPosts") : null;
+
+							pagination = PaginationHelper.CreatePaginationMetadata<Post>(postsToReturn);
+							//Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
+						}
+						return Ok(new CollectionWithPaginationData<Post> { PaginationMetadata = pagination, Collection = postsToReturn });
+
+					}
+					else
+					{
+						return NotFound($"User: {userId} not found.");
+					}
+				}
+				else
+				{
+					return BadRequest($"{userId} is not valid guid.");
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occured during getting the user posts. User id: {user}", userId);
+				return StatusCode(StatusCodes.Status500InternalServerError);
+			}
+		}
+
+		[AllowAnonymous]
+		[HttpGet("latest", Name = "GetLatestPosts")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<ActionResult<CollectionWithPaginationData<PostDbo>>> GetLatestPosts(string userId, [FromQuery] PaginationParams paginationParams)
+		{
+			try
+			{
+				if (Guid.TryParse(userId, out Guid gUserId))
+				{
+					if (await _userRepository.CheckIfUserExists(gUserId))
+					{
+						List<Guid> friendsId = _friendsRelationRepository.GetUserRelationships(gUserId)
+							.Select(s => (s.FriendId == gUserId ? s.UserId : s.FriendId))
+							.ToList();
+
+						List<Post> postsFromRepo = _postRepository.GetLatestFriendsPosts(gUserId, friendsId);
+						List<PostDbo> postsToReturn = _mapper.Map<List<PostDbo>>(postsFromRepo);
+
+						var pagedListToReturn = PagedList<PostDbo>.Create(postsToReturn,
+						   paginationParams.PageNumber,
+						   paginationParams.PageSize,
+						   (paginationParams.PageNumber - 1) * paginationParams.PageSize);
+						PaginationMetadata pagination = new PaginationMetadata();
+						if (pagedListToReturn != null)
+						{
+							pagedListToReturn.PreviousPageLink = pagedListToReturn.HasPrevious ?
+								this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetPosts") : null;
+
+							pagedListToReturn.NextPageLink = pagedListToReturn.HasNext ?
+								this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetPosts") : null;
+
+							pagination = PaginationHelper.CreatePaginationMetadata<PostDbo>(pagedListToReturn);
+							//Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
+						}
+						return Ok(new CollectionWithPaginationData<PostDbo> { PaginationMetadata = pagination, Collection = pagedListToReturn });
+
 					}
 					else
 					{

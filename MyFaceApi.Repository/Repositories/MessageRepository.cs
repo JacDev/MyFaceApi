@@ -59,7 +59,6 @@ namespace MyFaceApi.Api.Repository.Repositories
 				throw;
 			}
 		}
-
 		public async Task DeleteMessageAsync(Message message)
 		{
 			_logger.LogDebug("Trying to remove message: {message}.", message);
@@ -79,7 +78,6 @@ namespace MyFaceApi.Api.Repository.Repositories
 				throw;
 			}
 		}
-
 		public IEnumerable<Message> GetLastUserMessages(Guid userId)
 		{
 			_logger.LogDebug("Trying to get user last messages: {userid}", userId);
@@ -109,7 +107,6 @@ namespace MyFaceApi.Api.Repository.Repositories
 				throw;
 			}
 		}
-
 		public Message GetMessage(Guid messageId)
 		{
 			_logger.LogDebug("Trying to get the message: {messageId}", messageId);

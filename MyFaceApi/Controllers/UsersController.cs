@@ -62,7 +62,7 @@ namespace MyFaceApi.Api.Controllers
 				}
 				else
 				{
-					return BadRequest($"{userId} is not valid Guid.");
+					return BadRequest($"{userId} is not valid guid.");
 				}
 			}
 			catch (Exception ex)

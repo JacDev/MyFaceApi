@@ -1,8 +1,4 @@
 ﻿using MyFaceApi.Api.Repository.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Helpers
 {
@@ -18,6 +14,8 @@ namespace MyFaceApi.Api.Helpers
 				TotalPages = pagedList.TotalPages,
 				PreviousPageLink = pagedList.PreviousPageLink,
 				NextPageLink = pagedList.NextPageLink,
+				HasNext = pagedList.HasNext,
+				HasPrevious = pagedList.HasPrevious
 			};
 		}
 	}

@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.DataAccess.Data;
 using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Repository.Helpers;
 using MyFaceApi.Api.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -107,7 +109,7 @@ namespace MyFaceApi.Api.Repository.Repositories
 				throw;
 			}
 		}
-		public List<Post> GetUserPosts(Guid userId)
+		public PagedList<Post> GetUserPosts(Guid userId, PaginationParams paginationParams)
 		{
 			_logger.LogDebug("Trying to get user posts: {userid}", userId);
 			if (userId == Guid.Empty)
@@ -119,12 +121,41 @@ namespace MyFaceApi.Api.Repository.Repositories
 				List<Post> posts = new List<Post>();
 				posts = _appDbContext.Posts
 					.Where(s => s.UserId == userId)
+					.OrderByDescending(x => x.WhenAdded)
+					.ToList();
+
+				return PagedList<Post>.Create(posts,
+					   paginationParams.PageNumber,
+					   paginationParams.PageSize,
+					   (paginationParams.PageNumber - 1) * paginationParams.PageSize);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occured during getting user posts.");
+				throw;
+			}
+		}
+		public List<Post> GetLatestFriendsPosts(Guid userId, List<Guid> userFriends)
+		{
+			_logger.LogDebug("Trying to get user and friends latest posts: {userid}", userId);
+			if (userId == Guid.Empty)
+			{
+				throw new ArgumentNullException(nameof(userId));
+			}
+			try
+			{
+				userFriends.Add(userId);
+				List<Post> posts = _appDbContext.Posts
+					.Include(nameof(_appDbContext.PostComments))
+					.Include(nameof(_appDbContext.PostReactions))
+					.Where(a => userFriends.Contains(a.UserId))
+					.OrderByDescending(p => p.WhenAdded)
 					.ToList();
 				return posts;
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Error occured during getting user posts.");
+				_logger.LogError(ex, "Error occured during getting latest posts.");
 				throw;
 			}
 		}

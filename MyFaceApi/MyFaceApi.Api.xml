@@ -205,11 +205,12 @@
             <response code="404"> If post not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Api.Controllers.PostsController.GetPosts(System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.PostsController.GetPosts(System.String,MyFaceApi.Api.Repository.Helpers.PaginationParams)">
             <summary>
             Return the found user posts
             </summary>
             <param name="userId">User guid as a string </param>
+            <param name="paginationParams"></param>
             <returns>Found user posts</returns>
             <response code="200"> Returns the found user posts</response>
             <response code="400"> If parameter is not a valid guid</response>    
