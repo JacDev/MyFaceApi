@@ -1,9 +1,15 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
+using MyFaceApi.Api.DboModels;
+using MyFaceApi.Api.Extensions;
+using MyFaceApi.Api.Helpers;
 using MyFaceApi.Api.Models.FriendsRelationModels;
+using MyFaceApi.Api.Repository.Helpers;
 using MyFaceApi.Api.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -58,21 +64,40 @@ namespace MyFaceApi.Api.Controllers
 				return StatusCode(StatusCodes.Status500InternalServerError);
 			}
 		}
-		[HttpGet]
+		[AllowAnonymous]
+		[HttpGet(Name = "GetFriends")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<List<FriendsRelation>>> GetUserRelations(string userId)
+		public async Task<ActionResult<CollectionWithPaginationData<BasicUserData>>> GetUserFriends(string userId, [FromQuery] PaginationParams paginationParams)
 		{
 			try
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
+					paginationParams.Skip = (paginationParams.PageNumber - 1) * paginationParams.PageSize;
 					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
-						var userRelations = _relationRepository.GetUserFriends(gUserId, null);
-						return Ok(userRelations);
+						PagedList<Guid> userFriendsId = _relationRepository.GetUserFriends(gUserId, paginationParams);
+						List<BasicUserData> usersToReturn = await _userRepository.GetUsersAsync(userFriendsId);
+
+						PagedList<BasicUserData> friendsToReturn = PagedList<BasicUserData>.Create(usersToReturn,
+							paginationParams.PageNumber,
+							paginationParams.PageSize,
+							0);
+						friendsToReturn.TotalCount = userFriendsId.TotalCount;
+						friendsToReturn.TotalPages = userFriendsId.TotalPages;
+
+						friendsToReturn.PreviousPageLink = friendsToReturn.HasPrevious ?
+							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetFriends") : null;
+
+						friendsToReturn.NextPageLink = friendsToReturn.HasNext ?
+							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetFriends") : null;
+
+						PaginationMetadata pagination = PaginationHelper.CreatePaginationMetadata<BasicUserData>(friendsToReturn);
+
+						return Ok(new CollectionWithPaginationData<BasicUserData> { PaginationMetadata = pagination, Collection = friendsToReturn });
 					}
 					else
 					{
