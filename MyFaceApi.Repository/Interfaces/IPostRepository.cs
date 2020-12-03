@@ -12,7 +12,7 @@ namespace MyFaceApi.Api.Repository.Interfaces
 		bool CheckIfPostExists(Guid postId);
 		Task DeletePostAsync(Post postId);
 		Post GetPost(Guid postId);
-		PagedList<Post> GetUserPosts(Guid userId, PaginationParams paginationParams);
+		List<Post> GetUserPosts(Guid userId);
 		List<Post> GetLatestFriendsPosts(Guid userId, List<Guid> userFriends);
 		Task UpdatePostAsync(Post post);
 	}

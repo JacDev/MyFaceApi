@@ -5,6 +5,7 @@ using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 using MyFaceApi.Api.Repository.Interfaces;
 using MyFaceApi.Api.DataAccess.Entities;
 using System;
+using System.Collections.Generic;
 
 namespace MyFaceApi.Api.IdentityServerAccess
 {
@@ -41,6 +42,17 @@ namespace MyFaceApi.Api.IdentityServerAccess
 		public async Task<bool> GetUserIfExists(Guid userId)
 		{
 			return await GetUserAsync(userId) != null;
+		}
+		public async Task<List<BasicUserData>> GetUsersAsync(IEnumerable<Guid> usersId)
+		{
+			string query = "";
+			foreach(var id in usersId)
+			{
+				query += id.ToString() + ",";
+			}
+			query = query.Remove(query.LastIndexOf(","));
+			var response = await _identityServerHttpService.Client.GetAsync($"/users/getall?ids={query}");
+			return await response.ReadContentAs<List<BasicUserData>>();
 		}
 
 		public Task UpdateUserAsync(User user)

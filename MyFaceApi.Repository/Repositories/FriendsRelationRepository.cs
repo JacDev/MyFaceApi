@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.DataAccess.Data;
 using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Repository.Helpers;
 using MyFaceApi.Api.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -106,21 +107,50 @@ namespace MyFaceApi.Api.Repository.Repositories
 			}
 		}
 
-		public List<FriendsRelation> GetUserRelationships(Guid userId)
+		public PagedList<Guid> GetUserFriends(Guid userId, PaginationParams paginationParams)
 		{
-			_logger.LogDebug("Trying to get user: {userId} relations.", userId);
+			_logger.LogDebug("Trying to get user: {userId} friends.", userId);
 			if (userId == Guid.Empty)
 			{
 				throw new ArgumentNullException(nameof(Guid));
 			}
 			try
 			{
-				var relations = _appDbContext.Relations.Where(s => s.UserId == userId || s.FriendId == userId).ToList();
-				return relations;
+				var friends = _appDbContext.Relations.Where(s => s.UserId == userId || s.FriendId == userId)
+					.OrderByDescending(x => x.SinceWhen)
+					.Select(s => (s.FriendId == userId ? s.UserId : s.FriendId))
+					.ToList();
+
+				return PagedList<Guid>.Create(friends,
+				   paginationParams.PageNumber,
+				   paginationParams.PageSize,
+				   paginationParams.Skip);
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Error occured during getting the user: {userId} relations.", userId);
+				_logger.LogError(ex, "Error occured during getting the user: {userId} friends.", userId);
+				throw;
+			}
+		}
+		public List<Guid> GetUserFriends(Guid userId)
+		{
+			_logger.LogDebug("Trying to get user: {userId} friends.", userId);
+			if (userId == Guid.Empty)
+			{
+				throw new ArgumentNullException(nameof(Guid));
+			}
+			try
+			{
+				var friends = _appDbContext.Relations.Where(s => s.UserId == userId || s.FriendId == userId)
+					.OrderByDescending(x => x.SinceWhen)
+					.Select(s => (s.FriendId == userId ? s.UserId : s.FriendId))
+					.ToList();
+
+				return friends;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occured during getting the user: {userId} friends.", userId);
 				throw;
 			}
 		}

@@ -98,7 +98,7 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<CollectionWithPaginationData<Post>>> GetPosts(string userId, [FromQuery] PaginationParams paginationParams)
+		public async Task<ActionResult<CollectionWithPaginationData<PostDbo>>> GetPosts(string userId, [FromQuery] PaginationParams paginationParams)
 		{
 			try
 			{
@@ -106,20 +106,24 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
-						PagedList<Post> postsToReturn = _postRepository.GetUserPosts(gUserId, paginationParams);
-						PaginationMetadata pagination = new PaginationMetadata();
-						if (postsToReturn != null)
-						{
-							postsToReturn.PreviousPageLink = postsToReturn.HasPrevious ?
-								this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetPosts") : null;
+						List<Post> postsFromRepo = _postRepository.GetUserPosts(gUserId);
+						List<PostDbo> postDbos = _mapper.Map<List<PostDbo>>(postsFromRepo);
 
-							postsToReturn.NextPageLink = postsToReturn.HasNext ?
-								this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetPosts") : null;
 
-							pagination = PaginationHelper.CreatePaginationMetadata<Post>(postsToReturn);
-							//Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
-						}
-						return Ok(new CollectionWithPaginationData<Post> { PaginationMetadata = pagination, Collection = postsToReturn });
+						PagedList<PostDbo> postsToReturn = PagedList<PostDbo>.Create(postDbos,
+							paginationParams.PageNumber,
+							paginationParams.PageSize,
+							(paginationParams.PageNumber - 1) * paginationParams.PageSize);
+
+						postsToReturn.PreviousPageLink = postsToReturn.HasPrevious ?
+							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetPosts") : null;
+
+						postsToReturn.NextPageLink = postsToReturn.HasNext ?
+							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetPosts") : null;
+
+						PaginationMetadata pagination = PaginationHelper.CreatePaginationMetadata<PostDbo>(postsToReturn);
+
+						return Ok(new CollectionWithPaginationData<PostDbo> { PaginationMetadata = pagination, Collection = postsToReturn });
 
 					}
 					else
@@ -153,9 +157,7 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
-						List<Guid> friendsId = _friendsRelationRepository.GetUserRelationships(gUserId)
-							.Select(s => (s.FriendId == gUserId ? s.UserId : s.FriendId))
-							.ToList();
+						List<Guid> friendsId = _friendsRelationRepository.GetUserFriends(gUserId);
 
 						List<Post> postsFromRepo = _postRepository.GetLatestFriendsPosts(gUserId, friendsId);
 						List<PostDbo> postsToReturn = _mapper.Map<List<PostDbo>>(postsFromRepo);
@@ -163,19 +165,16 @@ namespace MyFaceApi.Api.Controllers
 						var pagedListToReturn = PagedList<PostDbo>.Create(postsToReturn,
 						   paginationParams.PageNumber,
 						   paginationParams.PageSize,
-						   (paginationParams.PageNumber - 1) * paginationParams.PageSize);
-						PaginationMetadata pagination = new PaginationMetadata();
-						if (pagedListToReturn != null)
-						{
-							pagedListToReturn.PreviousPageLink = pagedListToReturn.HasPrevious ?
-								this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetPosts") : null;
+						  (paginationParams.PageNumber - 1) * paginationParams.PageSize);
 
-							pagedListToReturn.NextPageLink = pagedListToReturn.HasNext ?
-								this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetPosts") : null;
+						pagedListToReturn.PreviousPageLink = pagedListToReturn.HasPrevious ?
+							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetLatestPosts") : null;
 
-							pagination = PaginationHelper.CreatePaginationMetadata<PostDbo>(pagedListToReturn);
-							//Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
-						}
+						pagedListToReturn.NextPageLink = pagedListToReturn.HasNext ?
+							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetLatestPosts") : null;
+
+						PaginationMetadata pagination = PaginationHelper.CreatePaginationMetadata<PostDbo>(pagedListToReturn);
+
 						return Ok(new CollectionWithPaginationData<PostDbo> { PaginationMetadata = pagination, Collection = pagedListToReturn });
 
 					}

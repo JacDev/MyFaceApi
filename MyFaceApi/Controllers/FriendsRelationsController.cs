@@ -71,7 +71,7 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
-						var userRelations = _relationRepository.GetUserRelationships(gUserId);
+						var userRelations = _relationRepository.GetUserFriends(gUserId, null);
 						return Ok(userRelations);
 					}
 					else

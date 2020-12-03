@@ -109,7 +109,7 @@ namespace MyFaceApi.Api.Repository.Repositories
 				throw;
 			}
 		}
-		public PagedList<Post> GetUserPosts(Guid userId, PaginationParams paginationParams)
+		public List<Post> GetUserPosts(Guid userId)
 		{
 			_logger.LogDebug("Trying to get user posts: {userid}", userId);
 			if (userId == Guid.Empty)
@@ -124,10 +124,7 @@ namespace MyFaceApi.Api.Repository.Repositories
 					.OrderByDescending(x => x.WhenAdded)
 					.ToList();
 
-				return PagedList<Post>.Create(posts,
-					   paginationParams.PageNumber,
-					   paginationParams.PageSize,
-					   (paginationParams.PageNumber - 1) * paginationParams.PageSize);
+				return posts;
 			}
 			catch (Exception ex)
 			{

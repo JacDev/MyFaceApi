@@ -2,11 +2,13 @@
 using AutoFixture.AutoMoq;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 using MyFaceApi.IdentityServer.DataAccess.Data;
 using MyFaceApi.IdentityServer.DataAccess.Entities;
+using SemesterProject.MyFaceApi.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,10 +43,36 @@ namespace MyFaceApi.IdentityServer.Controllers
 				return BadRequest();
 			}
 		}
+		[HttpGet("users/getall")]
+		public ActionResult<List<BasicUserData>> GetUsersById([ModelBinder(typeof(ArrayModelBinder))] string[] ids)
+		{
+			List<AppUser> usersToReturn = new List<AppUser>();
+			try
+			{
+				foreach(var id in ids)
+				{
+					if(Guid.TryParse(id, out Guid gId))
+					{
+						usersToReturn.Add(_identityServerDbContext.Users.FirstOrDefault(x => x.Id == gId));
+					}
+					else
+					{
+						return BadRequest($"{gId} is not valid guid.");
+					}
+				}
+				return Ok(_mapper.Map<IEnumerable<BasicUserData>>(usersToReturn));
+			
+			}
+			catch (Exception ex)
+			{
+				//_logger.LogError(ex, "Error occured during getting the user posts. User id: {user}", userId);
+				return StatusCode(StatusCodes.Status500InternalServerError);
+			}
+		}
 		[HttpGet]
 		public async Task<IActionResult> Pupulate()
 		{
-			 var fixture = new Fixture().Customize(new AutoMoqCustomization());
+			var fixture = new Fixture().Customize(new AutoMoqCustomization());
 			List<AppUser> appUsers = new List<AppUser>();
 			fixture.AddManyTo(appUsers, 10);
 			foreach(var user in appUsers)
@@ -54,6 +82,22 @@ namespace MyFaceApi.IdentityServer.Controllers
 			
 			await _identityServerDbContext.SaveChangesAsync();
 			return Ok();
+		}
+		[HttpGet("users")]
+		public ActionResult<List<BasicUserData>> GetUsers()
+		{
+			List<AppUser> usersToReturn = _identityServerDbContext.Users.ToList();
+			try
+			{
+				
+				return Ok(_mapper.Map<IEnumerable<BasicUserData>>(usersToReturn));
+
+			}
+			catch (Exception ex)
+			{
+				//_logger.LogError(ex, "Error occured during getting the user posts. User id: {user}", userId);
+				return StatusCode(StatusCodes.Status500InternalServerError);
+			}
 		}
 	}
 }
