@@ -16,3 +16,8 @@
 /MyFaceApi.DataAccess/bin/Debug/netcoreapp3.1
 /MyFaceApi.Repository/bin/Debug/netcoreapp3.1
 /MyFaceApi.Repository/obj
+/MyFaceApi.IdentityServer/obj/Debug/netcoreapp3.1
+/MyFaceApi.IdentityServer/obj
+/MyFaceApi.IdentityServer.DataAccess/obj/Debug/netcoreapp3.1
+/MyFaceApi.Tests.UnitTests/obj
+/MyFaceApi.IdentityServer.DataAccess/obj
