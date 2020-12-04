@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
 using AutoFixture;
 using MyFaceApi.Api.DataAccess.Entities;
@@ -8,9 +7,6 @@ using Moq;
 using MyFaceApi.Api.Controllers;
 using MyFaceApi.Api.Repository.Helpers;
 using Microsoft.AspNetCore.Mvc;
-using MyFaceApi.Api.Extensions;
-using Microsoft.AspNetCore.Mvc.Routing;
-using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
@@ -75,13 +71,13 @@ namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
 		[Theory]
 		[InlineData(ConstIds.InvalidGuid, ConstIds.ExampleNotificationId)]
 		[InlineData(ConstIds.ExampleUserId, ConstIds.InvalidGuid)]
-		public void GetMessages_ReturnsBadRequestObjectResult_WhenTheUserOrWithWhoIdIsInvalid(string testUserId, string testFriendId)
+		public async void GetMessages_ReturnsBadRequestObjectResult_WhenTheUserOrWithWhoIdIsInvalid(string testUserId, string testFriendId)
 		{
 			//Arrange
 			var controller = new MessagesController(_loggerMock.Object, _mockMessagesRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetMessagesWith(testUserId, testFriendId, _paginationParams);
+			var result = await controller.GetMessagesWith(testUserId, testFriendId, _paginationParams);
 
 			//Assert
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -90,7 +86,7 @@ namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
 		[Theory]
 		[InlineData(true, false)]
 		[InlineData(false, true)]
-		public void GetMessages_ReturnsNotFoundObjectResult_WhenTheUserOrWithWhoDoesntExist(bool doesTheUserExist, bool doesTheFriendExist)
+		public async void GetMessages_ReturnsNotFoundObjectResult_WhenTheUserOrWithWhoDoesntExist(bool doesTheUserExist, bool doesTheFriendExist)
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
@@ -105,14 +101,14 @@ namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
 			var controller = new MessagesController(_loggerMock.Object, _mockMessagesRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetMessagesWith(ConstIds.ExampleUserId, ConstIds.ExampleFromWhoId, _paginationParams);
+			var result = await controller.GetMessagesWith(ConstIds.ExampleUserId, ConstIds.ExampleFromWhoId, _paginationParams);
 			//Assert
 			var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
 			Assert.Equal($"User: {ConstIds.ExampleUserId} or user: {ConstIds.ExampleFromWhoId} doesnt exist.", notFoundObjectResult.Value);
 			_mockUserRepo.Verify();
 		}
 		[Fact]
-		public void GetMessages_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
+		public async void GetMessages_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(new Guid(ConstIds.ExampleUserId)))
@@ -122,7 +118,7 @@ namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
 			var controller = new MessagesController(_loggerMock.Object, _mockMessagesRepo.Object, _mockUserRepo.Object, _mapper);
 
 			//Act
-			var result = controller.GetMessagesWith(ConstIds.ExampleUserId, ConstIds.ExampleFromWhoId, _paginationParams);
+			var result = await controller.GetMessagesWith(ConstIds.ExampleUserId, ConstIds.ExampleFromWhoId, _paginationParams);
 
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);

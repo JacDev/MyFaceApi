@@ -29,7 +29,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 
 			//Act
-			var result = controller.GetComments(ConstIds.ExamplePostId);
+			var result = controller.GetComments(ConstIds.ExamplePostId, _paginationsParams);
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -44,7 +44,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 
 			//Act
-			var result = controller.GetComments(ConstIds.InvalidGuid);
+			var result = controller.GetComments(ConstIds.InvalidGuid, _paginationsParams);
 
 			//Assert
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -61,7 +61,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 
 			//Act
-			var result = controller.GetComments(ConstIds.ExamplePostId);
+			var result = controller.GetComments(ConstIds.ExamplePostId, _paginationsParams);
 
 			//Assert
 			var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
@@ -79,7 +79,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
 
 			//Act
-			var result = controller.GetComments(ConstIds.ExamplePostId);
+			var result = controller.GetComments(ConstIds.ExamplePostId, _paginationsParams);
 
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);

@@ -31,7 +31,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 				.ReturnsAsync(postEntity)
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = await controller.AddPost(ConstIds.ExampleUserId, _postToAdd);
@@ -50,7 +50,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		public async void AddPost_ReturnsBadRequestObjectResult_WhenTheUserIdIsInvalid()
 		{
 			//Arrange
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = await controller.AddPost(ConstIds.InvalidGuid, _postToAdd);
@@ -67,7 +67,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 				.ReturnsAsync(false)
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = await controller.AddPost(ConstIds.ExampleUserId, _postToAdd);
@@ -85,7 +85,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = await controller.AddPost(ConstIds.ExampleUserId, _postToAdd);

@@ -1,10 +1,15 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.DboModels;
+using MyFaceApi.Api.Extensions;
+using MyFaceApi.Api.Helpers;
 using MyFaceApi.Api.Models.CommentModels;
+using MyFaceApi.Api.Repository.Helpers;
 using MyFaceApi.Api.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -86,17 +91,19 @@ namespace MyFaceApi.Api.Controllers
 		/// Return the found post comments
 		/// </summary>
 		/// <param name="postId">Post guid as a string </param>
+		/// <param name="paginationParams"></param>
 		/// <returns>Found post comments</returns>
 		/// <response code="200"> Returns the found post comments</response>
 		/// <response code="400"> If parameter is not a valid guid</response>    
 		/// <response code="404"> If post not found</response>   
 		/// <response code="500"> If internal error occured</response>
-		[HttpGet]
+		[HttpGet(Name = "GetComments")]
+		[AllowAnonymous]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<List<PostComment>> GetComments(string postId)
+		public ActionResult<CollectionWithPaginationData<PostComment>> GetComments(string postId, [FromQuery] PaginationParams paginationParams)
 		{
 			try
 			{
@@ -104,8 +111,22 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (_postRepository.CheckIfPostExists(gPostId))
 					{
-						List<PostComment> comments = _postCommentRepository.GetComments(gPostId);
-						return Ok(comments);
+						List<PostComment> commentsFromRepo = _postCommentRepository.GetComments(gPostId);
+
+						PagedList<PostComment> commentsToReturn = PagedList<PostComment>.Create(commentsFromRepo,
+							paginationParams.PageNumber,
+							paginationParams.PageSize,
+							(paginationParams.PageNumber - 1) * paginationParams.PageSize);
+
+						commentsToReturn.PreviousPageLink = commentsToReturn.HasPrevious ?
+							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetComments") : null;
+
+						commentsToReturn.NextPageLink = commentsToReturn.HasNext ?
+							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetComments") : null;
+
+						PaginationMetadata pagination = PaginationHelper.CreatePaginationMetadata<PostComment>(commentsToReturn);
+
+						return Ok(new CollectionWithPaginationData<PostComment> { PaginationMetadata = pagination, Collection = commentsToReturn });
 					}
 					else
 					{

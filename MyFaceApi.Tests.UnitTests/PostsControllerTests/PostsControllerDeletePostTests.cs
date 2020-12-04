@@ -25,7 +25,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			_mockPostRepo.Setup(repo => repo.DeletePostAsync(It.IsAny<Post>()))
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = await controller.DeletePost(ConstIds.ExamplePostId);
@@ -38,7 +38,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		public async void DeletePost_ReturnsBadRequestObjectResult_WhenThePostGuidIdIsInvalid()
 		{
 			//Arrange
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = await controller.DeletePost(ConstIds.InvalidGuid);
@@ -55,7 +55,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 				.Returns((Post)null)
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = await controller.DeletePost(ConstIds.ExamplePostId);
@@ -72,7 +72,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = await controller.DeletePost(ConstIds.ExamplePostId);

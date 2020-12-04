@@ -12,6 +12,7 @@ using MyFaceApi.Api.Repository.Interfaces;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using MyFaceApi.Api.Repository.Helpers;
 
 namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 {
@@ -19,7 +20,9 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 	{
 		protected readonly Mock<IUserRepository> _mockUserRepo;
 		protected readonly Mock<IPostRepository> _mockPostRepo;
+		protected readonly Mock<IFriendsRelationRepository> _mockRelationsRepo;
 		protected readonly Mock<ILogger<PostsController>> _loggerMock;
+		protected readonly PaginationParams _paginationsParams;
 		protected readonly IMapper _mapper;
 		protected readonly IFixture _fixture;
 		protected PostsControllerPreparation()
@@ -27,6 +30,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			//mocking repos
 			_mockUserRepo = new Mock<IUserRepository>();
 			_mockPostRepo = new Mock<IPostRepository>();
+			_mockRelationsRepo = new Mock<IFriendsRelationRepository>();
 			//mocking logger
 			_loggerMock = new Mock<ILogger<PostsController>>();
 			//mocking automapper
@@ -34,6 +38,12 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
 			_fixture = new Fixture().Customize(new AutoMoqCustomization());
+			_paginationsParams = new PaginationParams()
+			{
+				PageNumber = 0,
+				PageSize = 10,
+				Skip = 0
+			};
 		}
 		protected List<User> GetTestUserData()
 		{

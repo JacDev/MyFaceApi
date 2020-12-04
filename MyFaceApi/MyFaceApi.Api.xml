@@ -81,11 +81,12 @@
             <response code="404"> If user or post not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Api.Controllers.PostCommentsController.GetComments(System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.PostCommentsController.GetComments(System.String,MyFaceApi.Api.Repository.Helpers.PaginationParams)">
             <summary>
             Return the found post comments
             </summary>
             <param name="postId">Post guid as a string </param>
+            <param name="paginationParams"></param>
             <returns>Found post comments</returns>
             <response code="200"> Returns the found post comments</response>
             <response code="400"> If parameter is not a valid guid</response>    

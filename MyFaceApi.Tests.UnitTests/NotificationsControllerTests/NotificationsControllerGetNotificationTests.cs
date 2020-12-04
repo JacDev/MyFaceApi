@@ -41,13 +41,13 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 		[Theory]
 		[InlineData(ConstIds.InvalidGuid, ConstIds.ExampleNotificationId)]
 		[InlineData(ConstIds.ExampleUserId, ConstIds.InvalidGuid)]
-		public void GetNotification_ReturnsBadRequestObjectResult_WhenUserOrNotificationIdIsInvalid(string testUserId, string testNotificationId)
+		public async void GetNotification_ReturnsBadRequestObjectResult_WhenUserOrNotificationIdIsInvalid(string testUserId, string testNotificationId)
 		{
 			//Arrange
 			var controller = new NotificationsController(_loggerMock.Object, _mockNotificationRepo.Object, _mapper, _mockUserRepo.Object);
 
 			//Act
-			var result = controller.GetNotification(testUserId, testNotificationId);
+			var result = await controller.GetNotification(testUserId, testNotificationId);
 
 			//Assert
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -56,7 +56,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 		[Theory]
 		[InlineData(true, null)]
 		[InlineData(false, null)]
-		public void GetNotification_ReturnsNotFoundObjectResult_WhenUserOrNotificationDoesntExist(bool doesTheUserExists, Notification testNotificationData)
+		public async void GetNotification_ReturnsNotFoundObjectResult_WhenUserOrNotificationDoesntExist(bool doesTheUserExists, Notification testNotificationData)
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
@@ -69,7 +69,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 			var controller = new NotificationsController(_loggerMock.Object, _mockNotificationRepo.Object, _mapper, _mockUserRepo.Object);
 
 			//Act
-			var result = controller.GetNotification(ConstIds.ExampleUserId, ConstIds.ExampleNotificationId);
+			var result = await controller.GetNotification(ConstIds.ExampleUserId, ConstIds.ExampleNotificationId);
 			//Assert
 			var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
 
@@ -85,7 +85,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 			_mockUserRepo.Verify();
 		}
 		[Fact]
-		public void GetNotification_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
+		public async void GetNotification_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
 		{
 			//Arrange
 			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
@@ -95,7 +95,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 			var controller = new NotificationsController(_loggerMock.Object, _mockNotificationRepo.Object, _mapper, _mockUserRepo.Object);
 
 			//Act
-			var result = controller.GetNotification(ConstIds.ExampleUserId, ConstIds.ExampleNotificationId);
+			var result = await controller.GetNotification(ConstIds.ExampleUserId, ConstIds.ExampleNotificationId);
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);

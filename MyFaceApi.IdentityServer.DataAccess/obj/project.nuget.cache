@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ZSxzO75IhLUVIWxtjF2Q9N5cyq6EpmuborenWON86naK/1nRwhWR3k8qNU+sio8/tV+d569SsTvwF82xLEfwFg==",
+  "dgSpecHash": "7nPa4yFoezyp0yJ3i7/XXnmXObcgKI6luGV3rH5h6UvCyZUS9WfZGVprNHAHP1yA8PRObxtqbHaLlW97oV6jFw==",
   "success": true,
   "projectFilePath": "C:\\Users\\lenovo\\source\\repos\\MyFaceApi\\MyFaceApi.IdentityServer.DataAccess\\MyFaceApi.IdentityServer.DataAccess.csproj",
   "expectedPackageFiles": [

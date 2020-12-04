@@ -24,7 +24,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 				.Returns(post)
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = controller.GetPost(ConstIds.ExamplePostId);
@@ -39,7 +39,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		public void GetPost_ReturnsBadRequestObjectResult_WhenThePostIdIsInvalid()
 		{
 			//Arrange
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = controller.GetPost(ConstIds.InvalidGuid);
@@ -56,7 +56,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 				.Returns((Post)null)
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = controller.GetPost(ConstIds.ExamplePostId);
@@ -73,7 +73,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = controller.GetPost(ConstIds.ExamplePostId);

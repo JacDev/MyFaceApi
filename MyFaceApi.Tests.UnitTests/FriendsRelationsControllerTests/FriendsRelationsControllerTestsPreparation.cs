@@ -8,6 +8,7 @@ using MyFaceApi.Api.Controllers;
 using MyFaceApi.Api.DataAccess.Entities;
 using MyFaceApi.Api.Repository.Interfaces;
 using System.Collections.Generic;
+using MyFaceApi.Api.Repository.Helpers;
 
 namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 {
@@ -18,6 +19,8 @@ namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 		protected readonly Mock<ILogger<FriendsRelationsController>> _loggerMock;
 		protected readonly IMapper _mapper;
 		protected readonly IFixture _fixture;
+		protected readonly PaginationParams _paginationsParams;
+
 		protected FriendsRelationsControllerTestsPreparation()
 		{
 			//mocking repos
@@ -30,6 +33,12 @@ namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
 			_fixture = new Fixture().Customize(new AutoMoqCustomization());
+			_paginationsParams = new PaginationParams()
+			{
+				PageNumber = 0,
+				PageSize = 10,
+				Skip = 0
+			};
 		}
 		protected List<FriendsRelation> GetTestRelationData()
 		{

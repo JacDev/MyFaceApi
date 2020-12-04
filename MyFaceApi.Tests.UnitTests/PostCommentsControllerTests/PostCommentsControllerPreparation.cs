@@ -12,6 +12,7 @@ using MyFaceApi.Api.Repository.Interfaces;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using MyFaceApi.Api.Repository.Helpers;
 
 namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 {
@@ -23,6 +24,8 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 		protected readonly Mock<ILogger<PostCommentsController>> _loggerMock;
 		protected readonly IMapper _mapper;
 		protected readonly IFixture _fixture;
+		protected readonly PaginationParams _paginationsParams;
+
 		protected PostCommentsControllerPreparation()
 		{
 			//mocking repos
@@ -36,6 +39,12 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
 			_fixture = new Fixture().Customize(new AutoMoqCustomization());
+			_paginationsParams = new PaginationParams()
+			{
+				PageNumber = 0,
+				PageSize = 10,
+				Skip = 0
+			};
 		}
 		protected List<PostComment> GetTestPostData()
 		{

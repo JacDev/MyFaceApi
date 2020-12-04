@@ -63,9 +63,8 @@ namespace MyFaceApi.IdentityServer.Controllers
 				return Ok(_mapper.Map<IEnumerable<BasicUserData>>(usersToReturn));
 			
 			}
-			catch (Exception ex)
+			catch
 			{
-				//_logger.LogError(ex, "Error occured during getting the user posts. User id: {user}", userId);
 				return StatusCode(StatusCodes.Status500InternalServerError);
 			}
 		}
@@ -93,7 +92,7 @@ namespace MyFaceApi.IdentityServer.Controllers
 				return Ok(_mapper.Map<IEnumerable<BasicUserData>>(usersToReturn));
 
 			}
-			catch (Exception ex)
+			catch
 			{
 				//_logger.LogError(ex, "Error occured during getting the user posts. User id: {user}", userId);
 				return StatusCode(StatusCodes.Status500InternalServerError);

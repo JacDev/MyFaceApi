@@ -73,8 +73,9 @@ namespace MyFaceApi.Api.Repository.Repositories
 			try
 			{
 				var comments = _appDbContext.PostComments
-				.Where(p => p.Id == postId);
-				return comments.ToList();
+				.Where(p => p.PostId == postId)
+				.ToList();
+				return comments;
 			}
 			catch (Exception ex)
 			{

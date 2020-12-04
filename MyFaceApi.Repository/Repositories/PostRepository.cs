@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoFixture;
+using AutoFixture.AutoMoq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.DataAccess.Data;
 using MyFaceApi.Api.DataAccess.Entities;
@@ -120,6 +122,8 @@ namespace MyFaceApi.Api.Repository.Repositories
 			{
 				List<Post> posts = new List<Post>();
 				posts = _appDbContext.Posts
+					.Include(nameof(_appDbContext.PostComments))
+					.Include(nameof(_appDbContext.PostReactions))
 					.Where(s => s.UserId == userId)
 					.OrderByDescending(x => x.WhenAdded)
 					.ToList();

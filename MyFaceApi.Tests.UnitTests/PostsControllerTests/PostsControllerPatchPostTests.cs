@@ -27,7 +27,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			_mockPostRepo.Setup(repo => repo.UpdatePostAsync(It.IsAny<Post>()))
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			var objectValidator = new Mock<IObjectModelValidator>();
 			objectValidator.Setup(o => o.Validate(It.IsAny<ActionContext>(),
@@ -48,7 +48,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		public async void PartiallyUpdatePost_ReturnsBadRequestObjectResult_WhenThePostIdIsInvalid()
 		{
 			//Arrange
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = await controller.PartiallyUpdatePost(ConstIds.InvalidGuid, GetJsonPatchDocument());
@@ -65,7 +65,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 				.Returns((Post)null)
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = await controller.PartiallyUpdatePost(ConstIds.ExamplePostId, GetJsonPatchDocument());
@@ -82,7 +82,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
 
 			//Act
 			var result = await controller.PartiallyUpdatePost(ConstIds.ExamplePostId, GetJsonPatchDocument());
