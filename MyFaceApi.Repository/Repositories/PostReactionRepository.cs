@@ -74,9 +74,28 @@ namespace MyFaceApi.Api.Repository.Repositories
 			}
 			try
 			{
-				var reactions =  _appDbContext.PostReactions.FirstOrDefault(p => p.Id == reactionId);
+				var reaction = _appDbContext.PostReactions.FirstOrDefault(p => p.Id == reactionId);
 
-				return reactions;
+				return reaction;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occured during getting the reaction.");
+				throw;
+			}
+		}
+		public PostReaction GetPostReaction(Guid fromWho, Guid postId)
+		{
+			_logger.LogDebug("Trying to get reaction: fromWho id: {userId}, post id: {postId}.", fromWho, postId);
+			if (fromWho == Guid.Empty || postId == Guid.Empty)
+			{
+				throw new ArgumentNullException(nameof(Guid));
+			}
+			try
+			{
+				var reaction = _appDbContext.PostReactions.FirstOrDefault(p => p.FromWho == fromWho && p.PostId == postId);
+
+				return reaction;
 			}
 			catch (Exception ex)
 			{
@@ -95,7 +114,7 @@ namespace MyFaceApi.Api.Repository.Repositories
 			try
 			{
 				List<PostReaction> reactions = _appDbContext.PostReactions
-					.Where(p => p.Id == postId)
+					.Where(p => p.PostId == postId)
 					.ToList();
 
 				return reactions;

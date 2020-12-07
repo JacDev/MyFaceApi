@@ -59,6 +59,7 @@ namespace MyFaceApi.Api.Controllers
 					if (_postRepository.CheckIfPostExists(gPostId) && await _userRepository.CheckIfUserExists(gUserId))
 					{
 						PostReaction postReactionEntity = _mapper.Map<PostReaction>(reactionToAdd);
+						postReactionEntity.WhenAdded = DateTime.Now;
 						postReactionEntity.PostId = gPostId;
 						postReactionEntity = await _postReactionRepository.AddPostReactionAsync(postReactionEntity);
 
@@ -67,7 +68,7 @@ namespace MyFaceApi.Api.Controllers
 							{
 								userId,
 								postId = postReactionEntity.PostId,
-								commentId = postReactionEntity.Id
+								reactionId = postReactionEntity.Id
 							},
 							postReactionEntity);
 					}
@@ -78,7 +79,7 @@ namespace MyFaceApi.Api.Controllers
 				}
 				else
 				{
-					return BadRequest($"{userId} or {postId} is not valid Guid.");
+					return BadRequest($"{userId} or {postId} is not valid guid.");
 				}
 			}
 			catch (Exception ex)
@@ -96,7 +97,6 @@ namespace MyFaceApi.Api.Controllers
 		/// <response code="400"> If parameter is not a valid guid</response>    
 		/// <response code="404"> If post not found</response>   
 		/// <response code="500"> If internal error occured</response>
-		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -232,7 +232,8 @@ namespace MyFaceApi.Api.Controllers
 		/// <summary>
 		/// Remove a reaction from the database
 		/// </summary>
-		/// <param name="reactionId"></param>
+		/// <param name="postId"></param>
+		/// <param name="fromWho"></param>
 		/// <returns>
 		/// Status 204 no content if the reaction has been removed
 		/// </returns>
@@ -240,33 +241,40 @@ namespace MyFaceApi.Api.Controllers
 		/// <response code="400"> If the post is not valid</response>    
 		/// <response code="404"> If the post not found</response>
 		/// <response code="500"> If internal error occured</response>
-		[HttpDelete("{reactionId}")]
+		[HttpDelete("{fromWho}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult> DeletePostReaction(string reactionId)
+		public async Task<ActionResult> DeletePostReaction(string postId, string fromWho)
 		{
 			try
 			{
-				if (Guid.TryParse(reactionId, out Guid gReactionId))
+				if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(fromWho, out Guid gFromWho))
 				{
-					PostReaction reactionFromRepo = _postReactionRepository.GetPostReaction(gReactionId);
-					if (reactionFromRepo == null)
+					if (_postRepository.CheckIfPostExists(gPostId) && await _userRepository.CheckIfUserExists(gFromWho))
 					{
-						return NotFound();
+						PostReaction reactionFromRepo = _postReactionRepository.GetPostReaction(gFromWho, gPostId);
+						if (reactionFromRepo == null)
+						{
+							return NotFound();
+						}
+						await _postReactionRepository.DeletePostReactionAsync(reactionFromRepo);
+						return NoContent();
 					}
-					await _postReactionRepository.DeletePostReactionAsync(reactionFromRepo);
-					return NoContent();
+					else
+					{
+						return NotFound($"User: {gFromWho} or post {postId} not found.");
+					}
 				}
 				else
 				{
-					return BadRequest($"{reactionId} is not valid Guid.");
+					return BadRequest($"{fromWho} or {postId} is not valid Guid.");
 				}
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Error occured during removing the reaction. Reaction id: {reactionId}", reactionId);
+				_logger.LogError(ex, "Error occured during removing the reaction. FromWho id: {fromWho}, post id: {postId}", fromWho, postId);
 				return StatusCode(StatusCodes.Status500InternalServerError);
 			}
 		}

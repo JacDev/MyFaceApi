@@ -51,6 +51,7 @@ namespace MyFaceApi.Api.Controllers
 		/// <response code="404"> If user or post not found</response>   
 		/// <response code="500"> If internal error occured</response>
 		[HttpPost]
+		[AllowAnonymous]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -64,6 +65,8 @@ namespace MyFaceApi.Api.Controllers
 					if (_postRepository.CheckIfPostExists(gPostId) && await _userRepository.CheckIfUserExists(gUserId))
 					{
 						PostComment commentEntity = _mapper.Map<PostComment>(postComment);
+						commentEntity.PostId = gPostId;
+						commentEntity.WhenAdded = DateTime.Now;
 						commentEntity = await _postCommentRepository.AddCommentAsync(commentEntity);
 
 						return CreatedAtRoute("GetComment",

@@ -10,5 +10,6 @@ namespace MyFaceApi.Api.DataAccess.Entities
 		public Guid Id { get; set; }
 		[Required]
 		public Guid PostId { get; set; }
+		public DateTime WhenAdded { get; set; }
 	}
 }

@@ -8,5 +8,7 @@ namespace MyFaceApi.Api.DataAccess.Entities
 	{
 		[Key]
 		public Guid Id { get; set; }
+		public Guid PostId { get; set; }
+		public DateTime WhenAdded { get; set; }
 	}
 }

@@ -8,8 +8,6 @@ namespace MyFaceApi.Api.DataAccess.ModelsBasicInfo
 	{
 		[Required]
 		public Guid FromWho { get; set; }
-		[Required]
-		public DateTime WhenAdded { get; set; }
 		public ReactionType Reaction { get; set; }
 	}
 }

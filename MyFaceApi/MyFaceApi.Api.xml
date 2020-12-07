@@ -182,11 +182,12 @@
             <response code="404"> If the reaction not found</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Api.Controllers.PostReactionsController.DeletePostReaction(System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.PostReactionsController.DeletePostReaction(System.String,System.String)">
             <summary>
             Remove a reaction from the database
             </summary>
-            <param name="reactionId"></param>
+            <param name="postId"></param>
+            <param name="fromWho"></param>
             <returns>
             Status 204 no content if the reaction has been removed
             </returns>

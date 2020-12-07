@@ -11,6 +11,7 @@ namespace MyFaceApi.Api.Repository.Interfaces
 		Task DeletePostReactionAsync(PostReaction postReaction);
 		List<PostReaction> GetPostReactions(Guid postId);
 		PostReaction GetPostReaction(Guid reactionId);
+		PostReaction GetPostReaction(Guid fromWho, Guid postId);
 		Task UpdatePostReactionAsync(PostReaction postReaction);
 	}
 }

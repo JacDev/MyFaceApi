@@ -33,7 +33,7 @@ namespace MyFaceApi.IdentityServer.Controllers
 		[HttpGet("users/{userId}")]
 		public ActionResult<BasicUserData> GetUser(string userId)
 		{
-			if(Guid.TryParse(userId, out Guid gUserId))
+			if (Guid.TryParse(userId, out Guid gUserId))
 			{
 				AppUser user = _identityServerDbContext.Users.FirstOrDefault(x => x.Id == gUserId);
 				return _mapper.Map<BasicUserData>(user);
@@ -49,9 +49,9 @@ namespace MyFaceApi.IdentityServer.Controllers
 			List<AppUser> usersToReturn = new List<AppUser>();
 			try
 			{
-				foreach(var id in ids)
+				foreach (var id in ids)
 				{
-					if(Guid.TryParse(id, out Guid gId))
+					if (Guid.TryParse(id, out Guid gId))
 					{
 						usersToReturn.Add(_identityServerDbContext.Users.FirstOrDefault(x => x.Id == gId));
 					}
@@ -61,24 +61,84 @@ namespace MyFaceApi.IdentityServer.Controllers
 					}
 				}
 				return Ok(_mapper.Map<IEnumerable<BasicUserData>>(usersToReturn));
-			
+
 			}
 			catch
 			{
 				return StatusCode(StatusCodes.Status500InternalServerError);
 			}
 		}
-		[HttpGet]
+		[HttpGet("p")]
 		public async Task<IActionResult> Pupulate()
 		{
-			var fixture = new Fixture().Customize(new AutoMoqCustomization());
-			List<AppUser> appUsers = new List<AppUser>();
-			fixture.AddManyTo(appUsers, 10);
-			foreach(var user in appUsers)
+			//var fixture = new Fixture().Customize(new AutoMoqCustomization());
+			//List<AppUser> appUsers = new List<AppUser>();
+			//fixture.AddManyTo(appUsers, 10);
+			//foreach(var user in appUsers)
+			//{
+			//	await _userManager.CreateAsync(user);
+			//}
+			var users = _identityServerDbContext.Users.ToList();
+			var names = new List<string>(){"Aaron",
+"Abbo			",
+"Abbon			",
+"Abdiasz		",
+"Abdon			",
+"Abel			",
+"Abelard		",
+"Abercjusz		",
+"Abiasz			",
+"Abigail		",
+"Abraham		",
+"Absalon		",
+"Abundancja		",
+"Abundancjusz	",
+"Achacja		",
+"Achacjusz		",
+"Achacy			",
+"Achilles		",
+"Ada			",
+"Adalbert		",
+"Adalberta		",
+"Adalgunda		",
+"Adalruna		",
+"Alruna			",
+"Adalryk		",
+"Alderyk		",
+"Adalwin		",
+"Adalwina		" };
+
+			var lastnames = new List<string>()
 			{
-				await _userManager.CreateAsync(user);
+"Nowak		",
+"Kowalski    ",
+"Wiśniewski  ",
+"Wójcik		",
+"Kowalczyk   ",
+"Kamiński    ",
+"Lewandowski ",
+"Zieliński   ",
+"Woźniak		",
+"Szymański   ",
+"Dąbrowski   ",
+"Kozłowski   ",
+"Mazur		",
+"Jankowski   ",
+"Kwiatkowski ",
+"Krawczyk    ",
+"Kaczmarek   ",
+"Piotrowski  ",
+"Grabowski",
+"Wojciechowski"
+
+			};
+			for(int i = 0; i < users.Count;++ i)
+			{
+				//users[i].FirstName = names[i].Trim();
+				//users[i].LastName = lastnames[i].Trim();
+				users[i].ProfileImagePath = null;
 			}
-			
+
 			await _identityServerDbContext.SaveChangesAsync();
 			return Ok();
 		}
@@ -88,7 +148,7 @@ namespace MyFaceApi.IdentityServer.Controllers
 			List<AppUser> usersToReturn = _identityServerDbContext.Users.ToList();
 			try
 			{
-				
+
 				return Ok(_mapper.Map<IEnumerable<BasicUserData>>(usersToReturn));
 
 			}
