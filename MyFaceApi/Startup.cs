@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyFaceApi.Api.DataAccess.Data;
+using MyFaceApi.Api.FileManager;
 using MyFaceApi.Api.IdentityServerAccess;
 using MyFaceApi.Api.Repository;
 using MyFaceApi.Api.Repository.Interfaces;
@@ -96,7 +97,7 @@ namespace MyFaceApi
 			
 			
 			services.AddScoped<IUserRepository, UserIdentityServerAccess>();
-			
+			services.AddScoped<IImageManager, ImageManager>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

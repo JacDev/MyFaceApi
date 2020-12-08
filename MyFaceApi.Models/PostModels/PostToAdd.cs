@@ -1,10 +1,10 @@
 ﻿using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
-using System;
+using Microsoft.AspNetCore.Http;
 
 namespace MyFaceApi.Api.Models.PostModels
 {
 	public class PostToAdd : BasicPostData
 	{
-		public DateTime WhenAdded { get; set; }
+		public IFormFile Picture { get; set; } = null;
 	}
 }

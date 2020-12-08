@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.DataAccess.Entities;
 using MyFaceApi.Api.DboModels;
 using MyFaceApi.Api.Extensions;
+using MyFaceApi.Api.FileManager;
 using MyFaceApi.Api.Helpers;
 using MyFaceApi.Api.Models.PostModels;
 using MyFaceApi.Api.Repository.Helpers;
@@ -16,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace MyFaceApi.Api.Controllers
 {
@@ -28,17 +30,20 @@ namespace MyFaceApi.Api.Controllers
 		private readonly IUserRepository _userRepository;
 		private readonly IMapper _mapper;
 		private readonly IFriendsRelationRepository _friendsRelationRepository;
+		private readonly IImageManager _imagesManager;
 		public PostsController(ILogger<PostsController> logger,
 			IPostRepository postRepository,
 			IUserRepository userRepository,
 			IMapper mapper,
-			IFriendsRelationRepository friendsRelationRepository)
+			IFriendsRelationRepository friendsRelationRepository,
+			IImageManager imagesManager)
 		{
 			_logger = logger;
 			_postRepository = postRepository;
 			_userRepository = userRepository;
 			_mapper = mapper;
 			_friendsRelationRepository = friendsRelationRepository;
+			_imagesManager = imagesManager;
 			_logger.LogTrace("PostsController created");
 		}
 		/// <summary>
@@ -108,7 +113,6 @@ namespace MyFaceApi.Api.Controllers
 					{
 						List<Post> postsFromRepo = _postRepository.GetUserPosts(gUserId);
 						List<PostDbo> postDbos = _mapper.Map<List<PostDbo>>(postsFromRepo);
-
 
 						PagedList<PostDbo> postsToReturn = PagedList<PostDbo>.Create(postDbos,
 							paginationParams.PageNumber,
@@ -209,7 +213,7 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<Post>> AddPost(string userId, PostToAdd post)
+		public async Task<ActionResult<Post>> AddPost(string userId, [FromForm] PostToAdd post)
 		{
 			try
 			{
@@ -217,7 +221,15 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (await _userRepository.CheckIfUserExists(gUserId))
 					{
+						string imagePath = null, fullImagePath = null;
+						if (post.Picture != null)
+						{
+							(imagePath, fullImagePath) = await _imagesManager.SaveImage(post.Picture);
+						}
 						Post postEntity = _mapper.Map<Post>(post);
+						postEntity.ImageFullPath = fullImagePath;
+						postEntity.ImagePath = imagePath;
+						postEntity.WhenAdded = DateTime.Now;
 						postEntity.UserId = gUserId;
 						postEntity = await _postRepository.AddPostAsync(postEntity);
 
@@ -321,6 +333,10 @@ namespace MyFaceApi.Api.Controllers
 					{
 						return NotFound();
 					}
+					if (postFromRepo.ImageFullPath!=null && System.IO.File.Exists(postFromRepo.ImageFullPath))
+					{
+						System.IO.File.Delete(postFromRepo.ImageFullPath);
+					}
 					await _postRepository.DeletePostAsync(postFromRepo);
 					return NoContent();
 				}
@@ -333,6 +349,22 @@ namespace MyFaceApi.Api.Controllers
 			{
 				_logger.LogError(ex, "Error occured during removing the post. Post id: {postId}", postId);
 				return StatusCode(StatusCodes.Status500InternalServerError);
+			}
+		}
+		[AllowAnonymous]
+		[HttpGet("image/{image}")]
+		public IActionResult Image(string image)
+		{
+			try
+			{
+				string mime = image.Substring(image.LastIndexOf('.') + 1);
+				return new FileStreamResult(_imagesManager.ImageStream(image), $"image/{mime}");
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError($"Something went wrong during streaming image: {image}");
+				_logger.LogError($"Exception info: {ex.Message} {ex.Source}");
+				return RedirectToAction("Error", "Error");
 			}
 		}
 	}

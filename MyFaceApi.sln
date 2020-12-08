@@ -13,9 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.Api.Models", "MyF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.Api.DataAccess", "MyFaceApi.DataAccess\MyFaceApi.Api.DataAccess.csproj", "{A54EE7D7-8FB6-469A-8D6E-02E08B87520E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFaceApi.IdentityServer", "MyFaceApi.IdentityServer\MyFaceApi.IdentityServer.csproj", "{5724145D-2C29-4B64-AA14-CB20DED6B19A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.IdentityServer", "MyFaceApi.IdentityServer\MyFaceApi.IdentityServer.csproj", "{5724145D-2C29-4B64-AA14-CB20DED6B19A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFaceApi.IdentityServer.DataAccess", "MyFaceApi.IdentityServer.DataAccess\MyFaceApi.IdentityServer.DataAccess.csproj", "{356516C0-A2C3-496E-AAC6-76104FA80149}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.IdentityServer.DataAccess", "MyFaceApi.IdentityServer.DataAccess\MyFaceApi.IdentityServer.DataAccess.csproj", "{356516C0-A2C3-496E-AAC6-76104FA80149}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{2B4D05E0-C71C-4633-A05F-C79634E802CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

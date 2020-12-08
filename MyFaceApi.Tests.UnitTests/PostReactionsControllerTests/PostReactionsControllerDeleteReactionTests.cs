@@ -28,7 +28,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
-			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId);
+			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId, ConstIds.ExampleFromWhoId);
 
 			//Act
 			var noContentResult = Assert.IsType<NoContentResult>(result);
@@ -41,7 +41,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
-			var result = await controller.DeletePostReaction(ConstIds.InvalidGuid);
+			var result = await controller.DeletePostReaction(ConstIds.InvalidGuid, ConstIds.ExampleFromWhoId);
 
 			//Assert
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -58,7 +58,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
-			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId);
+			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId, ConstIds.ExampleFromWhoId);
 
 			//Assert
 			var notFoundResult = Assert.IsType<NotFoundResult>(result);
@@ -75,7 +75,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
 
 			//Act
-			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId);
+			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId, ConstIds.ExampleFromWhoId);
 
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result);
