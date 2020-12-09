@@ -27,6 +27,19 @@ namespace MyFaceApi.IdentityServer
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddCors(options =>
+			{
+				// this defines a CORS policy called "default"
+				options.AddPolicy("default", policy =>
+				{
+					policy.WithOrigins("http://localhost:4200")
+						.AllowAnyHeader()
+						.AllowAnyMethod();
+					//.AllowCredentials();
+					//.AllowAnyOrigin();
+				});
+			});
+
 			services.AddControllersWithViews();
 			var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
@@ -94,6 +107,8 @@ namespace MyFaceApi.IdentityServer
 			app.UseStaticFiles();
 
 			app.UseRouting();
+
+			app.UseCors("default");
 
 			app.UseIdentityServer();
 

@@ -13,6 +13,7 @@ namespace MyFaceApi.Api.Repository
 			services.AddTransient<IPostCommentRepository, PostCommentRepository>();
 			services.AddTransient<IFriendsRelationRepository, FriendsRelationRepository>();
 			services.AddTransient<IMessageRepository, MessageRepository>();
+			services.AddTransient<IOnlineUsersRepository, OnlineUsersRepository>();
 			return services;
 		}
 	}

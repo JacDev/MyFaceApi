@@ -28,7 +28,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 				.Returns(user.Posts.ToList())
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
 
 			//Act
 			var result = controller.GetPosts(ConstIds.ExampleUserId, _paginationsParams);
@@ -45,7 +45,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		public async void GetPosts_ReturnsBadRequestObjectResult_WhenTheUserIdIsInvalid()
 		{
 			//Arrange
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
 
 			//Act
 			var result = await controller.GetPosts(ConstIds.InvalidGuid, _paginationsParams);
@@ -62,7 +62,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 				.ReturnsAsync(false)
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
 
 			//Act
 			var result = await controller.GetPosts(ConstIds.ExampleUserId, _paginationsParams);
@@ -80,7 +80,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object);
+			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
 
 			//Act
 			var result = await controller.GetPosts(ConstIds.ExampleUserId, _paginationsParams);

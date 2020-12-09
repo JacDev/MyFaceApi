@@ -13,6 +13,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using MyFaceApi.Api.Repository.Helpers;
+using MyFaceApi.Api.FileManager;
 
 namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 {
@@ -22,6 +23,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		protected readonly Mock<IPostRepository> _mockPostRepo;
 		protected readonly Mock<IFriendsRelationRepository> _mockRelationsRepo;
 		protected readonly Mock<ILogger<PostsController>> _loggerMock;
+		protected readonly Mock<IImageManager> _mockImageManager;
 		protected readonly PaginationParams _paginationsParams;
 		protected readonly IMapper _mapper;
 		protected readonly IFixture _fixture;
@@ -36,6 +38,8 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			//mocking automapper
 			var myProfile = new PostProfiles();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
+
+			_mockImageManager = new Mock<IImageManager>();
 			_mapper = new Mapper(configuration);
 			_fixture = new Fixture().Customize(new AutoMoqCustomization());
 			_paginationsParams = new PaginationParams()

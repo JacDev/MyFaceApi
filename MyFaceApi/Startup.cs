@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyFaceApi.Api.DataAccess.Data;
 using MyFaceApi.Api.FileManager;
+using MyFaceApi.Api.Hubs;
 using MyFaceApi.Api.IdentityServerAccess;
 using MyFaceApi.Api.Repository;
 using MyFaceApi.Api.Repository.Interfaces;
@@ -84,10 +85,16 @@ namespace MyFaceApi
 					options.UseSqlServer(Configuration.GetConnectionString("MyFaceApi"),
 					b => b.MigrationsAssembly("MyFaceApi.Api"));
 					});
+			services.AddDbContext<OnlineUsersDbContext>(
+				options => {
+					options.UseSqlServer(Configuration.GetConnectionString("MyFaceOnlineUsers"),
+					b => b.MigrationsAssembly("MyFaceApi.Api"));
+				});
 
 
 			services.AddScoped<IAppDbContext>(provider => provider.GetService<AppDbContext>());
-		
+			services.AddScoped<IOnlineUsersDbContext>(provider => provider.GetService<OnlineUsersDbContext>());
+
 			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 			services.AddRepositories();
@@ -98,6 +105,7 @@ namespace MyFaceApi
 			
 			services.AddScoped<IUserRepository, UserIdentityServerAccess>();
 			services.AddScoped<IImageManager, ImageManager>();
+			services.AddSignalR();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -132,6 +140,7 @@ namespace MyFaceApi
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
+				endpoints.MapHub<MessagesHub>("/messagesHub");
 			});
 		}
 	}
