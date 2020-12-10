@@ -8,7 +8,7 @@ namespace MyFaceApi.Api.Repository.Interfaces
 {
 	public interface IMessageRepository
 	{
-		PagedList<Message> GetUserMessagesWith(Guid userId, Guid friendId, PaginationParams paginationParams);
+		Task<List<Message>> GetUserMessagesWith(Guid userId, Guid friendId);
 		Task<Message> AddMessageAsync(Message message);
 		Task DeleteMessageAsync(Message messageid);
 		Message GetMessage(Guid messageId);

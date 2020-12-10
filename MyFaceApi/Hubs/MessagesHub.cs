@@ -27,24 +27,24 @@ namespace MyFaceApi.Api.Hubs
 			_logger = logger;
 			_notificationRepository = notificationRepository;
 		}
-		public async Task SendMessageToUser(string toWhoId, string message)
+		public async Task SendMessageToUser(string toWhoId, string message, DateTime when)
 		{
 			try
 			{
 				var fromWhoUser = GetLoggedUser().Id;
-				if (!string.IsNullOrWhiteSpace(toWhoId) && Guid.TryParse(fromWhoUser, out Guid gToWhoId))
+				if (!string.IsNullOrWhiteSpace(toWhoId) && Guid.TryParse(toWhoId, out Guid gToWhoId))
 				{
 					if (_onlineUsersRepository.IsUserOnline(toWhoId))
 					{
 						string toWhoConnectionId = _onlineUsersRepository.GetOnlineUser(toWhoId).ConnectionId;
-						await Clients.Client(toWhoConnectionId).SendAsync("ReceiveMessage", fromWhoUser, message);
+						await Clients.Client(toWhoConnectionId).SendAsync("ReceiveMessage", fromWhoUser, message, when);
 					}
 					await _messageRepository.AddMessageAsync(new Message
 					{
 						FromWho = Guid.Parse(fromWhoUser),
 						Text = message,
 						ToWho = gToWhoId,
-						When = DateTime.Now
+						When = when
 					});
 				}
 				else

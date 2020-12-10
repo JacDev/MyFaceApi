@@ -20,6 +20,7 @@ using Serilog;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace MyFaceApi
 {
@@ -41,8 +42,8 @@ namespace MyFaceApi
 				{
 					policy.WithOrigins("http://localhost:4200")
 						.AllowAnyHeader()
-						.AllowAnyMethod();
-						//.AllowCredentials();
+						.AllowAnyMethod()
+						.AllowCredentials();
 					//.AllowAnyOrigin();
 				});
 			});
@@ -57,6 +58,22 @@ namespace MyFaceApi
 			{
 				options.Authority = identityServerUrl;
 				options.Audience = audienceName;
+				options.Events = new JwtBearerEvents
+				{
+					OnMessageReceived = context =>
+					{
+						var accessToken = context.Request.Query["token"];
+
+						// If the request is for our hub...
+						var path = context.HttpContext.Request.Path;
+						if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/messagesHub")))
+						{
+							// Read the token out of the query string
+							context.Token = accessToken;
+						}
+						return Task.CompletedTask;
+					}
+				};
 			});
 
 			services.AddControllers(options =>

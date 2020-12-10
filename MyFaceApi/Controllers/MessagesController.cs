@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using MyFaceApi.Api.Extensions;
 using MyFaceApi.Api.Helpers;
 using MyFaceApi.Api.Models.MessageModels;
+using MyFaceApi.Api.DboModels;
 
 namespace MyFaceApi.Api.Controllers
 {
@@ -47,7 +48,7 @@ namespace MyFaceApi.Api.Controllers
 			await _userRepository.AddUserAcync(users[0]);
 			await _userRepository.AddUserAcync(users[1]);
 			_fixture.AddManyTo(messages, 15);
-			for(int i = 0;i<10;++i)
+			for (int i = 0; i < 10; ++i)
 			{
 				messages[i].FromWho = users[0].Id;
 				messages[i].ToWho = users[1].Id;
@@ -59,7 +60,7 @@ namespace MyFaceApi.Api.Controllers
 				messages[i].ToWho = users[0].Id;
 				await _messageRepository.AddMessageAsync(messages[i]);
 			}
-			return messages;		
+			return messages;
 		}
 		[HttpGet("{messageId}", Name = "GetMessage")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -98,19 +99,22 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (await _userRepository.CheckIfUserExists(gUserId) && await _userRepository.CheckIfUserExists(gFriendId))
 					{
-						PagedList<Message> messagesToReturn = _messageRepository.GetUserMessagesWith(gUserId, gFriendId, paginationParams);
-						if (messagesToReturn != null)
-						{
-							messagesToReturn.PreviousPageLink = messagesToReturn.HasPrevious ?
-								this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetMessages") : null;
+						List<Message> messagesFromRepo = await _messageRepository.GetUserMessagesWith(gUserId, gFriendId);
+						PagedList<Message> messagesToReturn = PagedList<Message>.Create(messagesFromRepo,
+							paginationParams.PageNumber,
+							paginationParams.PageSize,
+							(paginationParams.PageNumber - 1) * paginationParams.PageSize + paginationParams.Skip);
 
-							messagesToReturn.NextPageLink = messagesToReturn.HasNext ?
-								this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetMessages") : null;
+						messagesToReturn.PreviousPageLink = messagesToReturn.HasPrevious ?
+							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetMessages") : null;
 
-							var paginationMetadata = PaginationHelper.CreatePaginationMetadata<Message>(messagesToReturn);
-							Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
-						}
-						return Ok(messagesToReturn);
+						messagesToReturn.NextPageLink = messagesToReturn.HasNext ?
+							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetMessages") : null;
+
+						PaginationMetadata pagination = PaginationHelper.CreatePaginationMetadata<Message>(messagesToReturn);
+
+						return Ok(new CollectionWithPaginationData<Message> { PaginationMetadata = pagination, Collection = messagesToReturn });
+
 					}
 					else
 					{

@@ -125,7 +125,7 @@ namespace MyFaceApi.Api.Repository.Repositories
 				throw;
 			}
 		}
-		public PagedList<Message> GetUserMessagesWith(Guid userId, Guid friendId, PaginationParams paginationParams)
+		public async Task<List<Message>> GetUserMessagesWith(Guid userId, Guid friendId)
 		{
 			_logger.LogDebug($"Trying to get the users: {userId} and {friendId} messages");
 			if (userId == Guid.Empty || friendId == Guid.Empty)
@@ -149,12 +149,10 @@ namespace MyFaceApi.Api.Repository.Repositories
 						Messages = new List<Message>()
 					};
 					_appDbContext.Conversations.Add(conversation);
+					await _appDbContext.SaveAsync();
 				}
 				var collection = conversation.Messages.OrderByDescending(x => x.When).ToList();
-				return PagedList<Message>.Create(collection,
-					   paginationParams.PageNumber,
-					   paginationParams.PageSize,
-					   paginationParams.Skip);
+				return collection;
 
 			}
 			catch (Exception ex)
