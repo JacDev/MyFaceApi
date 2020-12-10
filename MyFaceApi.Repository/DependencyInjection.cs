@@ -14,6 +14,7 @@ namespace MyFaceApi.Api.Repository
 			services.AddTransient<IFriendsRelationRepository, FriendsRelationRepository>();
 			services.AddTransient<IMessageRepository, MessageRepository>();
 			services.AddTransient<IOnlineUsersRepository, OnlineUsersRepository>();
+			services.AddTransient<INotificationRepository, NotificationRepository>();
 			return services;
 		}
 	}
