@@ -1,0 +1,12 @@
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Repository\obj\Debug\netcoreapp3.1\MyFaceApi.Repository.csprojAssemblyReference.cache
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Repository\obj\Debug\netcoreapp3.1\MyFaceApi.Repository.AssemblyInfoInputs.cache
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Repository\obj\Debug\netcoreapp3.1\MyFaceApi.Repository.AssemblyInfo.cs
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Repository\obj\Debug\netcoreapp3.1\MyFaceApi.Repository.csproj.CoreCompileInputs.cache
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Repository\bin\Debug\netcoreapp3.1\MyFaceApi.Repository.deps.json
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Repository\bin\Debug\netcoreapp3.1\MyFaceApi.Repository.dll
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Repository\bin\Debug\netcoreapp3.1\MyFaceApi.Repository.pdb
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Repository\obj\Debug\netcoreapp3.1\MyFaceApi.Repository.csproj.CopyComplete
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Repository\obj\Debug\netcoreapp3.1\MyFaceApi.Repository.dll
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Repository\obj\Debug\netcoreapp3.1\MyFaceApi.Repository.pdb
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Repository\bin\Debug\netcoreapp3.1\MyFaceApi.DataAccess.dll
+C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Repository\bin\Debug\netcoreapp3.1\MyFaceApi.DataAccess.pdb

@@ -31,3 +31,9 @@
 /Images
 /MyFaceApi/log.json
 /MyFaceAPI.Infractructure
+/MyFaceApi.Application/bin/Debug/netcoreapp3.1
+/MyFaceApi.Application/obj
+/MyFaceApi.Domain/bin/Debug/netcoreapp3.1
+/MyFaceApi.Infrastructure/bin/Debug/netcoreapp3.1
+/MyFaceApi.Infrastructure/obj/Debug/netcoreapp3.1
+/MyFaceApi.Infrastructure/obj
