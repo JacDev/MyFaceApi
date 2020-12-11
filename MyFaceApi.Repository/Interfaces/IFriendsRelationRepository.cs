@@ -8,8 +8,8 @@ namespace MyFaceApi.Api.Repository.Interfaces
 {
 	public interface IFriendsRelationRepository
 	{
-		PagedList<Guid> GetUserFriends(Guid userId, PaginationParams paginationParams);
-		List<Guid> GetUserFriends(Guid userId);
+		Task<PagedList<Guid>> GetUserFriendsAsync(Guid userId, PaginationParams paginationParams);
+		Task<List<Guid>> GetUserFriendsAsync(Guid userId);
 		FriendsRelation GetFriendRelation(Guid firstUser, Guid secondUser);
 		Task<FriendsRelation> AddRelationAsync(FriendsRelation friendRelation);
 		Task DeleteRelationAsync(FriendsRelation friendRelation);

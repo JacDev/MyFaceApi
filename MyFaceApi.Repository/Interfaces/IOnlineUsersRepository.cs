@@ -1,4 +1,6 @@
 ﻿using MyFaceApi.Api.DataAccess.Entities;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Repository.Interfaces
@@ -9,5 +11,6 @@ namespace MyFaceApi.Api.Repository.Interfaces
 		Task AddOnlineUser(OnlineUserModel onlineUserModel);
 		OnlineUserModel GetOnlineUser(string userId);
 		Task RemoveUser(OnlineUserModel user);
+		Task<List<Guid>> GetOnlineUsersAsync();
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.DataAccess.Data;
 using MyFaceApi.Api.DataAccess.Entities;
 using MyFaceApi.Api.Repository.Helpers;
@@ -107,7 +108,7 @@ namespace MyFaceApi.Api.Repository.Repositories
 			}
 		}
 
-		public PagedList<Guid> GetUserFriends(Guid userId, PaginationParams paginationParams)
+		public async Task<PagedList<Guid>> GetUserFriendsAsync(Guid userId, PaginationParams paginationParams)
 		{
 			_logger.LogDebug("Trying to get user: {userId} friends.", userId);
 			if (userId == Guid.Empty)
@@ -116,10 +117,10 @@ namespace MyFaceApi.Api.Repository.Repositories
 			}
 			try
 			{
-				var friends = _appDbContext.Relations.Where(s => s.UserId == userId || s.FriendId == userId)
+				var friends = await _appDbContext.Relations.Where(s => s.UserId == userId || s.FriendId == userId)
 					.OrderByDescending(x => x.SinceWhen)
 					.Select(s => (s.FriendId == userId ? s.UserId : s.FriendId))
-					.ToList();
+					.ToListAsync();
 
 				return PagedList<Guid>.Create(friends,
 				   paginationParams.PageNumber,
@@ -132,7 +133,7 @@ namespace MyFaceApi.Api.Repository.Repositories
 				throw;
 			}
 		}
-		public List<Guid> GetUserFriends(Guid userId)
+		public async Task<List<Guid>> GetUserFriendsAsync(Guid userId)
 		{
 			_logger.LogDebug("Trying to get user: {userId} friends.", userId);
 			if (userId == Guid.Empty)
@@ -141,10 +142,10 @@ namespace MyFaceApi.Api.Repository.Repositories
 			}
 			try
 			{
-				var friends = _appDbContext.Relations.Where(s => s.UserId == userId || s.FriendId == userId)
+				var friends = await _appDbContext.Relations.Where(s => s.UserId == userId || s.FriendId == userId)
 					.OrderByDescending(x => x.SinceWhen)
 					.Select(s => (s.FriendId == userId ? s.UserId : s.FriendId))
-					.ToList();
+					.ToListAsync();
 
 				return friends;
 			}

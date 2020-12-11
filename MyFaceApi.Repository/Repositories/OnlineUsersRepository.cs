@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.DataAccess.Data;
 using MyFaceApi.Api.DataAccess.Entities;
 using MyFaceApi.Api.Repository.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -86,6 +88,26 @@ namespace MyFaceApi.Api.Repository.Repositories
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Error occured during getting removing online user.");
+				throw;
+			}
+		}
+		public async Task<List<Guid>> GetOnlineUsersAsync()
+		{
+			_logger.LogDebug("Trying to get all online users.");
+
+			try
+			{
+				var usersStringIds = await _onlineUsersDbContext.OnlineUsers
+					.Select(x =>x.Id)
+					.ToListAsync();
+
+				List<Guid> usersGuidIds = new List<Guid>();
+				usersStringIds.ForEach(x => { usersGuidIds.Add(Guid.Parse(x)); });
+				return usersGuidIds;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occured during getting online usera.");
 				throw;
 			}
 		}

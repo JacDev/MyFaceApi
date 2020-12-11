@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.IdentityServer.Da
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{2B4D05E0-C71C-4633-A05F-C79634E802CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFaceAPI.Infractructure", "MyFaceAPI.Infractructure\MyFaceAPI.Infractructure.csproj", "{AB10F6D2-AF05-4EFA-B5C6-7C7BD2FB1ED3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{356516C0-A2C3-496E-AAC6-76104FA80149}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{356516C0-A2C3-496E-AAC6-76104FA80149}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{356516C0-A2C3-496E-AAC6-76104FA80149}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB10F6D2-AF05-4EFA-B5C6-7C7BD2FB1ED3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB10F6D2-AF05-4EFA-B5C6-7C7BD2FB1ED3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB10F6D2-AF05-4EFA-B5C6-7C7BD2FB1ED3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB10F6D2-AF05-4EFA-B5C6-7C7BD2FB1ED3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
