@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MyFaceApi.Api.DataAccess.Entities
+namespace MyFaceApi.Api.Domain.Entities
 {
 	public class Conversation
 	{
@@ -9,9 +9,5 @@ namespace MyFaceApi.Api.DataAccess.Entities
 		public Guid FirstUser { get; set; }
 		public Guid SecondUser { get; set; }
 		public ICollection<Message> Messages { get; set; }
-		public Conversation()
-		{
-			Messages = new List<Message>();
-		}
 	}
 }

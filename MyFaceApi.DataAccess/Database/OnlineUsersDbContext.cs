@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MyFaceApi.Api.DataAccess.Entities;
 using System.Threading.Tasks;
 
-namespace MyFaceApi.Api.DataAccess.Data
+namespace MyFaceApi.Api.Infrastructure.Database
 {
 	public class OnlineUsersDbContext : DbContext, IOnlineUsersDbContext
 	{

@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MyFaceApi.IdentityServer.DataAccess\MyFaceApi.IdentityServer.DataAccess.csproj" />
-    <ProjectReference Include="..\MyFaceApi.Models\MyFaceApi.Api.Models.csproj" />
+    <ProjectReference Include="..\MyFaceApi.Models\MyFaceApi.Api.Application.csproj" />
   </ItemGroup>
 
 

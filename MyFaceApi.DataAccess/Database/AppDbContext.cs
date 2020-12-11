@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using MyFaceApi.Api.DataAccess.Data;
 using MyFaceApi.Api.DataAccess.Entities;
-using System;
 using System.Threading.Tasks;
 
-namespace MyFaceApi.Api.DataAccess.Data
+namespace MyFaceApi.Api.Infrastructure.Database
 {
 	public class AppDbContext : DbContext, IAppDbContext
 	{

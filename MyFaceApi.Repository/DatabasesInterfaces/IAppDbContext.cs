@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MyFaceApi.Api.DataAccess.Entities;
+using MyFaceApi.Api.Domain.Entities;
 using System.Threading.Tasks;
 
-namespace MyFaceApi.Api.DataAccess.Data
+namespace MyFaceApi.Api.Domain.DatabasesInterfaces
 {
 	public interface IAppDbContext
 	{

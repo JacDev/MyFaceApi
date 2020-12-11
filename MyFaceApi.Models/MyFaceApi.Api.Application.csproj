@@ -7,9 +7,5 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MyFaceApi.DataAccess\MyFaceApi.Api.DataAccess.csproj" />
-  </ItemGroup>
   
 </Project>

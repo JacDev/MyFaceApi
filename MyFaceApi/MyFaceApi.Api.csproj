@@ -39,9 +39,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MyFaceApi.DataAccess\MyFaceApi.Api.DataAccess.csproj" />
-    <ProjectReference Include="..\MyFaceApi.Models\MyFaceApi.Api.Models.csproj" />
-    <ProjectReference Include="..\MyFaceApi.Repository\MyFaceApi.Api.Repository.csproj" />
+    <ProjectReference Include="..\MyFaceApi.DataAccess\MyFaceApi.Api.Infrastructure.csproj" />
+    <ProjectReference Include="..\MyFaceApi.Models\MyFaceApi.Api.Application.csproj" />
+    <ProjectReference Include="..\MyFaceApi.Repository\MyFaceApi.Api.Domain.csproj" />
   </ItemGroup>
 
 

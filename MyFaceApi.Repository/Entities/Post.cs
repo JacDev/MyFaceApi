@@ -1,29 +1,19 @@
-﻿using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace MyFaceApi.Api.DataAccess.Entities
+namespace MyFaceApi.Api.Domain.Entities
 {
-	public class Post : BasicPostData
+	public class Post
 	{
-		[Key]
 		public Guid Id { get; set; }
 		public DateTime WhenAdded { get; set; }
 		[Required]
 		public Guid UserId { get; set; }
+		public string Text { get; set; }
+		public string ImagePath { get; set; }
+		public string ImageFullPath { get; set; }
 		public virtual ICollection<PostComment> PostComments { get; set; }
 		public virtual ICollection<PostReaction> PostReactions { get; set; }
-
-		public object ElementAt(int v)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Post()
-		{
-			PostComments = new List<PostComment>();
-			PostReactions = new List<PostReaction>();
-		}
 	}
 }

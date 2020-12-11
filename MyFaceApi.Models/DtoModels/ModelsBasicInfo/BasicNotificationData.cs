@@ -1,4 +1,4 @@
-﻿using MyFaceApi.Api.DataAccess.Enums;
+﻿using MyFaceApi.Api.Domain.Enums;
 using System;
 
 namespace MyFaceApi.Api.DataAccess.ModelsBasicInfo
