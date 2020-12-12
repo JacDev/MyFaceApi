@@ -1,8 +1,8 @@
-﻿
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.Repository.Interfaces;
+using MyFaceApi.Api.Application.DtoModels.Message;
+using MyFaceApi.Api.Application.DtoModels.User;
+using MyFaceApi.Api.Application.Interfaces;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -12,20 +12,20 @@ namespace MyFaceApi.Api.Hubs
 {
 	public class MessagesHub : Hub
 	{
-		private readonly IOnlineUsersRepository _onlineUsersRepository;
-		private readonly IMessageRepository _messageRepository;
+		private readonly IOnlineUsersService _onlineUsersService;
+		private readonly IMessageService _messageService;
 		private readonly ILogger<MessagesHub> _logger;
-		private readonly INotificationRepository _notificationRepository;
+		private readonly INotificationService _notificationService;
 
-		public MessagesHub(IOnlineUsersRepository onlineUsersRepository,
-			IMessageRepository messageRepository,
+		public MessagesHub(IOnlineUsersService onlineUsersService,
+			IMessageService messageService,
 			ILogger<MessagesHub> logger,
-			INotificationRepository notificationRepository)
+			INotificationService notificationService)
 		{
-			_onlineUsersRepository = onlineUsersRepository;
-			_messageRepository = messageRepository;
+			_onlineUsersService = onlineUsersService;
+			_messageService = messageService;
 			_logger = logger;
-			_notificationRepository = notificationRepository;
+			_notificationService = notificationService;
 		}
 		public async Task SendMessageToUser(string toWhoId, string message, DateTime when)
 		{
@@ -34,16 +34,15 @@ namespace MyFaceApi.Api.Hubs
 				var fromWhoUser = GetLoggedUser().Id;
 				if (!string.IsNullOrWhiteSpace(toWhoId) && Guid.TryParse(toWhoId, out Guid gToWhoId))
 				{
-					if (_onlineUsersRepository.IsUserOnline(toWhoId))
+					if (_onlineUsersService.IsUserOnline(toWhoId))
 					{
-						string toWhoConnectionId = _onlineUsersRepository.GetOnlineUser(toWhoId).ConnectionId;
+						string toWhoConnectionId = _onlineUsersService.GetOnlineUser(toWhoId).ConnectionId;
 						await Clients.Client(toWhoConnectionId).SendAsync("ReceiveMessage", fromWhoUser, message, when);
 					}
-					await _messageRepository.AddMessageAsync(new Message
+					await _messageService.AddMessageAsync(gToWhoId, new MessageToAddDto
 					{
 						FromWho = Guid.Parse(fromWhoUser),
 						Text = message,
-						ToWho = gToWhoId,
 						When = when
 					});
 				}
@@ -61,50 +60,38 @@ namespace MyFaceApi.Api.Hubs
 		}
 		public override async Task OnConnectedAsync()
 		{
-			OnlineUserModel _loggedUser = GetLoggedUser();
+			OnlineUserDto _loggedUser = GetLoggedUser();
 			if (!string.IsNullOrWhiteSpace(_loggedUser.Id))
 			{
-				if (_onlineUsersRepository.IsUserOnline(_loggedUser.Id))
+				if (_onlineUsersService.IsUserOnline(_loggedUser.Id))
 				{
-					await _onlineUsersRepository.RemoveUser(_loggedUser);
+					await _onlineUsersService.RemoveUserAsync(_loggedUser.Id);
 				}
 				else
 				{
 					_loggedUser.ConnectionId = Context.ConnectionId;
-					await _onlineUsersRepository.AddOnlineUser(_loggedUser);
+					await _onlineUsersService.AddOnlineUserAsync(_loggedUser);
 				}
 			}
 			await base.OnConnectedAsync();
 		}
 		public override async Task OnDisconnectedAsync(Exception ex)
 		{
-			OnlineUserModel _loggedUser = GetLoggedUser();
+			OnlineUserDto _loggedUser = GetLoggedUser();
 			if (_loggedUser != null)
 			{
-				await _onlineUsersRepository.RemoveUser(_loggedUser);
+				await _onlineUsersService.RemoveUserAsync(_loggedUser.Id);
 			}
 			await base.OnDisconnectedAsync(ex);
 		}
-		private OnlineUserModel GetLoggedUser()
+		private OnlineUserDto GetLoggedUser()
 		{
-			try
+			OnlineUserDto user = new OnlineUserDto();
+			if (Context.User.Claims != null)
 			{
-				if (Context.User.Claims != null)
-				{
-					OnlineUserModel user = new OnlineUserModel
-					{
-						Id = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value,
-						//FirstName = Context.User.Claims.FirstOrDefault(c => c.Type == "FirstName").Value,
-						//LastName = Context.User.Claims.FirstOrDefault(c => c.Type == "LastName").Value
-					};
-					return user;
-				}
+				user.Id = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 			}
-			catch
-			{
-
-			}
-			return null;
+			return user;
 		}
 	}
 }

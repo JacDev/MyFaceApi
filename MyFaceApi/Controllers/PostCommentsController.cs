@@ -9,8 +9,8 @@ using MyFaceApi.Api.DboModels;
 using MyFaceApi.Api.Extensions;
 using MyFaceApi.Api.Helpers;
 using MyFaceApi.Api.Models.CommentModels;
-using MyFaceApi.Api.Repository.Helpers;
-using MyFaceApi.Api.Repository.Interfaces;
+using MyFaceApi.Api.Service.Helpers;
+using MyFaceApi.Api.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -22,21 +22,21 @@ namespace MyFaceApi.Api.Controllers
 	public class PostCommentsController : ControllerBase
 	{
 		private readonly ILogger<PostCommentsController> _logger;
-		private readonly IPostRepository _postRepository;
-		private readonly IUserRepository _userRepository;
-		private readonly IPostCommentRepository _postCommentRepository;
+		private readonly IPostService _postService;
+		private readonly IUserService _userService;
+		private readonly IPostCommentService _postCommentService;
 		private readonly IMapper _mapper;
 		public PostCommentsController(ILogger<PostCommentsController> logger,
-			IPostRepository postRepository,
-			IUserRepository userRepository,
+			IPostService postService,
+			IUserService userService,
 			IMapper mapper, 
-			IPostCommentRepository postCommentRepository)
+			IPostCommentService postCommentService)
 		{
 			_logger = logger;
-			_postRepository = postRepository;
-			_userRepository = userRepository;
+			_postService = postService;
+			_userService = userService;
 			_mapper = mapper;
-			_postCommentRepository = postCommentRepository;
+			_postCommentService = postCommentService;
 			_logger.LogTrace("PostCommentController created");
 		}
 		/// <summary>
@@ -62,12 +62,12 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (_postRepository.CheckIfPostExists(gPostId) && await _userRepository.CheckIfUserExists(gUserId))
+					if (_postService.CheckIfPostExists(gPostId) && await _userService.CheckIfUserExists(gUserId))
 					{
 						PostComment commentEntity = _mapper.Map<PostComment>(postComment);
 						commentEntity.PostId = gPostId;
 						commentEntity.WhenAdded = DateTime.Now;
-						commentEntity = await _postCommentRepository.AddCommentAsync(commentEntity);
+						commentEntity = await _postCommentService.AddCommentAsync(commentEntity);
 
 						return CreatedAtRoute("GetComment",
 							new { userId, postId = commentEntity.PostId, 
@@ -112,9 +112,9 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(postId, out Guid gPostId))
 				{
-					if (_postRepository.CheckIfPostExists(gPostId))
+					if (_postService.CheckIfPostExists(gPostId))
 					{
-						List<PostComment> commentsFromRepo = _postCommentRepository.GetComments(gPostId);
+						List<PostComment> commentsFromRepo = _postCommentService.GetComments(gPostId);
 
 						PagedList<PostComment> commentsToReturn = PagedList<PostComment>.Create(commentsFromRepo,
 							paginationParams.PageNumber,
@@ -168,9 +168,9 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(commentId, out Guid gCommentId))
 				{
-					if (_postRepository.CheckIfPostExists(gPostId))
+					if (_postService.CheckIfPostExists(gPostId))
 					{
-						PostComment comment = _postCommentRepository.GetComment(gCommentId);
+						PostComment comment = _postCommentService.GetComment(gCommentId);
 						if(comment is null)
 						{
 							return NotFound($"Comment: {commentId} not found.");
@@ -219,7 +219,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(commentId, out Guid gCommentId))
 				{
-					PostComment commentFromRepo = _postCommentRepository.GetComment(gCommentId);
+					PostComment commentFromRepo = _postCommentService.GetComment(gCommentId);
 					if (commentFromRepo == null)
 					{
 						return NotFound();
@@ -233,7 +233,7 @@ namespace MyFaceApi.Api.Controllers
 					}
 
 					_mapper.Map(commentToPatch, commentFromRepo);
-					await _postCommentRepository.UpdateComment(commentFromRepo);
+					await _postCommentService.UpdateComment(commentFromRepo);
 					return NoContent();
 				}
 				else
@@ -271,12 +271,12 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(commentId, out Guid gCommentId))
 				{
-					PostComment commentFromRepo = _postCommentRepository.GetComment(gCommentId);
+					PostComment commentFromRepo = _postCommentService.GetComment(gCommentId);
 					if (commentFromRepo == null)
 					{
 						return NotFound();
 					}
-					await _postCommentRepository.DeleteCommentAsync(commentFromRepo);
+					await _postCommentService.DeleteCommentAsync(commentFromRepo);
 					return NoContent();
 				}
 				else

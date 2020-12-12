@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.Repository.Helpers;
-using MyFaceApi.Api.Repository.Interfaces;
+using MyFaceApi.Api.Service.Helpers;
+using MyFaceApi.Api.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,17 +24,17 @@ namespace MyFaceApi.Api.Controllers
 	public class MessagesController : ControllerBase
 	{
 		private readonly ILogger<MessagesController> _logger;
-		private readonly IMessageRepository _messageRepository;
-		private readonly IUserRepository _userRepository;
+		private readonly IMessageService _messageService;
+		private readonly IUserService _userService;
 		private readonly IMapper _mapper;
 		public MessagesController(ILogger<MessagesController> logger,
-			IMessageRepository messageRepository,
-			IUserRepository userRepository,
+			IMessageService messageService,
+			IUserService userService,
 			IMapper mapper)
 		{
 			_logger = logger;
-			_messageRepository = messageRepository;
-			_userRepository = userRepository;
+			_messageService = messageService;
+			_userService = userService;
 			_mapper = mapper;
 			_logger.LogTrace("MessagesController created");
 		}
@@ -45,20 +45,20 @@ namespace MyFaceApi.Api.Controllers
 			var messages = new List<Message>();
 			var users = new List<User>();
 			_fixture.AddManyTo(users, 2);
-			await _userRepository.AddUserAcync(users[0]);
-			await _userRepository.AddUserAcync(users[1]);
+			await _userService.AddUserAcync(users[0]);
+			await _userService.AddUserAcync(users[1]);
 			_fixture.AddManyTo(messages, 15);
 			for (int i = 0; i < 10; ++i)
 			{
 				messages[i].FromWho = users[0].Id;
 				messages[i].ToWho = users[1].Id;
-				await _messageRepository.AddMessageAsync(messages[i]);
+				await _messageService.AddMessageAsync(messages[i]);
 			}
 			for (int i = 10; i < messages.Count; ++i)
 			{
 				messages[i].FromWho = users[1].Id;
 				messages[i].ToWho = users[0].Id;
-				await _messageRepository.AddMessageAsync(messages[i]);
+				await _messageService.AddMessageAsync(messages[i]);
 			}
 			return messages;
 		}
@@ -72,7 +72,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(messageId, out Guid gMessageId))
 				{
-					Message messageToReturn = _messageRepository.GetMessage(gMessageId);
+					Message messageToReturn = _messageService.GetMessage(gMessageId);
 					return Ok(messageToReturn);
 				}
 				else
@@ -97,9 +97,9 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(friendId, out Guid gFriendId))
 				{
-					if (await _userRepository.CheckIfUserExists(gUserId) && await _userRepository.CheckIfUserExists(gFriendId))
+					if (await _userService.CheckIfUserExists(gUserId) && await _userService.CheckIfUserExists(gFriendId))
 					{
-						List<Message> messagesFromRepo = await _messageRepository.GetUserMessagesWith(gUserId, gFriendId);
+						List<Message> messagesFromRepo = await _messageService.GetUserMessagesWith(gUserId, gFriendId);
 						PagedList<Message> messagesToReturn = PagedList<Message>.Create(messagesFromRepo,
 							paginationParams.PageNumber,
 							paginationParams.PageSize,
@@ -143,12 +143,12 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (await _userRepository.CheckIfUserExists(gUserId))
+					if (await _userService.CheckIfUserExists(gUserId))
 					{
 						Message messageEntity = _mapper.Map<Message>(messageToAdd);
 
 						messageEntity.ToWho = gUserId;
-						messageEntity = await _messageRepository.AddMessageAsync(messageEntity);
+						messageEntity = await _messageService.AddMessageAsync(messageEntity);
 
 						return CreatedAtRoute("GetMessage",
 							new { userId, messageId = messageEntity.Id },
@@ -181,12 +181,12 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(messageId, out Guid gMessageId))
 				{
-					Message messageFromRepo = _messageRepository.GetMessage(gMessageId);
+					Message messageFromRepo = _messageService.GetMessage(gMessageId);
 					if (messageFromRepo == null)
 					{
 						return NotFound();
 					}
-					await _messageRepository.DeleteMessageAsync(messageFromRepo);
+					await _messageService.DeleteMessageAsync(messageFromRepo);
 					return NoContent();
 				}
 				else

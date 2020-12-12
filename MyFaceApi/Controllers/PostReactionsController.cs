@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.DataAccess.Entities;
 using MyFaceApi.Api.Models.PostReactionModels;
-using MyFaceApi.Api.Repository.Interfaces;
+using MyFaceApi.Api.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,21 +17,21 @@ namespace MyFaceApi.Api.Controllers
 	public class PostReactionsController : ControllerBase
 	{
 		private readonly ILogger<PostReactionsController> _logger;
-		private readonly IPostRepository _postRepository;
-		private readonly IUserRepository _userRepository;
-		private readonly IPostReactionRepository _postReactionRepository;
+		private readonly IPostService _postService;
+		private readonly IUserService _userService;
+		private readonly IPostReactionService _postReactionService;
 		private readonly IMapper _mapper;
 		public PostReactionsController(ILogger<PostReactionsController> logger,
-			IPostRepository postRepository,
-			IUserRepository userRepository,
+			IPostService postService,
+			IUserService userService,
 			IMapper mapper,
-			IPostReactionRepository postReactionRepository)
+			IPostReactionService postReactionService)
 		{
 			_logger = logger;
-			_postRepository = postRepository;
-			_userRepository = userRepository;
+			_postService = postService;
+			_userService = userService;
 			_mapper = mapper;
-			_postReactionRepository = postReactionRepository;
+			_postReactionService = postReactionService;
 			_logger.LogTrace("PostReactionController created");
 		}
 		/// <summary>
@@ -56,12 +56,12 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (_postRepository.CheckIfPostExists(gPostId) && await _userRepository.CheckIfUserExists(gUserId))
+					if (_postService.CheckIfPostExists(gPostId) && await _userService.CheckIfUserExists(gUserId))
 					{
 						PostReaction postReactionEntity = _mapper.Map<PostReaction>(reactionToAdd);
 						postReactionEntity.WhenAdded = DateTime.Now;
 						postReactionEntity.PostId = gPostId;
-						postReactionEntity = await _postReactionRepository.AddPostReactionAsync(postReactionEntity);
+						postReactionEntity = await _postReactionService.AddPostReactionAsync(postReactionEntity);
 
 						return CreatedAtRoute("GetReaction",
 							new
@@ -107,9 +107,9 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(postId, out Guid gPostId))
 				{
-					if (_postRepository.CheckIfPostExists(gPostId))
+					if (_postService.CheckIfPostExists(gPostId))
 					{
-						List<PostReaction> reactions = _postReactionRepository.GetPostReactions(gPostId);
+						List<PostReaction> reactions = _postReactionService.GetPostReactions(gPostId);
 						return Ok(reactions);
 					}
 					else
@@ -149,9 +149,9 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(reactionId, out Guid gReactionId))
 				{
-					if (_postRepository.CheckIfPostExists(gPostId))
+					if (_postService.CheckIfPostExists(gPostId))
 					{
-						PostReaction postReaction = _postReactionRepository.GetPostReaction(gReactionId);
+						PostReaction postReaction = _postReactionService.GetPostReaction(gReactionId);
 						if (postReaction is null)
 						{
 							return NotFound($"Reaction: {reactionId} not found.");
@@ -200,7 +200,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(reactionId, out Guid gReactionId))
 				{
-					PostReaction reactionFromRepo = _postReactionRepository.GetPostReaction(gReactionId);
+					PostReaction reactionFromRepo = _postReactionService.GetPostReaction(gReactionId);
 					if (reactionFromRepo == null)
 					{
 						return NotFound();
@@ -214,7 +214,7 @@ namespace MyFaceApi.Api.Controllers
 					}
 
 					_mapper.Map(reactionToPatch, reactionFromRepo);
-					await _postReactionRepository.UpdatePostReactionAsync(reactionFromRepo);
+					await _postReactionService.UpdatePostReactionAsync(reactionFromRepo);
 					return NoContent();
 				}
 				else
@@ -252,14 +252,14 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(fromWho, out Guid gFromWho))
 				{
-					if (_postRepository.CheckIfPostExists(gPostId) && await _userRepository.CheckIfUserExists(gFromWho))
+					if (_postService.CheckIfPostExists(gPostId) && await _userService.CheckIfUserExists(gFromWho))
 					{
-						PostReaction reactionFromRepo = _postReactionRepository.GetPostReaction(gFromWho, gPostId);
+						PostReaction reactionFromRepo = _postReactionService.GetPostReaction(gFromWho, gPostId);
 						if (reactionFromRepo == null)
 						{
 							return NotFound();
 						}
-						await _postReactionRepository.DeletePostReactionAsync(reactionFromRepo);
+						await _postReactionService.DeletePostReactionAsync(reactionFromRepo);
 						return NoContent();
 					}
 					else

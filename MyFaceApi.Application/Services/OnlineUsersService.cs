@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using MyFaceApi.Api.Application.DtoModels.User;
 using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Domain.Entities;
 using MyFaceApi.Api.Domain.RepositoryInterfaces;
@@ -13,6 +15,7 @@ namespace MyFaceApi.Api.Application.Services
 	{
 		private readonly IRepository<OnlineUser> _onlineUsersRepository;
 		private readonly ILogger<OnlineUsersService> _logger;
+		private readonly IMapper _mapper;
 		public OnlineUsersService(IRepository<OnlineUser> onlineUsersRepository,
 			ILogger<OnlineUsersService> logger)
 		{
@@ -37,27 +40,27 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public async Task<OnlineUser> AddOnlineUserAsync(OnlineUser onlineUserModel)
+		public async Task<OnlineUserDto> AddOnlineUserAsync(OnlineUserDto onlineUserToAdd)
 		{
 			_logger.LogDebug("Trying to add online user.");
-			if (onlineUserModel == null)
+			if (onlineUserToAdd == null)
 			{
-				throw new ArgumentNullException(nameof(onlineUserModel));
+				throw new ArgumentNullException(nameof(onlineUserToAdd));
 			}
 			try
 			{
-				OnlineUser addedUser = await _onlineUsersRepository.AddAsync(onlineUserModel);
+				OnlineUser userToAdd = _mapper.Map<OnlineUser>(onlineUserToAdd);
+				OnlineUser addedUser = await _onlineUsersRepository.AddAsync(userToAdd);
 				await _onlineUsersRepository.SaveAsync();
-				return addedUser;
+				return _mapper.Map<OnlineUserDto>(addedUser);
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Error occured during adding the user.");
 				throw;
 			}
-
 		}
-		public OnlineUser GetOnlineUser(string userId)
+		public OnlineUserDto GetOnlineUser(string userId)
 		{
 			_logger.LogDebug("Trying to get online user :{userId).", userId);
 			if (string.IsNullOrWhiteSpace(userId))
@@ -66,7 +69,8 @@ namespace MyFaceApi.Api.Application.Services
 			}
 			try
 			{
-				return _onlineUsersRepository.GetById(userId);
+				OnlineUser userToReturn = _onlineUsersRepository.GetById(userId);
+				return _mapper.Map<OnlineUserDto>(userToReturn);
 			}
 			catch (Exception ex)
 			{
@@ -74,23 +78,22 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public async Task RemoveUserAsync(Guid userId)
+		public async Task RemoveUserAsync(string userId)
 		{
 			_logger.LogDebug("Trying to remove online user.");
-			if (userId == Guid.Empty)
+			if (string.IsNullOrWhiteSpace(userId))
 			{
 				throw new ArgumentNullException(nameof(userId));
 			}
 			try
 			{
-				var userToRemove = _onlineUsersRepository.GetById(userId);
+				OnlineUser userToRemove = _onlineUsersRepository.GetById(userId);
 				if (userToRemove != null)
 				{
 					_onlineUsersRepository.Remove(userToRemove);
 					await _onlineUsersRepository.SaveAsync();
 					_logger.LogDebug("User {userId} has been removed.", userId);
 				}
-
 			}
 			catch (Exception ex)
 			{
@@ -98,18 +101,17 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public List<Guid> GetOnlineUsers()
+		public List<string> GetOnlineUsers()
 		{
 			_logger.LogDebug("Trying to get all online users.");
 
 			try
 			{
-				var onlineUserStringIds = _onlineUsersRepository.Get()
+				List<string> onlineUserStringIds = _onlineUsersRepository.Get()
 					.Select(x=>x.Id)
 					.ToList();
 
-				List<Guid> usersGuidIds = new List<Guid>();
-				onlineUserStringIds.ForEach(x => { usersGuidIds.Add(Guid.Parse(x)); });
+				List<string> usersGuidIds = new List<string>();
 				return usersGuidIds;
 			}
 			catch (Exception ex)

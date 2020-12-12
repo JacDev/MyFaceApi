@@ -1,6 +1,6 @@
-﻿namespace MyFaceApi.Api.Domain.Entities
+﻿namespace MyFaceApi.Api.Application.DtoModels.User
 {
-	public class OnlineUser
+	public class OnlineUserDto
 	{
 		public string Id { get; set; }
 		public string ConnectionId { get; set; }

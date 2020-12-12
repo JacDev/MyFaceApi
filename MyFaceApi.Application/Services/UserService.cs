@@ -15,17 +15,17 @@ namespace MyFaceApi.Api.Application.Services
 		{
 			_identityServerHttpService = identityServerHttpService;
 		}
-		public async Task<UserWithCountersDbo> GetUserAsync(Guid userId)
+		public async Task<UserDto> GetUserAsync(Guid userId)
 		{
 			var response = await _identityServerHttpService.Client.GetAsync($"/users/{userId}");
-			return await response.ReadContentAs<UserWithCountersDbo>();
+			return await response.ReadContentAs<UserDto>();
 		}
 
-		public async Task<bool> GetUserIfExists(Guid userId)
+		public async Task<bool> CheckIfUserExists(Guid userId)
 		{
 			return await GetUserAsync(userId) != null;
 		}
-		public async Task<List<UserWithCountersDbo>> GetUsersAsync(IEnumerable<Guid> usersId)
+		public async Task<List<UserDto>> GetUsersAsync(IEnumerable<Guid> usersId)
 		{
 			string query = "";
 			foreach (var id in usersId)
@@ -34,7 +34,7 @@ namespace MyFaceApi.Api.Application.Services
 			}
 			query = query.Remove(query.LastIndexOf(","));
 			var response = await _identityServerHttpService.Client.GetAsync($"/users/getall?ids={query}");
-			return await response.ReadContentAs<List<UserWithCountersDbo>>();
+			return await response.ReadContentAs<List<UserDto>>();
 		}
 	}
 }

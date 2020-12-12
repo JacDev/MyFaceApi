@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace MyFaceApi.Api.Domain.FileManagerInterfaces
+namespace MyFaceApi.Api.Application.FileManagerInterfaces
 {
 	public interface IImageManager
 	{

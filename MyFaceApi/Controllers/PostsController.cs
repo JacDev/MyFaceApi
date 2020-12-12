@@ -1,45 +1,39 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.Api.DboModels;
+using MyFaceApi.Api.Application.DtoModels;
+using MyFaceApi.Api.Application.DtoModels.Post;
+using MyFaceApi.Api.Application.FileManagerInterfaces;
+using MyFaceApi.Api.Application.Helpers;
+using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Extensions;
-using MyFaceApi.Api.FileManager;
-using MyFaceApi.Api.Helpers;
-
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
-using System.IO;
 
 namespace MyFaceApi.Api.Controllers
 {
+	[AllowAnonymous]
 	[Route("api/users/{userId}/posts")]
 	[ApiController]
 	public class PostsController : ControllerBase
 	{
 		private readonly ILogger<PostsController> _logger;
-		private readonly IPostService _postRepository;
-		private readonly IUserRepository _userRepository;
-		private readonly IMapper _mapper;
-		private readonly IFriendsRelationRepository _friendsRelationRepository;
+		private readonly IPostService _postService;
+		private readonly IUserService _userService;
+		private readonly IFriendsRelationService _friendsRelationService;
 		private readonly IImageManager _imagesManager;
 		public PostsController(ILogger<PostsController> logger,
-			IPostRepository postRepository,
-			IUserRepository userRepository,
-			IMapper mapper,
-			IFriendsRelationRepository friendsRelationRepository,
+			IPostService postService,
+			IUserService userService,
+			IFriendsRelationService friendsRelationService,
 			IImageManager imagesManager)
 		{
 			_logger = logger;
-			_postRepository = postRepository;
-			_userRepository = userRepository;
-			_mapper = mapper;
-			_friendsRelationRepository = friendsRelationRepository;
+			_postService = postService;
+			_userService = userService;
+			_friendsRelationService = friendsRelationService;
 			_imagesManager = imagesManager;
 			_logger.LogTrace("PostsController created");
 		}
@@ -57,33 +51,26 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<Post> GetPost(string postId)
+		public ActionResult<PostDto> GetPost(string postId)
 		{
-			try
+			if (Guid.TryParse(postId, out Guid gPostId))
 			{
-				if (Guid.TryParse(postId, out Guid gPostId))
+				try
 				{
-					Post postToReturn = _postRepository.GetPost(gPostId);
-					if (postToReturn != null)
-					{
-						return Ok(postToReturn);
-					}
-					else
-					{
-						return NotFound();
-					}
+					return _postService.GetPost(gPostId);
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{postId} is not valid guid.");
+					_logger.LogError(ex, "Error occured during getting the post. Post id: {postId}", postId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during getting the post. Post id: {postId}", postId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{postId} is not valid guid.");
 			}
 		}
+
 		/// <summary>
 		/// Return the found user posts
 		/// </summary>
@@ -94,112 +81,76 @@ namespace MyFaceApi.Api.Controllers
 		/// <response code="400"> If parameter is not a valid guid</response>    
 		/// <response code="404"> If user not found</response>   
 		/// <response code="500"> If internal error occured</response>
-		[AllowAnonymous]
 		[HttpGet(Name = "GetPosts")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<CollectionWithPaginationData<PostDbo>>> GetPosts(string userId, [FromQuery] PaginationParams paginationParams)
+		public async Task<ActionResult<CollectionWithPaginationData<PostDto>>> GetPosts(string userId, [FromQuery] PaginationParams paginationParams)
 		{
-			try
+			if (Guid.TryParse(userId, out Guid gUserId))
 			{
-				if (Guid.TryParse(userId, out Guid gUserId))
+				try
 				{
-					if (await _userRepository.CheckIfUserExists(gUserId))
+					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						List<Post> postsFromRepo = _postRepository.GetUserPosts(gUserId);
-						List<PostDbo> postDbos = _mapper.Map<List<PostDbo>>(postsFromRepo);
-
-						PagedList<PostDbo> postsToReturn = PagedList<PostDbo>.Create(postDbos,
-							paginationParams.PageNumber,
-							paginationParams.PageSize,
-							(paginationParams.PageNumber - 1) * paginationParams.PageSize);
-
-						postsToReturn.PreviousPageLink = postsToReturn.HasPrevious ?
-							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetPosts") : null;
-
-						postsToReturn.NextPageLink = postsToReturn.HasNext ?
-							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetPosts") : null;
-
-						PaginationMetadata pagination = PaginationHelper.CreatePaginationMetadata<PostDbo>(postsToReturn);
-
-						return Ok(new CollectionWithPaginationData<PostDbo> { PaginationMetadata = pagination, Collection = postsToReturn });
-
+						PagedList<PostDto> postsToReturn = _postService.GetUserPosts(gUserId, paginationParams);
+						return Ok(this.CreateCollectionWithPagination(postsToReturn, paginationParams, "GetPosts"));
 					}
 					else
 					{
 						return NotFound($"User: {userId} not found.");
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{userId} is not valid guid.");
+					_logger.LogError(ex, "Error occured during getting the user posts. User id: {user}", userId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during getting the user posts. User id: {user}", userId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{userId} is not valid guid.");
 			}
 		}
 
-		[AllowAnonymous]
 		[HttpGet("latest", Name = "GetLatestPosts")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<CollectionWithPaginationData<PostDbo>>> GetLatestPosts(string userId, [FromQuery] PaginationParams paginationParams)
+		public async Task<ActionResult<CollectionWithPaginationData<PostDto>>> GetLatestPosts(string userId, [FromQuery] PaginationParams paginationParams)
 		{
-			try
+			if (Guid.TryParse(userId, out Guid gUserId))
 			{
-				if (Guid.TryParse(userId, out Guid gUserId))
+				try
 				{
-					if (await _userRepository.CheckIfUserExists(gUserId))
+					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						List<Guid> friendsId = _friendsRelationRepository.GetUserFriends(gUserId);
-
-						List<Post> postsFromRepo = _postRepository.GetLatestFriendsPosts(gUserId, friendsId);
-						List<PostDbo> postsToReturn = _mapper.Map<List<PostDbo>>(postsFromRepo);
-
-						var pagedListToReturn = PagedList<PostDbo>.Create(postsToReturn,
-						   paginationParams.PageNumber,
-						   paginationParams.PageSize,
-						  (paginationParams.PageNumber - 1) * paginationParams.PageSize);
-
-						pagedListToReturn.PreviousPageLink = pagedListToReturn.HasPrevious ?
-							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetLatestPosts") : null;
-
-						pagedListToReturn.NextPageLink = pagedListToReturn.HasNext ?
-							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetLatestPosts") : null;
-
-						PaginationMetadata pagination = PaginationHelper.CreatePaginationMetadata<PostDbo>(pagedListToReturn);
-
-						return Ok(new CollectionWithPaginationData<PostDbo> { PaginationMetadata = pagination, Collection = pagedListToReturn });
-
+						PagedList<PostDto> postsToReturn = _postService.GetLatestFriendsPosts(gUserId, paginationParams);
+						return Ok(this.CreateCollectionWithPagination(postsToReturn, paginationParams, "GetLatestPosts"));
 					}
 					else
 					{
 						return NotFound($"User: {userId} not found.");
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{userId} is not valid guid.");
+					_logger.LogError(ex, "Error occured during getting the user posts. User id: {user}", userId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during getting the user posts. User id: {user}", userId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{userId} is not valid guid.");
 			}
 		}
 		/// <summary>
 		/// Add post to database
 		/// </summary>
 		/// <param name="userId">User guid as a string </param>
-		/// <param name="post"></param>
+		/// <param name="postToAdd"></param>
 		/// <returns>Added post</returns>
 		/// <response code="201"> Return created post</response>
 		/// <response code="400"> If parameter is not a valid guid</response>    
@@ -210,44 +161,33 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<Post>> AddPost(string userId, [FromForm] PostToAdd post)
+		public async Task<ActionResult<PostDto>> AddPost(string userId, [FromForm] PostToAddDto postToAdd)
 		{
-			try
+			if (Guid.TryParse(userId, out Guid gUserId))
 			{
-				if (Guid.TryParse(userId, out Guid gUserId))
+				try
 				{
-					if (await _userRepository.CheckIfUserExists(gUserId))
+					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						string imagePath = null, fullImagePath = null;
-						if (post.Picture != null)
-						{
-							(imagePath, fullImagePath) = await _imagesManager.SaveImage(post.Picture);
-						}
-						Post postEntity = _mapper.Map<Post>(post);
-						postEntity.ImageFullPath = fullImagePath;
-						postEntity.ImagePath = imagePath;
-						postEntity.WhenAdded = DateTime.Now;
-						postEntity.UserId = gUserId;
-						postEntity = await _postRepository.AddPostAsync(postEntity);
-
+						PostDto addedPost = await _postService.AddPostAsync(gUserId, postToAdd);
 						return CreatedAtRoute("GetPost",
-							new { userId, postId = postEntity.Id },
-							postEntity);
+							new { userId, postId = addedPost.Id },
+							addedPost);
 					}
 					else
 					{
 						return NotFound($"User: {userId} not found.");
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{userId} is not valid guid.");
+					_logger.LogError(ex, "Error occured during adding the user post. User id: {user}", userId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during adding the user post. User id: {user}", userId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{userId} is not valid guid.");
 			}
 		}
 		/// <summary>
@@ -260,47 +200,36 @@ namespace MyFaceApi.Api.Controllers
 		/// </returns>
 		/// <response code="204"> No content if the post has been updated</response>
 		/// <response code="400"> If the postId is not valid guid</response>    
-		/// <response code="404"> If the post not found</response>
 		/// <response code="500"> If internal error occured</response>
 		[HttpPatch("{postId}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult> PartiallyUpdatePost(string postId, JsonPatchDocument<PostToUpdate> patchDocument)
+		public async Task<ActionResult> PartiallyUpdatePost(string postId, JsonPatchDocument<PostToUpdateDto> patchDocument)
 		{
-			try
+			if (Guid.TryParse(postId, out Guid gUserId))
 			{
-				if (Guid.TryParse(postId, out Guid gUserId))
+				try
 				{
-					Post postFromRepo = _postRepository.GetPost(gUserId);
-					if (postFromRepo == null)
+					if (await _postService.TryUpdatePostAsync(gUserId, patchDocument))
 					{
-						return NotFound();
+						return NoContent();
 					}
-					PostToUpdate postToPatch = _mapper.Map<PostToUpdate>(postFromRepo);
-					patchDocument.ApplyTo(postToPatch, ModelState);
-
-					if (!TryValidateModel(postToPatch))
+					else
 					{
-						return ValidationProblem(ModelState);
+						return BadRequest();
 					}
-
-					_mapper.Map(postToPatch, postFromRepo);
-
-					await _postRepository.UpdatePostAsync(postFromRepo);
-					return NoContent();
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{postId} is not valid guid.");
+					_logger.LogError(ex, "Error occured during updating the post. Post id: {postId}", postId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during updating the post. Post id: {postId}", postId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
-
+				return BadRequest($"{postId} is not valid guid.");
 			}
 		}
 		/// <summary>
@@ -312,56 +241,42 @@ namespace MyFaceApi.Api.Controllers
 		/// </returns>
 		/// <response code="204"> No content if the post has been removed</response>
 		/// <response code="400"> If the post is not valid</response>    
-		/// <response code="404"> If the post not found</response>
 		/// <response code="500"> If internal error occured</response>
 		[HttpDelete("{postId}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<ActionResult> DeletePost(string postId)
 		{
-			try
+			if (Guid.TryParse(postId, out Guid gPostId))
 			{
-				if (Guid.TryParse(postId, out Guid gPostId))
+				try
 				{
-					Post postFromRepo = _postRepository.GetPost(gPostId);
-					if (postFromRepo == null)
-					{
-						return NotFound();
-					}
-					if (postFromRepo.ImageFullPath!=null && System.IO.File.Exists(postFromRepo.ImageFullPath))
-					{
-						System.IO.File.Delete(postFromRepo.ImageFullPath);
-					}
-					await _postRepository.DeletePostAsync(postFromRepo);
+					await _postService.DeletePostAsync(gPostId);
 					return NoContent();
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{postId} is not valid guid.");
+					_logger.LogError(ex, "Error occured during removing the post. Post id: {postId}", postId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during removing the post. Post id: {postId}", postId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{postId} is not valid guid.");
 			}
 		}
-		[AllowAnonymous]
 		[HttpGet("image/{image}")]
 		public IActionResult Image(string image)
 		{
 			try
 			{
-				string mime = image.Substring(image.LastIndexOf('.') + 1);
-				return new FileStreamResult(_imagesManager.ImageStream(image), $"image/{mime}");
+				return _postService.StreamImage(image);
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError($"Something went wrong during streaming image: {image}");
-				_logger.LogError($"Exception info: {ex.Message} {ex.Source}");
-				return RedirectToAction("Error", "Error");
+				_logger.LogError(ex, "Error occured during streaming image: {image}", image);
+				return StatusCode(StatusCodes.Status500InternalServerError);
 			}
 		}
 	}

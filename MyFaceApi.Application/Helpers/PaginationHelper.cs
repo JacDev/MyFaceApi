@@ -10,8 +10,6 @@
 				PageSize = pagedList.PageSize,
 				CurrentPage = pagedList.CurrentPage,
 				TotalPages = pagedList.TotalPages,
-				PreviousPageLink = pagedList.PreviousPageLink,
-				NextPageLink = pagedList.NextPageLink,
 				HasNext = pagedList.HasNext,
 				HasPrevious = pagedList.HasPrevious
 			};

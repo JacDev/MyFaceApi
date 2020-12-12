@@ -2,7 +2,7 @@
 
 namespace MyFaceApi.Api.Application.DtoModels.User
 {
-	public class UserWithCountersDbo 
+	public class UserDto 
 	{
 		public Guid Id { get; set; }
 		public string FirstName { get; set; }

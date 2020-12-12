@@ -6,8 +6,6 @@ namespace MyFaceApi.Api.Application.Helpers
 {
 	public class PagedList<T> : List<T>
 	{
-		public string NextPageLink { get; set; }
-		public string PreviousPageLink { get; set; }
 		public int CurrentPage { get; set; }
 		public int TotalPages { get; set; }
 		public int PageSize { get; set; }

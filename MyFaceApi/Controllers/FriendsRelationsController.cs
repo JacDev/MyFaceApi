@@ -9,8 +9,8 @@ using MyFaceApi.Api.DboModels;
 using MyFaceApi.Api.Extensions;
 using MyFaceApi.Api.Helpers;
 using MyFaceApi.Api.Models.FriendsRelationModels;
-using MyFaceApi.Api.Repository.Helpers;
-using MyFaceApi.Api.Repository.Interfaces;
+using MyFaceApi.Api.Service.Helpers;
+using MyFaceApi.Api.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -22,23 +22,23 @@ namespace MyFaceApi.Api.Controllers
 	public class FriendsRelationsController : ControllerBase
 	{
 		private readonly ILogger<FriendsRelationsController> _logger;
-		private readonly IFriendsRelationRepository _relationRepository;
+		private readonly IFriendsRelationService _relationService;
 		private readonly IMapper _mapper;
-		private readonly IUserRepository _userRepository;
+		private readonly IUserService _userService;
 
 		public FriendsRelationsController(ILogger<FriendsRelationsController> logger,
-			IFriendsRelationRepository relationRepository,
+			IFriendsRelationService relationService,
 			IMapper mapper,
-			IUserRepository userRepository)
+			IUserService userService)
 		{
 			_logger = logger ??
 				throw new ArgumentNullException(nameof(logger));
-			_relationRepository = relationRepository ??
-				throw new ArgumentNullException(nameof(relationRepository));
+			_relationService = relationService ??
+				throw new ArgumentNullException(nameof(relationService));
 			_mapper = mapper ??
 				throw new ArgumentNullException(nameof(mapper));
-			_userRepository = userRepository ??
-				throw new ArgumentNullException(nameof(userRepository));
+			_userService = userService ??
+				throw new ArgumentNullException(nameof(userService));
 		}
 		[HttpGet("{friendId}", Name = "GetRelation")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -50,7 +50,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(friendId, out Guid gFriendId))
 				{
-					FriendsRelation friendsRelation = _relationRepository.GetFriendRelation(gUserId, gFriendId);
+					FriendsRelation friendsRelation = _relationService.GetFriendRelation(gUserId, gFriendId);
 					return Ok(friendsRelation);
 				}
 				else
@@ -77,10 +77,10 @@ namespace MyFaceApi.Api.Controllers
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
 					paginationParams.Skip = (paginationParams.PageNumber - 1) * paginationParams.PageSize;
-					if (await _userRepository.CheckIfUserExists(gUserId))
+					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						PagedList<Guid> userFriendsId = _relationRepository.GetUserFriends(gUserId, paginationParams);
-						List<BasicUserData> usersToReturn = await _userRepository.GetUsersAsync(userFriendsId);
+						PagedList<Guid> userFriendsId = _relationService.GetUserFriends(gUserId, paginationParams);
+						List<BasicUserData> usersToReturn = await _userService.GetUsersAsync(userFriendsId);
 
 						PagedList<BasicUserData> friendsToReturn = PagedList<BasicUserData>.Create(usersToReturn,
 							paginationParams.PageNumber,
@@ -126,11 +126,11 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (await _userRepository.CheckIfUserExists(gUserId) && await _userRepository.CheckIfUserExists(relationToAdd.FriendId))
+					if (await _userService.CheckIfUserExists(gUserId) && await _userService.CheckIfUserExists(relationToAdd.FriendId))
 					{
 						FriendsRelation friendsRelationEntity = _mapper.Map<FriendsRelation>(relationToAdd);
 						friendsRelationEntity.UserId = gUserId;
-						friendsRelationEntity = await _relationRepository.AddRelationAsync(friendsRelationEntity);
+						friendsRelationEntity = await _relationService.AddRelationAsync(friendsRelationEntity);
 
 						return CreatedAtRoute("GetRelation",
 							new { userId, friendId = friendsRelationEntity.FriendId },
@@ -163,14 +163,14 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(friendId, out Guid gFriendId))
 				{
-					if (await _userRepository.CheckIfUserExists(gUserId) && await _userRepository.CheckIfUserExists(gFriendId))
+					if (await _userService.CheckIfUserExists(gUserId) && await _userService.CheckIfUserExists(gFriendId))
 					{
-						var relationFromRepo = _relationRepository.GetFriendRelation(gUserId, gFriendId);
+						var relationFromRepo = _relationService.GetFriendRelation(gUserId, gFriendId);
 						if (relationFromRepo is null)
 						{
 							return NotFound($"Users: {userId} and {friendId} relation not found");
 						}
-						await _relationRepository.DeleteRelationAsync(relationFromRepo);
+						await _relationService.DeleteRelationAsync(relationFromRepo);
 						return NoContent();
 					}
 					else

@@ -7,8 +7,8 @@ namespace MyFaceApi.Api.Application.Interfaces
 {
 	public interface IUserService
 	{
-		Task<UserWithCountersDbo> GetUserAsync(Guid userId);
-		Task<bool> GetUserIfExists(Guid userId);
-		Task<List<UserWithCountersDbo>> GetUsersAsync(IEnumerable<Guid> usersId);
+		Task<UserDto> GetUserAsync(Guid userId);
+		Task<bool> CheckIfUserExists(Guid userId);
+		Task<List<UserDto>> GetUsersAsync(IEnumerable<Guid> usersId);
 	}
 }

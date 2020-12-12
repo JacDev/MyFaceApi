@@ -1,4 +1,4 @@
-﻿using MyFaceApi.Api.Domain.Helpers;
+﻿using MyFaceApi.Api.Application.Helpers;
 
 namespace MyFaceApi.Api.Application.DtoModels
 {

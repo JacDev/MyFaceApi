@@ -1,7 +1,8 @@
-﻿using MyFaceApi.Api.Application.DtoModels.Post;
-using MyFaceApi.Api.Domain.Entities;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
+using MyFaceApi.Api.Application.DtoModels.Post;
+using MyFaceApi.Api.Application.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Application.Interfaces
@@ -12,8 +13,9 @@ namespace MyFaceApi.Api.Application.Interfaces
 		bool CheckIfPostExists(Guid postId);
 		Task DeletePostAsync(Guid postId);
 		PostDto GetPost(Guid postId);
-		List<PostDto> GetUserPosts(Guid userId);
-		List<PostDto> GetLatestFriendsPosts(Guid userId, List<Guid> userFriends);
-		Task UpdatePostAsync(Post post)
+		PagedList<PostDto> GetUserPosts(Guid userId, PaginationParams paginationParams);
+		PagedList<PostDto> GetLatestFriendsPosts(Guid userId, PaginationParams paginationParams);
+		FileStreamResult StreamImage(string imageName);
+		Task<bool> TryUpdatePostAsync(Guid postId, JsonPatchDocument<PostToUpdateDto> patchDocument);
 	}
 }

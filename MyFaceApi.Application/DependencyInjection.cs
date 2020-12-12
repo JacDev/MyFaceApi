@@ -6,7 +6,7 @@ using AutoMapper;
 using MyFaceApi.Api.Application.IdentityServerAccess;
 using MyFaceApi.Api.Domain.ExternalApiInterfaces;
 using MyFaceApi.Api.Application.FileManager;
-using MyFaceApi.Api.Domain.FileManagerInterfaces;
+using MyFaceApi.Api.Application.FileManagerInterfaces;
 
 namespace MyFaceApi.Api.Application
 {
@@ -16,6 +16,7 @@ namespace MyFaceApi.Api.Application
 		{
 			services.AddAutoMapper(Assembly.GetExecutingAssembly());
 			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<IImageManager, ImageManager>();
 			services.AddScoped<IFriendsRelationService, FriendsRelationService>();
 			services.AddScoped<IMessageService, MessageService>();
 			services.AddScoped<INotificationService, NotificationService>();
@@ -24,7 +25,7 @@ namespace MyFaceApi.Api.Application
 			services.AddScoped<IPostReactionService, PostReactionService>();
 			services.AddScoped<IPostCommentService, PostCommentService>();
 			services.AddScoped<IHttpService, IdentityServerHttpService>();
-			services.AddScoped<IImageManager, ImageManager>();
+
 			return services;
 		}
 	}

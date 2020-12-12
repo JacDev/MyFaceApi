@@ -7,8 +7,8 @@ using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 using MyFaceApi.Api.DboModels;
 using MyFaceApi.Api.Extensions;
 using MyFaceApi.Api.Helpers;
-using MyFaceApi.Api.Repository.Helpers;
-using MyFaceApi.Api.Repository.Interfaces;
+using MyFaceApi.Api.Service.Helpers;
+using MyFaceApi.Api.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,22 +20,22 @@ namespace MyFaceApi.Api.Controllers
 	[ApiController]
 	public class OnlineUsersController : ControllerBase
 	{
-		private readonly IFriendsRelationRepository _friendsRelationRepository;
-		private readonly IOnlineUsersRepository _onlineUsersRepository;
+		private readonly IFriendsRelationService _friendsRelationService;
+		private readonly IOnlineUsersService _onlineUsersService;
 		private readonly ILogger<OnlineUsersController> _logger;
 		private readonly IMapper _mapper;
-		private readonly IUserRepository _userRepository;
-		public OnlineUsersController(IOnlineUsersRepository onlineUsersRepository,
-			IFriendsRelationRepository friendsRelationRepository,
+		private readonly IUserService _userService;
+		public OnlineUsersController(IOnlineUsersService onlineUsersService,
+			IFriendsRelationService friendsRelationService,
 			ILogger<OnlineUsersController> logger,
 			IMapper mapper,
-			IUserRepository userRepository)
+			IUserService userService)
 		{
-			_onlineUsersRepository = onlineUsersRepository;
-			_friendsRelationRepository = friendsRelationRepository;
+			_onlineUsersService = onlineUsersService;
+			_friendsRelationService = friendsRelationService;
 			_logger = logger;
 			_mapper = mapper;
-			_userRepository = userRepository;
+			_userService = userService;
 		}
 		[HttpGet(Name = "GetOnlineFriends")]
 		[AllowAnonymous]
@@ -50,7 +50,7 @@ namespace MyFaceApi.Api.Controllers
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
 					paginationParams.Skip = (paginationParams.PageNumber - 1) * paginationParams.PageSize;
-					if (await _userRepository.CheckIfUserExists(gUserId))
+					if (await _userService.CheckIfUserExists(gUserId))
 					{
 
 						List<Guid> onlineFriendsIds = await GetOnlineFriendsIds(gUserId);
@@ -79,8 +79,8 @@ namespace MyFaceApi.Api.Controllers
 		}
 		private async Task<List<Guid>> GetOnlineFriendsIds(Guid userId)
 		{
-			List<Guid> onlineUsersIds = await _onlineUsersRepository.GetOnlineUsersAsync();
-			List<Guid> userFriendsIds = await _friendsRelationRepository.GetUserFriendsAsync(userId);
+			List<Guid> onlineUsersIds = await _onlineUsersService.GetOnlineUsersAsync();
+			List<Guid> userFriendsIds = await _friendsRelationService.GetUserFriendsAsync(userId);
 
 			return onlineUsersIds.Intersect(userFriendsIds).ToList();
 		}
@@ -91,7 +91,7 @@ namespace MyFaceApi.Api.Controllers
 							paginationParams.PageSize,
 							(paginationParams.PageNumber - 1) * paginationParams.PageSize + paginationParams.Skip);
 
-			List<BasicUserData> onlineFriendsFromRepo = await _userRepository.GetUsersAsync(friendsToReturnIds);
+			List<BasicUserData> onlineFriendsFromRepo = await _userService.GetUsersAsync(friendsToReturnIds);
 
 			var friendsToReturn =  PagedList<BasicUserData>.Create(onlineFriendsFromRepo,
 				paginationParams.PageNumber,

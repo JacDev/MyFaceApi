@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.DataAccess.Entities;
 using MyFaceApi.Api.Models.NotificationModels;
-using MyFaceApi.Api.Repository.Interfaces;
+using MyFaceApi.Api.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,19 +17,19 @@ namespace MyFaceApi.Api.Controllers
 	public class NotificationsController : ControllerBase
 	{
 		private readonly ILogger<NotificationsController> _logger;
-		private readonly INotificationRepository _notificationRepository;
-		private readonly IUserRepository _userRepository;
+		private readonly INotificationService _notificationService;
+		private readonly IUserService _userService;
 		private readonly IMapper _mapper;
 
 		public NotificationsController(ILogger<NotificationsController> logger,
-			INotificationRepository notificationRepository,
+			INotificationService notificationService,
 			IMapper mapper, 
-			IUserRepository userRepository)
+			IUserService userService)
 		{
 			_logger = logger;
-			_notificationRepository = notificationRepository;
+			_notificationService = notificationService;
 			_mapper = mapper;
-			_userRepository = userRepository;
+			_userService = userService;
 			_logger.LogTrace("NotificationController created");
 		}
 		/// <summary>
@@ -53,9 +53,9 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(notificationId, out Guid gNotificationId))
 				{
-					if (await _userRepository.CheckIfUserExists(gUserId))
+					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						Notification notificationToReturn = _notificationRepository.GetNotification(gNotificationId);
+						Notification notificationToReturn = _notificationService.GetNotification(gNotificationId);
 						if (notificationToReturn is null)
 						{
 							return NotFound($"Notification: {notificationId} not found.");
@@ -101,9 +101,9 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (await _userRepository.CheckIfUserExists(gUserId))
+					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						List<Notification> notificationsToReturn = _notificationRepository.GetUserNotifications(gUserId);
+						List<Notification> notificationsToReturn = _notificationService.GetUserNotifications(gUserId);
 						if(notificationsToReturn is null)
 						{
 							return NotFound($"The user: {userId} notificatios not found.");
@@ -150,11 +150,11 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId))
 				{
-					if (await _userRepository.CheckIfUserExists(gUserId))
+					if (await _userService.CheckIfUserExists(gUserId))
 					{
 						Notification notificationEntity = _mapper.Map<Notification>(notificationToAdd);
 						notificationEntity.ToWhoId = gUserId;
-						notificationEntity = await _notificationRepository.AddNotificationAsync(notificationEntity);
+						notificationEntity = await _notificationService.AddNotificationAsync(notificationEntity);
 
 						return CreatedAtRoute("GetNotification",
 							new
@@ -204,9 +204,9 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(notificationId, out Guid gNotificationId))
 				{
-					if (await _userRepository.CheckIfUserExists(gUserId))
+					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						Notification notificationFromRepo = _notificationRepository.GetNotification(gNotificationId);
+						Notification notificationFromRepo = _notificationService.GetNotification(gNotificationId);
 						if (notificationFromRepo is null)
 						{
 							return NotFound($"Notification: {notificationId} not found.");
@@ -221,7 +221,7 @@ namespace MyFaceApi.Api.Controllers
 
 						_mapper.Map(notificationToPatch, notificationFromRepo);
 
-						await _notificationRepository.UpdateNotificationAsync(notificationFromRepo);
+						await _notificationService.UpdateNotificationAsync(notificationFromRepo);
 						return NoContent();
 					}
 					else
@@ -263,14 +263,14 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(notificationId, out Guid gNotificationId))
 				{
-					if (await _userRepository.CheckIfUserExists(gUserId))
+					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						Notification notificationToRemove = _notificationRepository.GetNotification(gNotificationId);
+						Notification notificationToRemove = _notificationService.GetNotification(gNotificationId);
 						if (notificationToRemove is null)
 						{
 							return NotFound($"Notification: {notificationId} not found.");
 						}
-						await _notificationRepository.DeleteNotificationAsync(notificationToRemove);
+						await _notificationService.DeleteNotificationAsync(notificationToRemove);
 						return NoContent();
 					}
 					else

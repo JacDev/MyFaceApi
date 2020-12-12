@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
+using MyFaceApi.Api.Application.DtoModels.User;
+using MyFaceApi.Api.Domain.Entities;
 
 namespace MyFaceApi.AutoMapperProfiles
 {
@@ -8,8 +8,8 @@ namespace MyFaceApi.AutoMapperProfiles
 	{
 		public UserProfiles()
 		{
-			CreateMap<User, BasicUserData>();
-			CreateMap<BasicUserData, User>();
+			CreateMap<OnlineUser, OnlineUserDto>();
+			CreateMap<OnlineUserDto, OnlineUser>();
 		}
 	}
 }

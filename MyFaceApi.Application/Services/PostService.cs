@@ -1,11 +1,16 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.Application.DtoModels.Post;
+using MyFaceApi.Api.Application.FileManagerInterfaces;
+using MyFaceApi.Api.Application.Helpers;
 using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Domain.Entities;
 using MyFaceApi.Api.Domain.RepositoryInterfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,16 +19,22 @@ namespace MyFaceApi.Api.Application.Services
 	public class PostService : IPostService
 	{
 		private readonly IRepository<Post> _postRepository;
+		private readonly IFriendsRelationService _friendsRelationService;
 		private readonly ILogger<PostService> _logger;
 		private readonly IMapper _mapper;
+		private readonly IImageManager _imageManager;
 
 		public PostService(IRepository<Post> postRepository,
 			ILogger<PostService> logger,
-			IMapper mapper)
+			IMapper mapper,
+			IFriendsRelationService friendsRelationService,
+			IImageManager imageManager)
 		{
 			_postRepository = postRepository;
 			_logger = logger;
 			_mapper = mapper;
+			_friendsRelationService = friendsRelationService;
+			_imageManager = imageManager;
 		}
 		public async Task<PostDto> AddPostAsync(Guid userId, PostToAddDto post)
 		{
@@ -38,6 +49,11 @@ namespace MyFaceApi.Api.Application.Services
 			}
 			try
 			{
+				if (post.Picture != null)
+				{
+					(post.ImagePath, post.ImageFullPath) = await _imageManager.SaveImage(post.Picture);
+				}
+
 				Post postToAdd = _mapper.Map<Post>(post);
 				postToAdd.UserId = userId;
 
@@ -70,7 +86,7 @@ namespace MyFaceApi.Api.Application.Services
 				{
 					_logger.LogTrace("Post {postId} exist.", postId);
 				}
-				return wasFound!=null;
+				return wasFound != null;
 			}
 			catch
 			{
@@ -87,7 +103,14 @@ namespace MyFaceApi.Api.Application.Services
 			}
 			try
 			{
-				_postRepository.Remove(postId);
+				Post postFromRepo = _postRepository.GetById(postId);
+
+				if (postFromRepo.ImageFullPath != null && File.Exists(postFromRepo.ImageFullPath))
+				{
+					File.Delete(postFromRepo.ImageFullPath);
+				}
+
+				_postRepository.Remove(postFromRepo);
 				await _postRepository.SaveAsync();
 				_logger.LogDebug("Post {postId} has been removed.", postId);
 			}
@@ -115,27 +138,26 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public List<PostDto> GetUserPosts(Guid userId)
+		public PagedList<PostDto> GetUserPosts(Guid userId, PaginationParams paginationParams)
 		{
-			_logger.LogDebug("Trying to get the user posts: {userid}", userId);
-			if (userId == Guid.Empty)
-			{
-				throw new ArgumentNullException(nameof(userId));
-			}
-			try
-			{
-				List<Post> postsToReturn = _postRepository.Get(x => x.UserId == userId, x => x.OrderByDescending(x => x.WhenAdded), "PostComments,PostReactions")
+			List<Post> postsToReturn = _postRepository.Get(x => x.UserId == userId, x => x.OrderByDescending(x => x.WhenAdded), "PostComments,PostReactions")
 					.ToList();
+			List<PostDto> posts = _mapper.Map<List<PostDto>>(postsToReturn);
 
-				return _mapper.Map<List<PostDto>>(postsToReturn);
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, "Error occured during getting the user posts.");
-				throw;
-			}
+			return PagedList<PostDto>.Create(posts,
+							paginationParams.PageNumber,
+							paginationParams.PageSize,
+							(paginationParams.PageNumber - 1) * paginationParams.PageSize + paginationParams.Skip);
 		}
-		public List<PostDto> GetLatestFriendsPosts(Guid userId, List<Guid> userFriends)
+		private List<PostDto> GetLatestFriendsPosts(Guid userId, List<Guid> userFriends)
+		{
+			userFriends.Add(userId);
+			List<Post> postsToReturn = _postRepository.Get(x => userFriends.Contains(x.UserId), x => x.OrderByDescending(x => x.WhenAdded), "PostComments,PostReactions")
+				.ToList();
+			return _mapper.Map<List<PostDto>>(postsToReturn);
+
+		}
+		public PagedList<PostDto> GetLatestFriendsPosts(Guid userId, PaginationParams paginationParams)
 		{
 			_logger.LogDebug("Trying to get user and friends latest posts: {userid}", userId);
 			if (userId == Guid.Empty)
@@ -144,11 +166,12 @@ namespace MyFaceApi.Api.Application.Services
 			}
 			try
 			{
-				userFriends.Add(userId);
-				List<Post> postsToReturn = _postRepository.Get(x => userFriends.Contains(x.UserId), x => x.OrderByDescending(x => x.WhenAdded), "PostComments,PostReactions")
-					.ToList();
-
-				return _mapper.Map<List<PostDto>>(postsToReturn);
+				var friendsId = _friendsRelationService.GetUserFriendsId(userId);
+				var latestPosts = GetLatestFriendsPosts(userId, friendsId);
+				return PagedList<PostDto>.Create(latestPosts,
+							paginationParams.PageNumber,
+							paginationParams.PageSize,
+							(paginationParams.PageNumber - 1) * paginationParams.PageSize + paginationParams.Skip);
 			}
 			catch (Exception ex)
 			{
@@ -156,20 +179,39 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public async Task UpdatePostAsync(Post post)
+		public async Task<bool> TryUpdatePostAsync(Guid postId, JsonPatchDocument<PostToUpdateDto> patchDocument)
 		{
-			_logger.LogDebug("Trying to update post: {post}", post);
+			_logger.LogDebug("Trying to update post: {post}", postId);
 			try
 			{
-				_postRepository.Update(post);
+				Post postFromRepo = _postRepository.GetById(postId);
+				if (postFromRepo == null)
+				{
+					return false;
+				}
+				PostToUpdateDto postToPatch = _mapper.Map<PostToUpdateDto>(postFromRepo);
+				patchDocument.ApplyTo(postToPatch);
+				if (!ValidatorHelper.ValidateModel(postToPatch))
+				{
+					return false;
+				}
+
+				_mapper.Map(postToPatch, postFromRepo);
+				_postRepository.Update(postFromRepo);
 				await _postRepository.SaveAsync();
-				_logger.LogDebug("Post {post} has been updated.", post);
+				_logger.LogDebug("Post {post} has been updated.", postId);
+				return true;
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Error occured during updating the post.");
 				throw;
 			}
+		}
+		public FileStreamResult StreamImage(string imageName)
+		{
+			string mime = imageName.Substring(imageName.LastIndexOf('.') + 1);
+			return new FileStreamResult(_imageManager.ImageStream(imageName), $"image/{mime}");
 		}
 	}
 }
