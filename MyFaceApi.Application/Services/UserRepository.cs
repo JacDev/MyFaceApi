@@ -7,7 +7,7 @@
 //using MyFaceApi.Api.DataAccess.Data;
 //using MyFaceApi.Api.DataAccess.Entities;
 
-//namespace MyFaceApi.Api.Repository.Repositories
+//namespace MyFaceApi.Api.Application.Services
 //{
 //	public class UserRepository
 //	{

@@ -4,14 +4,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.Api.DataAccess.Entities;
 using MyFaceApi.Api.DboModels;
 using MyFaceApi.Api.Extensions;
 using MyFaceApi.Api.FileManager;
 using MyFaceApi.Api.Helpers;
-using MyFaceApi.Api.Models.PostModels;
-using MyFaceApi.Api.Repository.Helpers;
-using MyFaceApi.Api.Repository.Interfaces;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +23,7 @@ namespace MyFaceApi.Api.Controllers
 	public class PostsController : ControllerBase
 	{
 		private readonly ILogger<PostsController> _logger;
-		private readonly IPostRepository _postRepository;
+		private readonly IPostService _postRepository;
 		private readonly IUserRepository _userRepository;
 		private readonly IMapper _mapper;
 		private readonly IFriendsRelationRepository _friendsRelationRepository;

@@ -1,4 +1,4 @@
-﻿namespace MyFaceApi.Api.Repository.Helpers
+﻿namespace MyFaceApi.Api.Application.Helpers
 {
 	public enum ResourceUriType
 	{

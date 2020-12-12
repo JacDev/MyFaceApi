@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace MyFaceApi.Api.Domain.Entities
 {
@@ -8,7 +7,6 @@ namespace MyFaceApi.Api.Domain.Entities
 	{
 		public Guid Id { get; set; }
 		public DateTime WhenAdded { get; set; }
-		[Required]
 		public Guid UserId { get; set; }
 		public string Text { get; set; }
 		public string ImagePath { get; set; }

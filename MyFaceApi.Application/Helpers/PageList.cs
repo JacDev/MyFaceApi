@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MyFaceApi.Api.Repository.Helpers
+namespace MyFaceApi.Api.Application.Helpers
 {
 	public class PagedList<T> : List<T>
 	{

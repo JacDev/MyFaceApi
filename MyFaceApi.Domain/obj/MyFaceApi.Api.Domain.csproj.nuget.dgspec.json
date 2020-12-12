@@ -52,6 +52,10 @@
               "target": "Package",
               "version": "[4.14.0, )"
             },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
             "Microsoft.Extensions.Logging.Abstractions": {
               "target": "Package",
               "version": "[5.0.0, )"

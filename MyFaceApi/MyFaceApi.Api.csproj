@@ -38,11 +38,5 @@
     <PackageReference Include="xunit" Version="2.4.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MyFaceApi.DataAccess\MyFaceApi.Api.Infrastructure.csproj" />
-    <ProjectReference Include="..\MyFaceApi.Models\MyFaceApi.Api.Application.csproj" />
-    <ProjectReference Include="..\MyFaceApi.Repository\MyFaceApi.Api.Domain.csproj" />
-  </ItemGroup>
-
 
 </Project>
