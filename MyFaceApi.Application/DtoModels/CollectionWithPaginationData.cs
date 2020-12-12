@@ -1,11 +1,10 @@
-﻿using MyFaceApi.Api.Repository.Helpers;
+﻿using MyFaceApi.Api.Domain.Helpers;
 
-namespace MyFaceApi.Api.DboModels
+namespace MyFaceApi.Api.Application.DtoModels
 {
 	public class CollectionWithPaginationData<T>
 	{
 		public PaginationMetadata PaginationMetadata { get; set; }
 		public PagedList<T> Collection { get; set; }
-
 	}
 }

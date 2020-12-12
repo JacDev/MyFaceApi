@@ -1,11 +1,11 @@
-﻿using MyFaceApi.Api.Repository.Helpers;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using MyFaceApi.Api.Application.Helpers;
 
 namespace MyFaceApi.Api.Extensions
 {
 	public static class ControllerBaseExtensions
 	{
-		public static string CreateMessagesResourceUriWithPaginationParams(this ControllerBase controllerBase,
+		public static string CreateLink(this ControllerBase controllerBase,
 			PaginationParams paginationParams,
 			ResourceUriType type,
 			string nameOfMethodToRedirect)

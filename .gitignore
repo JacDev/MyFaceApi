@@ -37,3 +37,5 @@
 /MyFaceApi.Infrastructure/bin/Debug/netcoreapp3.1
 /MyFaceApi.Infrastructure/obj/Debug/netcoreapp3.1
 /MyFaceApi.Infrastructure/obj
+/MyFaceApi.Domain/obj/Debug/netcoreapp3.1
+/MyFaceApi.Domain/obj

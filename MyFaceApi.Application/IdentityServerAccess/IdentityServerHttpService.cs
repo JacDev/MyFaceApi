@@ -1,13 +1,13 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
+using Microsoft.Extensions.Configuration;
 using System.Net.Http;
+using MyFaceApi.Api.Domain.ExternalApiInterfaces;
 
-namespace MyFaceApi.Api.Servieces
+namespace MyFaceApi.Api.Application.IdentityServerAccess
 {
-	public class IdentityServerHttpService : IIdentityServerHttpService
+	public class IdentityServerHttpService : IHttpService
 	{
 		public HttpClient Client { get; }
-
 		public IdentityServerHttpService(IHttpClientFactory clientFactory, IConfiguration configuration)
 		{
 			Client = clientFactory.CreateClient();

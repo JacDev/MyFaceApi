@@ -1,6 +1,4 @@
-﻿using MyFaceApi.Api.Repository.Helpers;
-
-namespace MyFaceApi.Api.Helpers
+﻿namespace MyFaceApi.Api.Application.Helpers
 {
 	public static class PaginationHelper
 	{

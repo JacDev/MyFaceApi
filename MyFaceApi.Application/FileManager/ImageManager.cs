@@ -7,8 +7,9 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
+using MyFaceApi.Api.Domain.FileManagerInterfaces;
 
-namespace MyFaceApi.Api.FileManager
+namespace MyFaceApi.Api.Application.FileManager
 {
 	public class ImageManager : IImageManager
 	{
@@ -52,7 +53,7 @@ namespace MyFaceApi.Api.FileManager
 				throw;
 			}
 		}
-		public string AddPrifileImage(string imageName, int width =100, int height=100)
+		public string AddProfileImage(string imageName, int width =100, int height=100)
 		{
 			var destRect = new Rectangle(0, 0, width, height);
 			var destImage = new Bitmap(width, height);

@@ -7,7 +7,7 @@ namespace MyFaceApi.Api.Infrastructure
 {
 	public static class DependencyInjection
 	{
-		public static IServiceCollection AddRepositories(this IServiceCollection services)
+		public static IServiceCollection AddInfrastructure(this IServiceCollection services)
 		{
 			services.AddScoped<IRepository<Post>, Repository<Post>>();
 			services.AddScoped<IRepository<PostComment>, Repository<PostComment>>();

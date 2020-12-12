@@ -3,14 +3,19 @@ using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Application.Services;
 using System.Reflection;
 using AutoMapper;
+using MyFaceApi.Api.Application.IdentityServerAccess;
+using MyFaceApi.Api.Domain.ExternalApiInterfaces;
+using MyFaceApi.Api.Application.FileManager;
+using MyFaceApi.Api.Domain.FileManagerInterfaces;
 
 namespace MyFaceApi.Api.Application
 {
 	public static class DependencyInjection
 	{
-		public static IServiceCollection AddRepositories(this IServiceCollection services)
+		public static IServiceCollection AddApplication(this IServiceCollection services)
 		{
 			services.AddAutoMapper(Assembly.GetExecutingAssembly());
+			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<IFriendsRelationService, FriendsRelationService>();
 			services.AddScoped<IMessageService, MessageService>();
 			services.AddScoped<INotificationService, NotificationService>();
@@ -18,6 +23,8 @@ namespace MyFaceApi.Api.Application
 			services.AddScoped<IPostService, PostService>();
 			services.AddScoped<IPostReactionService, PostReactionService>();
 			services.AddScoped<IPostCommentService, PostCommentService>();
+			services.AddScoped<IHttpService, IdentityServerHttpService>();
+			services.AddScoped<IImageManager, ImageManager>();
 			return services;
 		}
 	}

@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -8,13 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MyFaceApi.Api.DataAccess.Data;
-using MyFaceApi.Api.FileManager;
+using MyFaceApi.Api.Application;
 using MyFaceApi.Api.Hubs;
-using MyFaceApi.Api.IdentityServerAccess;
-using MyFaceApi.Api.Repository;
-using MyFaceApi.Api.Repository.Interfaces;
-using MyFaceApi.Api.Servieces;
+using MyFaceApi.Api.Infrastructure;
+using MyFaceApi.Api.Infrastructure.Database;
 using Newtonsoft.Json.Serialization;
 using Serilog;
 using System;
@@ -48,7 +44,6 @@ namespace MyFaceApi
 				});
 			});
 
-
 			IConfigurationSection identityServerConf = Configuration.GetSection("IdentityServerConfiguration");
 			var identityServerUrl = identityServerConf.GetValue<string>("IdentityServerUri");
 			var audienceName = identityServerConf.GetValue<string>("AudienceName");
@@ -63,12 +58,10 @@ namespace MyFaceApi
 					OnMessageReceived = context =>
 					{
 						var accessToken = context.Request.Query["token"];
-
-						// If the request is for our hub...
+.
 						var path = context.HttpContext.Request.Path;
 						if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/messagesHub")))
 						{
-							// Read the token out of the query string
 							context.Token = accessToken;
 						}
 						return Task.CompletedTask;
@@ -102,26 +95,10 @@ namespace MyFaceApi
 					options.UseSqlServer(Configuration.GetConnectionString("MyFaceApi"),
 					b => b.MigrationsAssembly("MyFaceApi.Api"));
 					});
-			services.AddDbContext<OnlineUsersDbContext>(
-				options => {
-					options.UseSqlServer(Configuration.GetConnectionString("MyFaceOnlineUsers"),
-					b => b.MigrationsAssembly("MyFaceApi.Api"));
-				});
-
-
-			services.AddScoped<IAppDbContext>(provider => provider.GetService<AppDbContext>());
-			services.AddScoped<IOnlineUsersDbContext>(provider => provider.GetService<OnlineUsersDbContext>());
-
-			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-			services.AddRepositories();
 
 			services.AddHttpClient();
-			services.AddScoped<IIdentityServerHttpService, IdentityServerHttpService>();
-			
-			
-			services.AddScoped<IUserRepository, UserIdentityServerAccess>();
-			services.AddScoped<IImageManager, ImageManager>();
+			services.AddInfrastructure();
+			services.AddApplication();
 			services.AddSignalR();
 		}
 
@@ -140,11 +117,8 @@ namespace MyFaceApi
 				c.DocumentTitle = "Api Doc";
 			});
 
-
-
 			app.UseHttpsRedirection();
 
-			//przy ka¿dym zapytaniu http zapisuje logi
 			app.UseSerilogRequestLogging();
 
 			app.UseRouting();

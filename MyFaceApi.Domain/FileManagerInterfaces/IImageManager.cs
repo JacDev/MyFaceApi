@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace MyFaceApi.Api.FileManager
+namespace MyFaceApi.Api.Domain.FileManagerInterfaces
 {
 	public interface IImageManager
 	{
@@ -11,7 +11,7 @@ namespace MyFaceApi.Api.FileManager
 
 		Task<Tuple<string, string>> SaveImage(IFormFile image);
 		FileStream ImageStream(string imageName);
-		string AddPrifileImage(string imageName, int width, int height);
+		string AddProfileImage(string imageName, int width, int height);
 
 	}
 }
