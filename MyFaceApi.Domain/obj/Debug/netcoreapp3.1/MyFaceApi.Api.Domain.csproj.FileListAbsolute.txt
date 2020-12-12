@@ -1,4 +1,0 @@
-C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Domain\obj\Debug\netcoreapp3.1\MyFaceApi.Api.Domain.csprojAssemblyReference.cache
-C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Domain\obj\Debug\netcoreapp3.1\MyFaceApi.Api.Domain.AssemblyInfoInputs.cache
-C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Domain\obj\Debug\netcoreapp3.1\MyFaceApi.Api.Domain.AssemblyInfo.cs
-C:\Users\lenovo\source\repos\MyFaceApi\MyFaceApi.Domain\obj\Debug\netcoreapp3.1\MyFaceApi.Api.Domain.csproj.CoreCompileInputs.cache
