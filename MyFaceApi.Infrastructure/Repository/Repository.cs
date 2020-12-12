@@ -11,24 +11,24 @@ using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Infrastructure.Repository
 {
-	public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+	public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class
 	{
 		private readonly DbContext _dbContext;
 		private readonly DbSet<TEntity> _dbSet;
-		public Repository(DbContext appDbContext)
+		public BaseRepository(DbContext appDbContext)
 		{
 			_dbContext = appDbContext;
 			_dbSet = _dbContext.Set<TEntity>();
 		}
 
-		public async Task<TEntity> AddAsync(TEntity entity)
+		public async Task<TEntity> Add(TEntity entity)
 		{
 			var addedEntity = await _dbSet.AddAsync(entity);
 			await _dbContext.SaveChangesAsync();
 			return addedEntity.Entity;
 		}
 
-		public void Remove(TEntity entityToDelete)
+		public void Delete(TEntity entityToDelete)
 		{
 			if (_dbContext.Entry(entityToDelete).State == EntityState.Detached)
 			{
@@ -37,10 +37,10 @@ namespace MyFaceApi.Api.Infrastructure.Repository
 			_dbSet.Remove(entityToDelete);
 		}
 
-		public void Remove(object id)
+		public void Delete(object id)
 		{
 			TEntity entityToDelete = _dbSet.Find(id);
-			Remove(entityToDelete);
+			Delete(entityToDelete);
 		}
 		public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = "")
 		{
@@ -76,10 +76,6 @@ namespace MyFaceApi.Api.Infrastructure.Repository
 		{
 			_dbSet.Attach(entityToUpdate);
 			_dbContext.Entry(entityToUpdate).State = EntityState.Modified;
-		}
-		public async Task SaveAsync()
-		{
-			await _dbContext.SaveChangesAsync();
 		}
 	}
 }

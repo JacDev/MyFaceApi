@@ -1,5 +1,6 @@
 ﻿using MyFaceApi.Api.Domain.Enums;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MyFaceApi.Api.Domain.Entities
 {

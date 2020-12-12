@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-
+using MyFaceApi.Api.Repository.Interfaces;
+using MyFaceApi.Api.Repository.Repositories;
 
 namespace MyFaceApi.Api.Repository
 {

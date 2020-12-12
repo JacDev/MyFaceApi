@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MyFaceApi.Api.Domain.DatabasesInterfaces;
-using MyFaceApi.Api.Domain.Entities;
+using MyFaceApi.Api.DataAccess.Data;
+using MyFaceApi.Api.DataAccess.Entities;
 using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Infrastructure.Database
@@ -15,7 +15,7 @@ namespace MyFaceApi.Api.Infrastructure.Database
 		public DbSet<Notification> Notifications { get; set; }
 		public DbSet<PostComment> PostComments { get; set; }
 		public DbSet<PostReaction> PostReactions { get; set; }
-		public DbSet<OnlineUser> OnlineUsers { get; set; }
+		public DbSet<Conversation> Conversations { get; set; }
 		public DbSet<Message> Messages { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
