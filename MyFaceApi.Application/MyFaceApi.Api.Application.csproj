@@ -19,9 +19,5 @@
   <ItemGroup>
     <ProjectReference Include="..\MyFaceApi.Domain\MyFaceApi.Api.Domain.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="UnitsOfWork\" />
-  </ItemGroup>
   
 </Project>

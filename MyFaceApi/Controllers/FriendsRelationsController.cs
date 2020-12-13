@@ -3,116 +3,91 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
-using MyFaceApi.Api.DboModels;
+using MyFaceApi.Api.Application.DtoModels;
+using MyFaceApi.Api.Application.DtoModels.FriendsRelation;
+using MyFaceApi.Api.Application.DtoModels.User;
+using MyFaceApi.Api.Application.Helpers;
+using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Extensions;
-using MyFaceApi.Api.Helpers;
-using MyFaceApi.Api.Models.FriendsRelationModels;
-using MyFaceApi.Api.Service.Helpers;
-using MyFaceApi.Api.Service.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Controllers
 {
+	[AllowAnonymous]
 	[Route("api/users/{userId}/friends")]
 	[ApiController]
 	public class FriendsRelationsController : ControllerBase
 	{
-		private readonly ILogger<FriendsRelationsController> _logger;
+
 		private readonly IFriendsRelationService _relationService;
+		private readonly ILogger<FriendsRelationsController> _logger;
 		private readonly IMapper _mapper;
 		private readonly IUserService _userService;
 
-		public FriendsRelationsController(ILogger<FriendsRelationsController> logger,
-			IFriendsRelationService relationService,
-			IMapper mapper,
-			IUserService userService)
+		public FriendsRelationsController(IFriendsRelationService relationService,
+			IUserService userService,
+			ILogger<FriendsRelationsController> logger)
 		{
-			_logger = logger ??
-				throw new ArgumentNullException(nameof(logger));
-			_relationService = relationService ??
-				throw new ArgumentNullException(nameof(relationService));
-			_mapper = mapper ??
-				throw new ArgumentNullException(nameof(mapper));
-			_userService = userService ??
-				throw new ArgumentNullException(nameof(userService));
+			_logger = logger;
+			_relationService = relationService;
+			_userService = userService;
 		}
 		[HttpGet("{friendId}", Name = "GetRelation")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<FriendsRelation> GetRelation(string userId, string friendId)
+		public ActionResult<FriendsRelationDto> GetRelation(string userId, string friendId)
 		{
-			try
+			if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(friendId, out Guid gFriendId))
 			{
-				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(friendId, out Guid gFriendId))
+				try
 				{
-					FriendsRelation friendsRelation = _relationService.GetFriendRelation(gUserId, gFriendId);
+					FriendsRelationDto friendsRelation = _relationService.GetFriendRelation(gUserId, gFriendId);
 					return Ok(friendsRelation);
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{userId} or {friendId} is not valid Guid.");
+					_logger.LogError(ex, "Error occured during getting the friends relation. Users id: {userId} and {friendId}", userId, friendId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during getting the friends relation. Users id: {userId} and {friendId}", userId, friendId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{userId} or {friendId} is not valid guid.");
 			}
 		}
-		[AllowAnonymous]
 		[HttpGet(Name = "GetFriends")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<CollectionWithPaginationData<BasicUserData>>> GetUserFriends(string userId, [FromQuery] PaginationParams paginationParams)
+		public async Task<ActionResult<CollectionWithPaginationData<UserDto>>> GetUserFriends(string userId, [FromQuery] PaginationParams paginationParams)
 		{
-			try
+			if (Guid.TryParse(userId, out Guid gUserId))
 			{
-				if (Guid.TryParse(userId, out Guid gUserId))
+				try
 				{
 					paginationParams.Skip = (paginationParams.PageNumber - 1) * paginationParams.PageSize;
 					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						PagedList<Guid> userFriendsId = _relationService.GetUserFriends(gUserId, paginationParams);
-						List<BasicUserData> usersToReturn = await _userService.GetUsersAsync(userFriendsId);
-
-						PagedList<BasicUserData> friendsToReturn = PagedList<BasicUserData>.Create(usersToReturn,
-							paginationParams.PageNumber,
-							paginationParams.PageSize,
-							0);
-						friendsToReturn.TotalCount = userFriendsId.TotalCount;
-						friendsToReturn.TotalPages = userFriendsId.TotalPages;
-
-						friendsToReturn.PreviousPageLink = friendsToReturn.HasPrevious ?
-							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetFriends") : null;
-
-						friendsToReturn.NextPageLink = friendsToReturn.HasNext ?
-							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetFriends") : null;
-
-						PaginationMetadata pagination = PaginationHelper.CreatePaginationMetadata<BasicUserData>(friendsToReturn);
-
-						return Ok(new CollectionWithPaginationData<BasicUserData> { PaginationMetadata = pagination, Collection = friendsToReturn });
+						PagedList<UserDto> friendsToReturn = await _relationService.GetUserFriends(gUserId, paginationParams);
+						return Ok(this.CreateCollectionWithPagination(friendsToReturn, paginationParams, "GetFriends"));
 					}
 					else
 					{
 						return NotFound($"User: {userId} not found.");
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{userId} is not valid guid.");
+					_logger.LogError(ex, "Error occured during getting the user relations. User id: {user}", userId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during getting the user relations. User id: {user}", userId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{userId} is not valid guid.");
 			}
 		}
 		[HttpPost]
@@ -120,7 +95,7 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<FriendsRelation>> AddRelation(string userId, FriendsRelationToAdd relationToAdd)
+		public async Task<ActionResult<FriendsRelationDto>> AddRelation(string userId, FriendsRelationToAddDto relationToAdd)
 		{
 			try
 			{
@@ -128,13 +103,10 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (await _userService.CheckIfUserExists(gUserId) && await _userService.CheckIfUserExists(relationToAdd.FriendId))
 					{
-						FriendsRelation friendsRelationEntity = _mapper.Map<FriendsRelation>(relationToAdd);
-						friendsRelationEntity.UserId = gUserId;
-						friendsRelationEntity = await _relationService.AddRelationAsync(friendsRelationEntity);
-
+						FriendsRelationDto addedRealtion = await _relationService.AddRelationAsync(gUserId, relationToAdd);
 						return CreatedAtRoute("GetRelation",
-							new { userId, friendId = friendsRelationEntity.FriendId },
-							friendsRelationEntity);
+							new { userId, friendId = addedRealtion.FriendId },
+							addedRealtion);
 					}
 					else
 					{
@@ -143,7 +115,7 @@ namespace MyFaceApi.Api.Controllers
 				}
 				else
 				{
-					return BadRequest($"{userId} is not valid Guid.");
+					return BadRequest($"{userId} is not valid guid.");
 				}
 			}
 			catch (Exception ex)
@@ -165,12 +137,7 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (await _userService.CheckIfUserExists(gUserId) && await _userService.CheckIfUserExists(gFriendId))
 					{
-						var relationFromRepo = _relationService.GetFriendRelation(gUserId, gFriendId);
-						if (relationFromRepo is null)
-						{
-							return NotFound($"Users: {userId} and {friendId} relation not found");
-						}
-						await _relationService.DeleteRelationAsync(relationFromRepo);
+						await _relationService.DeleteRelationAsync(gUserId, gFriendId);
 						return NoContent();
 					}
 					else
@@ -180,9 +147,9 @@ namespace MyFaceApi.Api.Controllers
 				}
 				else
 				{
-					return BadRequest($"{userId} or {friendId} is not valid Guid.");
+					return BadRequest($"{userId} or {friendId} is not valid guid.");
 				}
-				}
+			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Error occured during removing the friends relation. Users id: {userId} and {friendId}", userId, friendId);

@@ -1,7 +1,7 @@
-﻿using MyFaceApi.Api.Application.DtoModels.Comment;
-using MyFaceApi.Api.Domain.Entities;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using MyFaceApi.Api.Application.DtoModels.Comment;
+using MyFaceApi.Api.Application.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Application.Interfaces
@@ -10,8 +10,8 @@ namespace MyFaceApi.Api.Application.Interfaces
 	{
 		Task<CommentDto> AddCommentAsync(Guid postId, CommentToAddDto postComment);
 		Task DeleteCommentAsync(Guid comment);
-		List<CommentDto> GetPostComments(Guid postId);
+		PagedList<CommentDto> GetPostComments(Guid postId, PaginationParams paginationParams);
 		CommentDto GetComment(Guid commentId);
-		Task UpdateComment(PostComment postComment);
+		Task<bool> TryUpdatePostCommentAsync(Guid commentId, JsonPatchDocument<CommentToUpdateDto> patchDocument);
 	}
 }

@@ -15,6 +15,7 @@ namespace MyFaceApi.Api.Application
 		public static IServiceCollection AddApplication(this IServiceCollection services)
 		{
 			services.AddAutoMapper(Assembly.GetExecutingAssembly());
+			services.AddScoped<IHttpService, IdentityServerHttpService>();
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<IImageManager, ImageManager>();
 			services.AddScoped<IFriendsRelationService, FriendsRelationService>();
@@ -24,7 +25,6 @@ namespace MyFaceApi.Api.Application
 			services.AddScoped<IPostService, PostService>();
 			services.AddScoped<IPostReactionService, PostReactionService>();
 			services.AddScoped<IPostCommentService, PostCommentService>();
-			services.AddScoped<IHttpService, IdentityServerHttpService>();
 
 			return services;
 		}

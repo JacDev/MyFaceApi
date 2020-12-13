@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.Application.DtoModels.FriendsRelation;
+using MyFaceApi.Api.Application.DtoModels.User;
+using MyFaceApi.Api.Application.Helpers;
 using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Domain.Entities;
 using MyFaceApi.Api.Domain.RepositoryInterfaces;
@@ -14,13 +16,16 @@ namespace MyFaceApi.Api.Application.Services
 	public class FriendsRelationService : IFriendsRelationService
 	{
 		private readonly IRepository<FriendsRelation> _friendsRelationRepository;
+		private readonly IUserService _userService;
 		private readonly ILogger<FriendsRelationService> _logger;
 		private readonly IMapper _mapper;
 		public FriendsRelationService(IRepository<FriendsRelation> friendsRelationRepository,
+			IUserService userService,
 			ILogger<FriendsRelationService> logger)
 		{
 			_friendsRelationRepository = friendsRelationRepository;
 			_logger = logger;
+			_userService = userService;
 		}
 		public async Task<FriendsRelationDto> AddRelationAsync(Guid userId, FriendsRelationToAddDto friendRelation)
 		{
@@ -131,6 +136,17 @@ namespace MyFaceApi.Api.Application.Services
 				_logger.LogError(ex, "Error occured during getting the user: {userId} friends.", userId);
 				throw;
 			}
+		}
+		public async Task<PagedList<UserDto>> GetUserFriends(Guid userId, PaginationParams paginationParams)
+		{
+			List<Guid> friendsIds = GetUserFriendsId(userId);
+			PagedList<Guid> friendsToTakeFromApi = PagedList<Guid>.Create(friendsIds,
+							paginationParams.PageNumber,
+							paginationParams.PageSize,
+							(paginationParams.PageNumber - 1) * paginationParams.PageSize + paginationParams.Skip);
+
+			List<UserDto> usersToReturn = await _userService.GetUsersAsync(friendsToTakeFromApi);
+			return PagedList<UserDto>.CreateNewWithSameParams(friendsToTakeFromApi, usersToReturn);
 		}
 	}
 }

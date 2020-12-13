@@ -28,6 +28,10 @@ namespace MyFaceApi.Api.Application.Helpers
 				AddRange(items);
 			}
 		}
+		public static PagedList<dest> CreateNewWithSameParams<source, dest>(PagedList<source> old, List<dest> newCollection)
+		{
+			return PagedList<dest>.Create(newCollection, old.CurrentPage, old.PageSize, 0);
+		}
 		public static PagedList<T> Create(List<T> source, int pageNumber, int pageSize, int skip)
 		{
 			if (source != null)

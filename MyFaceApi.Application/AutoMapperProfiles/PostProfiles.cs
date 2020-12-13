@@ -10,6 +10,7 @@ namespace MyFaceApi.AutoMapperProfiles
 		{
 			CreateMap<PostToAddDto, Post>();
 			CreateMap<PostToUpdateDto, Post>();
+			CreateMap<Post, PostToUpdateDto>();
 			CreateMap<Post, PostDto>()
 				.ForMember(
 				dest => dest.PostCommentsCounter,

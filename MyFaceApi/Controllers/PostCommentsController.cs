@@ -4,13 +4,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.DboModels;
+using MyFaceApi.Api.Application.DtoModels;
+using MyFaceApi.Api.Application.DtoModels.Comment;
+using MyFaceApi.Api.Application.Helpers;
+using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Extensions;
-using MyFaceApi.Api.Helpers;
-using MyFaceApi.Api.Models.CommentModels;
-using MyFaceApi.Api.Service.Helpers;
-using MyFaceApi.Api.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -29,7 +27,7 @@ namespace MyFaceApi.Api.Controllers
 		public PostCommentsController(ILogger<PostCommentsController> logger,
 			IPostService postService,
 			IUserService userService,
-			IMapper mapper, 
+			IMapper mapper,
 			IPostCommentService postCommentService)
 		{
 			_logger = logger;
@@ -56,38 +54,38 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<PostComment>> AddComment(string userId, string postId, [FromBody] CommentToAdd postComment)
+		public async Task<ActionResult<CommentDto>> AddComment(string userId, string postId, [FromBody] CommentToAddDto postComment)
 		{
-			try
+			if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(userId, out Guid gUserId))
 			{
-				if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(userId, out Guid gUserId))
+				try
 				{
 					if (_postService.CheckIfPostExists(gPostId) && await _userService.CheckIfUserExists(gUserId))
 					{
-						PostComment commentEntity = _mapper.Map<PostComment>(postComment);
-						commentEntity.PostId = gPostId;
-						commentEntity.WhenAdded = DateTime.Now;
-						commentEntity = await _postCommentService.AddCommentAsync(commentEntity);
-
+						CommentDto addedComment = await _postCommentService.AddCommentAsync(gPostId, postComment);
 						return CreatedAtRoute("GetComment",
-							new { userId, postId = commentEntity.PostId, 
-								commentId = commentEntity.Id },
-							commentEntity);
+							new
+							{
+								userId,
+								postId = addedComment.PostId,
+								commentId = addedComment.Id
+							},
+							addedComment);
 					}
 					else
 					{
 						return NotFound($"User: {userId} or post {postId} not found.");
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{userId} or {postId} is not valid Guid.");
+					_logger.LogError(ex, "Error occured during adding the comment. Post id: {postId}", postId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during adding the comment. Post id: {postId}", postId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{userId} or {postId} is not valid Guid.");
 			}
 		}
 		/// <summary>
@@ -106,7 +104,7 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<CollectionWithPaginationData<PostComment>> GetComments(string postId, [FromQuery] PaginationParams paginationParams)
+		public ActionResult<CollectionWithPaginationData<CommentDto>> GetComments(string postId, [FromQuery] PaginationParams paginationParams)
 		{
 			try
 			{
@@ -114,22 +112,8 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (_postService.CheckIfPostExists(gPostId))
 					{
-						List<PostComment> commentsFromRepo = _postCommentService.GetComments(gPostId);
-
-						PagedList<PostComment> commentsToReturn = PagedList<PostComment>.Create(commentsFromRepo,
-							paginationParams.PageNumber,
-							paginationParams.PageSize,
-							(paginationParams.PageNumber - 1) * paginationParams.PageSize);
-
-						commentsToReturn.PreviousPageLink = commentsToReturn.HasPrevious ?
-							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetComments") : null;
-
-						commentsToReturn.NextPageLink = commentsToReturn.HasNext ?
-							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetComments") : null;
-
-						PaginationMetadata pagination = PaginationHelper.CreatePaginationMetadata<PostComment>(commentsToReturn);
-
-						return Ok(new CollectionWithPaginationData<PostComment> { PaginationMetadata = pagination, Collection = commentsToReturn });
+						PagedList<CommentDto> commentsToReturn = _postCommentService.GetPostComments(gPostId, paginationParams);
+						return Ok(this.CreateCollectionWithPagination(commentsToReturn, paginationParams, "GetPosts"));
 					}
 					else
 					{
@@ -160,9 +144,8 @@ namespace MyFaceApi.Api.Controllers
 		[HttpGet("{commentId}", Name = "GetComment")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<List<PostComment>> GetComment(string postId, string commentId)
+		public ActionResult<List<CommentDto>> GetComment(string postId, string commentId)
 		{
 			try
 			{
@@ -170,15 +153,7 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (_postService.CheckIfPostExists(gPostId))
 					{
-						PostComment comment = _postCommentService.GetComment(gCommentId);
-						if(comment is null)
-						{
-							return NotFound($"Comment: {commentId} not found.");
-						}
-						else
-						{
-							return Ok(comment);
-						}
+						return Ok(_postCommentService.GetComment(gCommentId));
 					}
 					else
 					{
@@ -206,35 +181,25 @@ namespace MyFaceApi.Api.Controllers
 		/// </returns>
 		/// <response code="204"> No content if the comment has been updated</response>
 		/// <response code="400"> If the comment is not valid</response>    
-		/// <response code="404"> If the comment not found</response>
 		/// <response code="500"> If internal error occured</response>
 		[HttpPatch("{commentId}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult> PartiallyUpdateComment(string commentId, JsonPatchDocument<CommentToUpdate> patchDocument)
+		public async Task<ActionResult> PartiallyUpdateComment(string commentId, JsonPatchDocument<CommentToUpdateDto> patchDocument)
 		{
 			try
 			{
 				if (Guid.TryParse(commentId, out Guid gCommentId))
 				{
-					PostComment commentFromRepo = _postCommentService.GetComment(gCommentId);
-					if (commentFromRepo == null)
+					if (await _postCommentService.TryUpdatePostCommentAsync(gCommentId, patchDocument))
 					{
-						return NotFound();
+						return NoContent();
 					}
-					CommentToUpdate commentToPatch = _mapper.Map<CommentToUpdate>(commentFromRepo);
-					patchDocument.ApplyTo(commentToPatch, ModelState);
-
-					if (!TryValidateModel(commentToPatch))
+					else
 					{
-						return ValidationProblem(ModelState);
+						return BadRequest();
 					}
-
-					_mapper.Map(commentToPatch, commentFromRepo);
-					await _postCommentService.UpdateComment(commentFromRepo);
-					return NoContent();
 				}
 				else
 				{
@@ -257,31 +222,23 @@ namespace MyFaceApi.Api.Controllers
 		/// </returns>
 		/// <response code="204"> No content if the comment has been updated</response>
 		/// <response code="400"> If the post is not valid</response>    
-		/// <response code="404"> If the post not found</response>
 		/// <response code="500"> If internal error occured</response>
 		[HttpDelete("{commentId}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
 		public async Task<ActionResult> DeleteComment(string commentId)
 		{
 			try
 			{
 				if (Guid.TryParse(commentId, out Guid gCommentId))
 				{
-					PostComment commentFromRepo = _postCommentService.GetComment(gCommentId);
-					if (commentFromRepo == null)
-					{
-						return NotFound();
-					}
-					await _postCommentService.DeleteCommentAsync(commentFromRepo);
+					await _postCommentService.DeleteCommentAsync(gCommentId);
 					return NoContent();
 				}
 				else
 				{
-					return BadRequest($"{commentId} is not valid Guid.");
+					return BadRequest($"{commentId} is not valid guid.");
 				}
 			}
 			catch (Exception ex)

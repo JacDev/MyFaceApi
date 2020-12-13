@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.Application.DtoModels;
 using MyFaceApi.Api.Application.DtoModels.Post;
-using MyFaceApi.Api.Application.FileManagerInterfaces;
 using MyFaceApi.Api.Application.Helpers;
 using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Extensions;
@@ -22,19 +21,14 @@ namespace MyFaceApi.Api.Controllers
 		private readonly ILogger<PostsController> _logger;
 		private readonly IPostService _postService;
 		private readonly IUserService _userService;
-		private readonly IFriendsRelationService _friendsRelationService;
-		private readonly IImageManager _imagesManager;
+
 		public PostsController(ILogger<PostsController> logger,
 			IPostService postService,
-			IUserService userService,
-			IFriendsRelationService friendsRelationService,
-			IImageManager imagesManager)
+			IUserService userService)
 		{
 			_logger = logger;
 			_postService = postService;
 			_userService = userService;
-			_friendsRelationService = friendsRelationService;
-			_imagesManager = imagesManager;
 			_logger.LogTrace("PostsController created");
 		}
 		/// <summary>
@@ -70,7 +64,6 @@ namespace MyFaceApi.Api.Controllers
 				return BadRequest($"{postId} is not valid guid.");
 			}
 		}
-
 		/// <summary>
 		/// Return the found user posts
 		/// </summary>
@@ -113,7 +106,6 @@ namespace MyFaceApi.Api.Controllers
 				return BadRequest($"{userId} is not valid guid.");
 			}
 		}
-
 		[HttpGet("latest", Name = "GetLatestPosts")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]

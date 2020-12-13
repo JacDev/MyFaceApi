@@ -1,11 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.Models.PostReactionModels;
-using MyFaceApi.Api.Service.Interfaces;
+using MyFaceApi.Api.Application.DtoModels.PostReaction;
+using MyFaceApi.Api.Application.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,17 +18,14 @@ namespace MyFaceApi.Api.Controllers
 		private readonly IPostService _postService;
 		private readonly IUserService _userService;
 		private readonly IPostReactionService _postReactionService;
-		private readonly IMapper _mapper;
 		public PostReactionsController(ILogger<PostReactionsController> logger,
 			IPostService postService,
 			IUserService userService,
-			IMapper mapper,
 			IPostReactionService postReactionService)
 		{
 			_logger = logger;
 			_postService = postService;
 			_userService = userService;
-			_mapper = mapper;
 			_postReactionService = postReactionService;
 			_logger.LogTrace("PostReactionController created");
 		}
@@ -50,42 +45,40 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<PostReactionToAdd>> AddPostReaction(string userId, string postId, [FromBody] PostReactionToAdd reactionToAdd)
+		public async Task<ActionResult<PostReactionDto>> AddPostReaction(string userId, string postId, [FromBody] PostReactionToAddDto reactionToAdd)
 		{
-			try
+			if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(userId, out Guid gUserId))
 			{
-				if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(userId, out Guid gUserId))
+				try
 				{
 					if (_postService.CheckIfPostExists(gPostId) && await _userService.CheckIfUserExists(gUserId))
 					{
-						PostReaction postReactionEntity = _mapper.Map<PostReaction>(reactionToAdd);
-						postReactionEntity.WhenAdded = DateTime.Now;
-						postReactionEntity.PostId = gPostId;
-						postReactionEntity = await _postReactionService.AddPostReactionAsync(postReactionEntity);
+
+						PostReactionDto addedReaction = await _postReactionService.AddPostReactionAsync(gPostId, reactionToAdd);
 
 						return CreatedAtRoute("GetReaction",
 							new
 							{
 								userId,
-								postId = postReactionEntity.PostId,
-								reactionId = postReactionEntity.Id
+								postId = addedReaction.PostId,
+								reactionId = addedReaction.Id
 							},
-							postReactionEntity);
+							addedReaction);
 					}
 					else
 					{
 						return NotFound($"User: {userId} or post {postId} not found.");
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{userId} or {postId} is not valid guid.");
+					_logger.LogError(ex, "Error occured during adding the reaction. Post id: {postId}", postId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during adding the reaction. Post id: {postId}", postId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{userId} or {postId} is not valid guid.");
 			}
 		}
 		/// <summary>
@@ -101,31 +94,31 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<List<PostReactionToAdd>> GetPostReactions(string postId)
+		public ActionResult<List<PostReactionDto>> GetPostReactions(string postId)
 		{
-			try
+			if (Guid.TryParse(postId, out Guid gPostId))
 			{
-				if (Guid.TryParse(postId, out Guid gPostId))
+				try
 				{
 					if (_postService.CheckIfPostExists(gPostId))
 					{
-						List<PostReaction> reactions = _postReactionService.GetPostReactions(gPostId);
-						return Ok(reactions);
+						List<PostReactionDto> reactionsToReturn = _postReactionService.GetPostReactions(gPostId);
+						return Ok(reactionsToReturn);
 					}
 					else
 					{
-						return NotFound($"Post: {postId} not found.");
+						return NotFound($"Post: {postId} doesnt exists.");
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{postId} is not valid Guid.");
+					_logger.LogError(ex, "Error occured during getting reactions of the post: {postId}", postId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during getting reactions of the post: {postId}", postId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{postId} is not valid Guid.");
 			}
 		}
 		/// <summary>
@@ -143,38 +136,32 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<List<PostComment>> GetPostReaction(string postId, string reactionId)
+		public ActionResult<List<PostReactionDto>> GetPostReaction(string postId, string reactionId)
 		{
-			try
+			if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(reactionId, out Guid gReactionId))
 			{
-				if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(reactionId, out Guid gReactionId))
+				try
 				{
 					if (_postService.CheckIfPostExists(gPostId))
 					{
-						PostReaction postReaction = _postReactionService.GetPostReaction(gReactionId);
-						if (postReaction is null)
-						{
-							return NotFound($"Reaction: {reactionId} not found.");
-						}
-						else
-						{
-							return Ok(postReaction);
-						}
+						PostReactionDto postReaction = _postReactionService.GetPostReaction(gReactionId);
+						return Ok(postReaction);
 					}
 					else
 					{
 						return NotFound($"Post: {postId} not found.");
 					}
 				}
-				else
+
+				catch (Exception ex)
 				{
-					return BadRequest($"{postId} or {reactionId} is not valid Guid.");
+					_logger.LogError(ex, "Error occured during getting the reaction: postId: {postId}, reactionId: {reactionId}", postId, reactionId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during getting the reaction: postId: {postId}, reactionId: {reactionId}", postId, reactionId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{postId} or {reactionId} is not valid guid.");
 			}
 		}
 		/// <summary>
@@ -196,37 +183,29 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<ActionResult> PartiallyUpdatePostReaction(string reactionId, JsonPatchDocument<PostReactionToUpdate> patchDocument)
 		{
-			try
+			if (Guid.TryParse(reactionId, out Guid gReactionId))
 			{
-				if (Guid.TryParse(reactionId, out Guid gReactionId))
+				try
 				{
-					PostReaction reactionFromRepo = _postReactionService.GetPostReaction(gReactionId);
-					if (reactionFromRepo == null)
+					if (await _postReactionService.TryUpdatePostReactionAsync(gReactionId, patchDocument))
 					{
-						return NotFound();
+						return NoContent();
 					}
-					PostReactionToUpdate reactionToPatch = _mapper.Map<PostReactionToUpdate>(reactionFromRepo);
-					patchDocument.ApplyTo(reactionToPatch, ModelState);
-
-					if (!TryValidateModel(reactionToPatch))
+					else
 					{
-						return ValidationProblem(ModelState);
+						return BadRequest();
 					}
-
-					_mapper.Map(reactionToPatch, reactionFromRepo);
-					await _postReactionService.UpdatePostReactionAsync(reactionFromRepo);
-					return NoContent();
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{reactionId} is not valid Guid.");
+					_logger.LogError(ex, "Error occured during updating the reaction. Reaction id: {reactionId}", reactionId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
+
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during updating the reaction. Reaction id: {reactionId}", reactionId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
-
+				return BadRequest($"{reactionId} is not valid guid.");
 			}
 		}
 		/// <summary>
@@ -248,18 +227,14 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<ActionResult> DeletePostReaction(string postId, string fromWho)
 		{
-			try
+
+			if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(fromWho, out Guid gFromWho))
 			{
-				if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(fromWho, out Guid gFromWho))
+				try
 				{
 					if (_postService.CheckIfPostExists(gPostId) && await _userService.CheckIfUserExists(gFromWho))
 					{
-						PostReaction reactionFromRepo = _postReactionService.GetPostReaction(gFromWho, gPostId);
-						if (reactionFromRepo == null)
-						{
-							return NotFound();
-						}
-						await _postReactionService.DeletePostReactionAsync(reactionFromRepo);
+						await _postReactionService.DeletePostReactionAsync(gFromWho, gPostId);
 						return NoContent();
 					}
 					else
@@ -267,15 +242,15 @@ namespace MyFaceApi.Api.Controllers
 						return NotFound($"User: {gFromWho} or post {postId} not found.");
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{fromWho} or {postId} is not valid Guid.");
+					_logger.LogError(ex, "Error occured during removing the reaction. FromWho id: {fromWho}, post id: {postId}", fromWho, postId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during removing the reaction. FromWho id: {fromWho}, post id: {postId}", fromWho, postId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{fromWho} or {postId} is not valid Guid.");
 			}
 		}
 	}

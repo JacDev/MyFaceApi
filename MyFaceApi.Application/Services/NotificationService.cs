@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.Application.DtoModels.Notification;
+using MyFaceApi.Api.Application.Helpers;
 using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Domain.Entities;
 using MyFaceApi.Api.Domain.RepositoryInterfaces;
@@ -106,6 +108,35 @@ namespace MyFaceApi.Api.Application.Services
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Error occured during getting the user notifications.");
+				throw;
+			}
+		}
+		public async Task<bool> TryUpdateNotificationAsync(Guid notificationId, JsonPatchDocument<NotificationToUpdateDto> patchDocument)
+		{
+			_logger.LogDebug("Trying to update notification: {id}", notificationId);
+			try
+			{
+				Notification notificationFromRepo = _notificationRepository.GetById(notificationId);
+				if (notificationFromRepo == null)
+				{
+					return false;
+				}
+				NotificationToUpdateDto postToPatch = _mapper.Map<NotificationToUpdateDto>(notificationFromRepo);
+				patchDocument.ApplyTo(postToPatch);
+				if (!ValidatorHelper.ValidateModel(postToPatch))
+				{
+					return false;
+				}
+
+				_mapper.Map(postToPatch, notificationFromRepo);
+				_notificationRepository.Update(notificationFromRepo);
+				await _notificationRepository.SaveAsync();
+				_logger.LogDebug("Notification {id} has been updated.", notificationId);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occured during updating the notification.");
 				throw;
 			}
 		}

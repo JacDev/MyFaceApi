@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.Application.DtoModels.Message;
+using MyFaceApi.Api.Application.Helpers;
 using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Domain.Entities;
 using MyFaceApi.Api.Domain.RepositoryInterfaces;
@@ -53,7 +54,7 @@ namespace MyFaceApi.Api.Application.Services
 		public async Task DeleteMessageAsync(Guid messageid)
 		{
 			_logger.LogDebug("Trying to remove message: {messageid}.", messageid);
-			if (messageid ==Guid.Empty)
+			if (messageid == Guid.Empty)
 			{
 				throw new ArgumentNullException(nameof(messageid));
 			}
@@ -113,7 +114,7 @@ namespace MyFaceApi.Api.Application.Services
 			}
 			try
 			{
-				var message = _messageRepository.GetById(messageId);		
+				var message = _messageRepository.GetById(messageId);
 				return _mapper.Map<MessageDto>(message);
 			}
 			catch (Exception ex)
@@ -122,7 +123,7 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public List<MessageDto> GetUserMessagesWith(Guid userId, Guid friendId)
+		public PagedList<MessageDto> GetUserMessagesWith(Guid userId, Guid friendId, PaginationParams paginationParams)
 		{
 			_logger.LogDebug($"Trying to get the users: {userId} and {friendId} messages");
 			if (userId == Guid.Empty || friendId == Guid.Empty)
@@ -133,10 +134,14 @@ namespace MyFaceApi.Api.Application.Services
 			{
 				List<Message> messagesFromRepo = _messageRepository.Get(
 					m => m.ToWho == userId && m.FromWho == friendId || m.ToWho == friendId && m.FromWho == userId,
-					x=>x.OrderByDescending(x => x.When)).ToList();
+					x => x.OrderByDescending(x => x.When)).ToList();
 
-				return _mapper.Map<List<MessageDto>>(messagesFromRepo);
+				List<MessageDto> messages = _mapper.Map<List<MessageDto>>(messagesFromRepo);
 
+				return PagedList<MessageDto>.Create(messages,
+							paginationParams.PageNumber,
+							paginationParams.PageSize,
+							(paginationParams.PageNumber - 1) * paginationParams.PageSize + paginationParams.Skip);
 			}
 			catch (Exception ex)
 			{

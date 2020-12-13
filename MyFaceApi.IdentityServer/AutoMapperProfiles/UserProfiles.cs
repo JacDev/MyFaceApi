@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
-using MyFaceApi.IdentityServer.DataAccess.Entities;
 
 namespace MyFaceApi.IdentityServer.AutoMapperProfiles
 {
@@ -8,7 +6,7 @@ namespace MyFaceApi.IdentityServer.AutoMapperProfiles
 	{
 		public UserProfiles()
 		{
-			CreateMap<AppUser, BasicUserData>();
+			//CreateMap<AppUser, BasicUserData>();
 		}
 	}
 }

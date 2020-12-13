@@ -1,5 +1,5 @@
-﻿using MyFaceApi.Api.Application.DtoModels.PostReaction;
-using MyFaceApi.Api.Domain.Entities;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using MyFaceApi.Api.Application.DtoModels.PostReaction;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,9 +10,10 @@ namespace MyFaceApi.Api.Application.Interfaces
 	{
 		Task<PostReactionDto> AddPostReactionAsync(Guid postId, PostReactionToAddDto postReaction);
 		Task DeletePostReactionAsync(Guid postReactionId);
+		Task DeletePostReactionAsync(Guid userId, Guid postId);
 		List<PostReactionDto> GetPostReactions(Guid postId);
 		PostReactionDto GetPostReaction(Guid reactionId);
 		PostReactionDto GetPostReaction(Guid fromWho, Guid postId);
-		Task UpdatePostReactionAsync(PostReaction postReaction);
+		Task<bool> TryUpdatePostReactionAsync(Guid reactionId, JsonPatchDocument<PostReactionToUpdate> patchDocument);
 	}
 }

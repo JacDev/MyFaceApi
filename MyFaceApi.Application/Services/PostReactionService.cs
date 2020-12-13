@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.Application.DtoModels.PostReaction;
+using MyFaceApi.Api.Application.Helpers;
 using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Domain.Entities;
 using MyFaceApi.Api.Domain.RepositoryInterfaces;
@@ -73,6 +75,11 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
+		public async Task DeletePostReactionAsync(Guid userId, Guid postId)
+		{
+			PostReactionDto reactionToRemove = GetPostReaction(userId, postId);
+			await DeletePostReactionAsync(reactionToRemove.Id);
+		}
 		public PostReactionDto GetPostReaction(Guid reactionId)
 		{
 			_logger.LogDebug("Trying to get reaction: {reactionId}", reactionId);
@@ -83,7 +90,6 @@ namespace MyFaceApi.Api.Application.Services
 			try
 			{
 				PostReaction reactionFromRepo = _postReactionRepository.GetById(reactionId);
-
 				return _mapper.Map<PostReactionDto>(reactionFromRepo);
 			}
 			catch (Exception ex)
@@ -133,18 +139,32 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public async Task UpdatePostReactionAsync(PostReaction postReaction)
+		public async Task<bool> TryUpdatePostReactionAsync(Guid reactionId, JsonPatchDocument<PostReactionToUpdate> patchDocument)
 		{
-			_logger.LogDebug("Trying to update reaction: {postReaction}", postReaction);
+			_logger.LogDebug("Trying to update post reaction: {id}.", reactionId);
 			try
 			{
-				_postReactionRepository.Update(postReaction);
+				PostReaction reactionFromRepo = _postReactionRepository.GetById(reactionId);
+				if (reactionFromRepo == null)
+				{
+					return false;
+				}
+				PostReactionToUpdate reactionToPatch = _mapper.Map<PostReactionToUpdate>(reactionFromRepo);
+				patchDocument.ApplyTo(reactionToPatch);
+				if (!ValidatorHelper.ValidateModel(reactionToPatch))
+				{
+					return false;
+				}
+
+				_mapper.Map(reactionToPatch, reactionFromRepo);
+				_postReactionRepository.Update(reactionFromRepo);
 				await _postReactionRepository.SaveAsync();
-				_logger.LogDebug("Reaction {postReaction} has been updated.", postReaction);
+				_logger.LogDebug("Reaction: {id} has been updated.", reactionId);
+				return true;
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Error occured during updating the reaction.");
+				_logger.LogError(ex, "Error occured during updating the post reaction.");
 				throw;
 			}
 		}

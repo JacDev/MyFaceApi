@@ -1,21 +1,13 @@
-﻿using AutoFixture;
-using AutoFixture.AutoMoq;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.Service.Helpers;
-using MyFaceApi.Api.Service.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
+using MyFaceApi.Api.Application.DtoModels;
+using MyFaceApi.Api.Application.DtoModels.Message;
+using MyFaceApi.Api.Application.Helpers;
+using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Extensions;
-using MyFaceApi.Api.Helpers;
-using MyFaceApi.Api.Models.MessageModels;
-using MyFaceApi.Api.DboModels;
+using System;
+using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Controllers
 {
@@ -26,94 +18,55 @@ namespace MyFaceApi.Api.Controllers
 		private readonly ILogger<MessagesController> _logger;
 		private readonly IMessageService _messageService;
 		private readonly IUserService _userService;
-		private readonly IMapper _mapper;
 		public MessagesController(ILogger<MessagesController> logger,
 			IMessageService messageService,
-			IUserService userService,
-			IMapper mapper)
+			IUserService userService)
 		{
 			_logger = logger;
 			_messageService = messageService;
 			_userService = userService;
-			_mapper = mapper;
 			_logger.LogTrace("MessagesController created");
 		}
-		[HttpGet("populate")]
-		public async Task<ActionResult<List<Message>>> PopulateDb()
-		{
-			var _fixture = new Fixture().Customize(new AutoMoqCustomization());
-			var messages = new List<Message>();
-			var users = new List<User>();
-			_fixture.AddManyTo(users, 2);
-			await _userService.AddUserAcync(users[0]);
-			await _userService.AddUserAcync(users[1]);
-			_fixture.AddManyTo(messages, 15);
-			for (int i = 0; i < 10; ++i)
-			{
-				messages[i].FromWho = users[0].Id;
-				messages[i].ToWho = users[1].Id;
-				await _messageService.AddMessageAsync(messages[i]);
-			}
-			for (int i = 10; i < messages.Count; ++i)
-			{
-				messages[i].FromWho = users[1].Id;
-				messages[i].ToWho = users[0].Id;
-				await _messageService.AddMessageAsync(messages[i]);
-			}
-			return messages;
-		}
+
 		[HttpGet("{messageId}", Name = "GetMessage")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<Message> GetMessage(string messageId)
+		public ActionResult<MessageDto> GetMessage(string messageId)
 		{
-			try
+			if (Guid.TryParse(messageId, out Guid gMessageId))
 			{
-				if (Guid.TryParse(messageId, out Guid gMessageId))
+				try
 				{
-					Message messageToReturn = _messageService.GetMessage(gMessageId);
+					MessageDto messageToReturn = _messageService.GetMessage(gMessageId);
 					return Ok(messageToReturn);
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{messageId} is not valid guid.");
+					_logger.LogError(ex, "Error occured during getting the message. Message id: {id}", messageId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during getting the message. Message id: {messageId}", messageId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{messageId} is not valid guid.");
 			}
 		}
-		[HttpGet("with/{friendId}", Name = "GetMessages")]
+		[HttpGet("with/{friendId}", Name = "GetMessagesWith")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<PagedList<Message>>> GetMessagesWith(string userId, string friendId, [FromQuery] PaginationParams paginationParams)
+		public async Task<ActionResult<CollectionWithPaginationData<MessageDto>>> GetMessagesWith(string userId, string friendId, [FromQuery] PaginationParams paginationParams)
 		{
-			try
+			if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(friendId, out Guid gFriendId))
 			{
-				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(friendId, out Guid gFriendId))
+				try
 				{
 					if (await _userService.CheckIfUserExists(gUserId) && await _userService.CheckIfUserExists(gFriendId))
 					{
-						List<Message> messagesFromRepo = await _messageService.GetUserMessagesWith(gUserId, gFriendId);
-						PagedList<Message> messagesToReturn = PagedList<Message>.Create(messagesFromRepo,
-							paginationParams.PageNumber,
-							paginationParams.PageSize,
-							(paginationParams.PageNumber - 1) * paginationParams.PageSize + paginationParams.Skip);
-
-						messagesToReturn.PreviousPageLink = messagesToReturn.HasPrevious ?
-							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.PreviousPage, "GetMessages") : null;
-
-						messagesToReturn.NextPageLink = messagesToReturn.HasNext ?
-							this.CreateMessagesResourceUriWithPaginationParams(paginationParams, ResourceUriType.NextPage, "GetMessages") : null;
-
-						PaginationMetadata pagination = PaginationHelper.CreatePaginationMetadata<Message>(messagesToReturn);
-
-						return Ok(new CollectionWithPaginationData<Message> { PaginationMetadata = pagination, Collection = messagesToReturn });
+						PagedList<MessageDto> messagesToReturn = _messageService.GetUserMessagesWith(gUserId, gFriendId, paginationParams);
+						return Ok(this.CreateCollectionWithPagination(messagesToReturn, paginationParams, "GetMessagesWith"));
 
 					}
 					else
@@ -121,15 +74,15 @@ namespace MyFaceApi.Api.Controllers
 						return NotFound($"User: {userId} or user: {friendId} doesnt exist.");
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{userId} or user: {friendId} is not valid guid.");
+					_logger.LogError(ex, "Error occured during getting the messages. User id: {userId} and friend id: {friendId}", userId, friendId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during getting the messages. User id: {userId} and friend id: {friendId}", userId, friendId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{userId} or user: {friendId} is not valid guid.");
 			}
 		}
 		[HttpPost]
@@ -137,7 +90,7 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<Message>> AddMessage(string userId, MessageToAdd messageToAdd)
+		public async Task<ActionResult<MessageDto>> AddMessage(string userId, MessageToAddDto messageToAdd)
 		{
 			try
 			{
@@ -145,14 +98,14 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						Message messageEntity = _mapper.Map<Message>(messageToAdd);
-
-						messageEntity.ToWho = gUserId;
-						messageEntity = await _messageService.AddMessageAsync(messageEntity);
-
+						MessageDto addedMessage = await _messageService.AddMessageAsync(gUserId, messageToAdd);
 						return CreatedAtRoute("GetMessage",
-							new { userId, messageId = messageEntity.Id },
-							messageEntity);
+							new
+							{
+								userId,
+								messageId = addedMessage.Id
+							},
+							addedMessage);
 					}
 					else
 					{
@@ -181,12 +134,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				if (Guid.TryParse(messageId, out Guid gMessageId))
 				{
-					Message messageFromRepo = _messageService.GetMessage(gMessageId);
-					if (messageFromRepo == null)
-					{
-						return NotFound();
-					}
-					await _messageService.DeleteMessageAsync(messageFromRepo);
+					await _messageService.DeleteMessageAsync(gMessageId);
 					return NoContent();
 				}
 				else
@@ -196,11 +144,9 @@ namespace MyFaceApi.Api.Controllers
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Error occured during removing the message. Message id: {messageId}", messageId);
+				_logger.LogError(ex, "Error occured during removing the message. Message id: {id}", messageId);
 				return StatusCode(StatusCodes.Status500InternalServerError);
 			}
 		}
-
-
 	}
 }

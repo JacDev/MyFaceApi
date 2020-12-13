@@ -1,11 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.Models.NotificationModels;
-using MyFaceApi.Api.Service.Interfaces;
+using MyFaceApi.Api.Application.DtoModels.Notification;
+using MyFaceApi.Api.Application.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,16 +17,13 @@ namespace MyFaceApi.Api.Controllers
 		private readonly ILogger<NotificationsController> _logger;
 		private readonly INotificationService _notificationService;
 		private readonly IUserService _userService;
-		private readonly IMapper _mapper;
 
 		public NotificationsController(ILogger<NotificationsController> logger,
 			INotificationService notificationService,
-			IMapper mapper, 
 			IUserService userService)
 		{
 			_logger = logger;
 			_notificationService = notificationService;
-			_mapper = mapper;
 			_userService = userService;
 			_logger.LogTrace("NotificationController created");
 		}
@@ -47,40 +42,34 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<Post>> GetNotification(string userId, string notificationId)
+		public async Task<ActionResult<NotificationDto>> GetNotification(string userId, string notificationId)
 		{
-			try
+			if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(notificationId, out Guid gNotificationId))
 			{
-				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(notificationId, out Guid gNotificationId))
+				try
 				{
 					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						Notification notificationToReturn = _notificationService.GetNotification(gNotificationId);
-						if (notificationToReturn is null)
-						{
-							return NotFound($"Notification: {notificationId} not found.");
-						}
-						else
-						{
-							return Ok(notificationToReturn);
-						}
+						NotificationDto notificationToReturn = _notificationService.GetNotification(gNotificationId);
+						return Ok(notificationToReturn);
 					}
 					else
 					{
 						return NotFound($"User: {userId} not found.");
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"User id: {userId} or  notification id: {notificationId} is not valid Guid.");
+					_logger.LogError(ex, "Error occured during getting the notification. Notification id: {id}", notificationId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during getting the notification. Notification id: {notificationId}", notificationId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"User id: {userId} or notification id: {notificationId} is not valid guid.");
 			}
 		}
+
 		/// <summary>
 		/// Return the found user notifications
 		/// </summary>
@@ -95,38 +84,31 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<List<Post>>> GetNotifications(string userId)
+		public async Task<ActionResult<List<NotificationDto>>> GetNotifications(string userId)
 		{
-			try
+			if (Guid.TryParse(userId, out Guid gUserId))
 			{
-				if (Guid.TryParse(userId, out Guid gUserId))
+				try
 				{
 					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						List<Notification> notificationsToReturn = _notificationService.GetUserNotifications(gUserId);
-						if(notificationsToReturn is null)
-						{
-							return NotFound($"The user: {userId} notificatios not found.");
-						}
-						else
-						{
-							return Ok(notificationsToReturn);
-						}
+						List<NotificationDto> notificationsToReturn = _notificationService.GetUserNotifications(gUserId);
+						return Ok(notificationsToReturn);
 					}
 					else
 					{
 						return NotFound($"User: {userId} not found.");
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{userId} is not valid Guid.");
+					_logger.LogError(ex, "Error occured during getting the user notifications. User id: {id}", userId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during getting the user notifications. User id: {user}", userId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{userId} is not valid guid.");
 			}
 		}
 		/// <summary>
@@ -144,23 +126,21 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<NotificationToAdd>> AddNotification(string userId,  [FromBody] NotificationToAdd notificationToAdd)
+		public async Task<ActionResult<NotificationDto>> AddNotification(string userId, [FromBody] NotificationToAddDto notificationToAdd)
 		{
-			try
+			if (Guid.TryParse(userId, out Guid gUserId))
 			{
-				if (Guid.TryParse(userId, out Guid gUserId))
+				try
 				{
 					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						Notification notificationEntity = _mapper.Map<Notification>(notificationToAdd);
-						notificationEntity.ToWhoId = gUserId;
-						notificationEntity = await _notificationService.AddNotificationAsync(notificationEntity);
+						var addedNotification = _notificationService.AddNotificationAsync(gUserId, notificationToAdd);
 
 						return CreatedAtRoute("GetNotification",
 							new
 							{
 								userId,
-								notificationId = notificationEntity.Id
+								notificationId = addedNotification.Id
 							},
 							notificationToAdd);
 					}
@@ -169,15 +149,15 @@ namespace MyFaceApi.Api.Controllers
 						return NotFound($"User: {userId} not found.");
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"{userId} is not valid Guid.");
+					_logger.LogError(ex, "Error occured during adding the notification. User id: {userId}", userId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during adding the notification. User id: {userId}", userId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"{userId} is not valid guid.");
 			}
 		}
 		/// <summary>
@@ -198,46 +178,37 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult> PartiallyUpdateNotification(string userId, string notificationId, JsonPatchDocument<NotificationToUpdate> patchDocument)
+		public async Task<ActionResult> PartiallyUpdateNotification(string userId, string notificationId, JsonPatchDocument<NotificationToUpdateDto> patchDocument)
 		{
-			try
+			if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(notificationId, out Guid gNotificationId))
 			{
-				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(notificationId, out Guid gNotificationId))
+				try
 				{
 					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						Notification notificationFromRepo = _notificationService.GetNotification(gNotificationId);
-						if (notificationFromRepo is null)
+						if (await _notificationService.TryUpdateNotificationAsync(gNotificationId, patchDocument))
 						{
-							return NotFound($"Notification: {notificationId} not found.");
+							return NoContent();
 						}
-						NotificationToUpdate notificationToPatch = _mapper.Map<NotificationToUpdate>(notificationFromRepo);
-						patchDocument.ApplyTo(notificationToPatch, ModelState);
-
-						if (!TryValidateModel(notificationToPatch))
+						else
 						{
-							return ValidationProblem(ModelState);
+							return BadRequest();
 						}
-
-						_mapper.Map(notificationToPatch, notificationFromRepo);
-
-						await _notificationService.UpdateNotificationAsync(notificationFromRepo);
-						return NoContent();
 					}
 					else
 					{
 						return NotFound($"User: {userId} not found.");
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"User id: {userId} or notification id: {notificationId} is not valid Guid.");
+					_logger.LogError(ex, "Error occured during updating the notification. Notification id: {notificationId}", notificationId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during updating the notification. Notification id: {notificationId}", notificationId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"User id: {userId} or notification id: {notificationId} is not valid guid.");
 			}
 		}
 		/// <summary>
@@ -259,18 +230,13 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<ActionResult> DeleteNotification(string userId, string notificationId)
 		{
-			try
+			if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(notificationId, out Guid gNotificationId))
 			{
-				if (Guid.TryParse(userId, out Guid gUserId) && Guid.TryParse(notificationId, out Guid gNotificationId))
+				try
 				{
 					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						Notification notificationToRemove = _notificationService.GetNotification(gNotificationId);
-						if (notificationToRemove is null)
-						{
-							return NotFound($"Notification: {notificationId} not found.");
-						}
-						await _notificationService.DeleteNotificationAsync(notificationToRemove);
+						await _notificationService.DeleteNotificationAsync(gNotificationId);
 						return NoContent();
 					}
 					else
@@ -278,15 +244,15 @@ namespace MyFaceApi.Api.Controllers
 						return NotFound($"User: {userId} not found.");
 					}
 				}
-				else
+				catch (Exception ex)
 				{
-					return BadRequest($"User id: {userId} or notification id: {notificationId} is not valid Guid.");
+					_logger.LogError(ex, "Error occured during removing the notification. Notification id: {notificationId}", notificationId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
 				}
 			}
-			catch (Exception ex)
+			else
 			{
-				_logger.LogError(ex, "Error occured during removing the notification. Notification id: {notificationId}", notificationId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return BadRequest($"User id: {userId} or notification id: {notificationId} is not valid guid.");
 			}
 		}
 	}

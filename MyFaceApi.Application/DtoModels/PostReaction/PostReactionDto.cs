@@ -5,6 +5,7 @@ namespace MyFaceApi.Api.Application.DtoModels.PostReaction
 {
 	public class PostReactionDto
 	{
+		public Guid Id { get; set; }
 		public Guid PostId { get; set; }
 		public DateTime WhenAdded { get; set; }
 		public Guid FromWho { get; set; }

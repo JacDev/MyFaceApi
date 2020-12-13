@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.Application.DtoModels.Comment;
+using MyFaceApi.Api.Application.Helpers;
 using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Domain.Entities;
 using MyFaceApi.Api.Domain.RepositoryInterfaces;
@@ -73,7 +75,7 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public List<CommentDto> GetPostComments(Guid postId)
+		public PagedList<CommentDto> GetPostComments(Guid postId, PaginationParams paginationParams)
 		{
 			_logger.LogDebug("Trying to get comments of the post: {postId}.", postId);
 			if (postId == Guid.Empty)
@@ -84,14 +86,18 @@ namespace MyFaceApi.Api.Application.Services
 			{
 				List<PostComment> commentsFromRepo = _postCommentRepository.Get(x => x.PostId == postId)
 					.ToList();
-	
-				return _mapper.Map<List<CommentDto>>(commentsFromRepo);
+				List<CommentDto> commentsToReturn = _mapper.Map<List<CommentDto>>(commentsFromRepo);
+
+				return PagedList<CommentDto>.Create(commentsToReturn,
+							paginationParams.PageNumber,
+							paginationParams.PageSize,
+							(paginationParams.PageNumber - 1) * paginationParams.PageSize + paginationParams.Skip);
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Error occured during getting post comments.");
 				throw;
-			}			
+			}
 		}
 		public CommentDto GetComment(Guid commentId)
 		{
@@ -123,6 +129,35 @@ namespace MyFaceApi.Api.Application.Services
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Error occured during updating the comment.");
+				throw;
+			}
+		}
+		public async Task<bool> TryUpdatePostCommentAsync(Guid commentId, JsonPatchDocument<CommentToUpdateDto> patchDocument)
+		{
+			_logger.LogDebug("Trying to update comment: {id}", commentId);
+			try
+			{
+				PostComment commentFromRepo = _postCommentRepository.GetById(commentId);
+				if (commentFromRepo == null)
+				{
+					return false;
+				}
+				CommentToUpdateDto commentToPatch = _mapper.Map<CommentToUpdateDto>(commentFromRepo);
+				patchDocument.ApplyTo(commentToPatch);
+				if (!ValidatorHelper.ValidateModel(commentToPatch))
+				{
+					return false;
+				}
+
+				_mapper.Map(commentToPatch, commentFromRepo);
+				_postCommentRepository.Update(commentFromRepo);
+				await _postCommentRepository.SaveAsync();
+				_logger.LogDebug("Comment: {id} has been updated.", commentId);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occured during updating the post.");
 				throw;
 			}
 		}

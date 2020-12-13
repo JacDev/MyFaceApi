@@ -140,11 +140,11 @@ namespace MyFaceApi.Api.Application.Services
 		}
 		public PagedList<PostDto> GetUserPosts(Guid userId, PaginationParams paginationParams)
 		{
-			List<Post> postsToReturn = _postRepository.Get(x => x.UserId == userId, x => x.OrderByDescending(x => x.WhenAdded), "PostComments,PostReactions")
+			List<Post> postsFromRepo = _postRepository.Get(x => x.UserId == userId, x => x.OrderByDescending(x => x.WhenAdded), "PostComments,PostReactions")
 					.ToList();
-			List<PostDto> posts = _mapper.Map<List<PostDto>>(postsToReturn);
+			List<PostDto> postsToReturn = _mapper.Map<List<PostDto>>(postsFromRepo);
 
-			return PagedList<PostDto>.Create(posts,
+			return PagedList<PostDto>.Create(postsToReturn,
 							paginationParams.PageNumber,
 							paginationParams.PageSize,
 							(paginationParams.PageNumber - 1) * paginationParams.PageSize + paginationParams.Skip);
@@ -166,8 +166,8 @@ namespace MyFaceApi.Api.Application.Services
 			}
 			try
 			{
-				var friendsId = _friendsRelationService.GetUserFriendsId(userId);
-				var latestPosts = GetLatestFriendsPosts(userId, friendsId);
+				List<Guid> friendsId = _friendsRelationService.GetUserFriendsId(userId);
+				List<PostDto> latestPosts = GetLatestFriendsPosts(userId, friendsId);
 				return PagedList<PostDto>.Create(latestPosts,
 							paginationParams.PageNumber,
 							paginationParams.PageSize,

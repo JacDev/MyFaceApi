@@ -10,6 +10,8 @@ namespace MyFaceApi.AutoMapperProfiles
 		{
 			CreateMap<NotificationToAddDto, Notification>();
 			CreateMap<Notification, NotificationDto>();
+			CreateMap<NotificationToUpdateDto, Notification>();
+			CreateMap<Notification, NotificationToUpdateDto>();
 		}
 	}
 }
