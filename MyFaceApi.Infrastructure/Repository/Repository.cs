@@ -1,21 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyFaceApi.Api.Domain.DatabasesInterfaces;
-using MyFaceApi.Api.Domain.Entities;
 using MyFaceApi.Api.Domain.RepositoryInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Infrastructure.Repository
 {
 	public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 	{
-		private readonly DbContext _dbContext;
+		private readonly IAppDbContext _dbContext;
 		private readonly DbSet<TEntity> _dbSet;
-		public Repository(DbContext appDbContext)
+		public Repository(IAppDbContext appDbContext)
 		{
 			_dbContext = appDbContext;
 			_dbSet = _dbContext.Set<TEntity>();
@@ -24,7 +22,7 @@ namespace MyFaceApi.Api.Infrastructure.Repository
 		public async Task<TEntity> AddAsync(TEntity entity)
 		{
 			var addedEntity = await _dbSet.AddAsync(entity);
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.SaveAsync();
 			return addedEntity.Entity;
 		}
 
@@ -79,7 +77,7 @@ namespace MyFaceApi.Api.Infrastructure.Repository
 		}
 		public async Task SaveAsync()
 		{
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.SaveAsync();
 		}
 	}
 }

@@ -1,4 +1,3 @@
-using AutoMapper;
 using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,12 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MyFaceApi.IdentityServer.DataAccess.Data;
-using MyFaceApi.IdentityServer.DataAccess.Entities;
+using MyFaceApi.IdentityServer.Infrastructure.Database;
+using MyFaceApi.IdentityServer.Domain.Entities;
 using System;
 using IdentityServer4.EntityFramework.Mappers;
-
 using System.Linq;
+using MyFaceApi.IdentityServer.Application;
 
 namespace MyFaceApi.IdentityServer
 {
@@ -49,7 +48,7 @@ namespace MyFaceApi.IdentityServer
 					b => b.MigrationsAssembly("MyFaceApi.IdentityServer"));
 				});
 
-			services.AddIdentity<AppUser, IdentityRole<Guid>>(config =>
+			services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(config =>
 			{
 				config.Password.RequiredLength = 1;
 				config.Password.RequireDigit = false;
@@ -74,7 +73,7 @@ namespace MyFaceApi.IdentityServer
 			var assembly = typeof(Startup).Assembly.GetName().Name;
 
 			services.AddIdentityServer()
-				.AddAspNetIdentity<AppUser>()
+				.AddAspNetIdentity<ApplicationUser>()
 				.AddConfigurationStore(options =>
 				{
 					options.ConfigureDbContext = b => b.UseSqlServer(Configuration.GetConnectionString("ConfigConnection"),
@@ -87,7 +86,7 @@ namespace MyFaceApi.IdentityServer
 				})
 				.AddDeveloperSigningCredential(); //add rsa key
 
-			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+			services.AddApplication();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

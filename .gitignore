@@ -40,3 +40,11 @@
 /MyFaceApi.Domain/obj/Debug/netcoreapp3.1
 /MyFaceApi.Domain/obj
 /MyFaceApi/Todo.txt
+/MyFaceApi.IdentityServer.Application/bin/Debug/netcoreapp3.1
+/MyFaceApi.IdentityServer.Application/obj/Debug/netcoreapp3.1
+/MyFaceApi.IdentityServer.Application/obj
+/MyFaceApi.IdentityServer.Domain/bin/Debug/netcoreapp3.1
+/MyFaceApi.IdentityServer.Domain/obj/Debug/netcoreapp3.1
+/MyFaceApi.IdentityServer.Domain/obj
+/MyFaceApi.IdentityServer.Infrastructure/bin/Debug/netcoreapp3.1
+/MyFaceApi.IdentityServer.Infrastructure/obj

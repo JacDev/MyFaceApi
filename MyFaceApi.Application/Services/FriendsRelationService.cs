@@ -21,11 +21,13 @@ namespace MyFaceApi.Api.Application.Services
 		private readonly IMapper _mapper;
 		public FriendsRelationService(IRepository<FriendsRelation> friendsRelationRepository,
 			IUserService userService,
-			ILogger<FriendsRelationService> logger)
+			ILogger<FriendsRelationService> logger,
+			IMapper mapper)
 		{
 			_friendsRelationRepository = friendsRelationRepository;
 			_logger = logger;
 			_userService = userService;
+			_mapper = mapper;
 		}
 		public async Task<FriendsRelationDto> AddRelationAsync(Guid userId, FriendsRelationToAddDto friendRelation)
 		{

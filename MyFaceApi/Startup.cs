@@ -58,7 +58,7 @@ namespace MyFaceApi
 					OnMessageReceived = context =>
 					{
 						var accessToken = context.Request.Query["token"];
-.
+
 						var path = context.HttpContext.Request.Path;
 						if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/messagesHub")))
 						{
@@ -92,8 +92,7 @@ namespace MyFaceApi
 
 			services.AddDbContext<AppDbContext>(
 				options => {
-					options.UseSqlServer(Configuration.GetConnectionString("MyFaceApi"),
-					b => b.MigrationsAssembly("MyFaceApi.Api"));
+					options.UseSqlServer(Configuration.GetConnectionString("MyFaceApi"));
 					});
 
 			services.AddHttpClient();

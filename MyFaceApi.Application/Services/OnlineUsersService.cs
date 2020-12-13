@@ -21,11 +21,15 @@ namespace MyFaceApi.Api.Application.Services
 		private readonly IMapper _mapper;
 		public OnlineUsersService(IRepository<OnlineUser> onlineUsersRepository,
 			ILogger<OnlineUsersService> logger,
-			IUserService userService)
+			IUserService userService,
+			IFriendsRelationService friendsRelationService,
+			IMapper mapper)
 		{
 			_onlineUsersRepository = onlineUsersRepository;
 			_logger = logger;
 			_userService = userService;
+			_friendsRelationService = friendsRelationService;
+			_mapper = mapper;
 		}
 		public bool IsUserOnline(string userId)
 		{

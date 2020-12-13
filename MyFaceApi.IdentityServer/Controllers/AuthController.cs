@@ -1,33 +1,27 @@
-﻿using IdentityModel;
-using IdentityServer4.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MyFaceApi.IdentityServer.DataAccess.Entities;
+using MyFaceApi.IdentityServer.Domain.Entities;
 using MyFaceApi.IdentityServer.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MyFaceApi.IdentityServer.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IIdentityServerInteractionService _interactionService;
 
-        public AuthController(UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager,
+        public AuthController(UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
             IIdentityServerInteractionService interactionService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _interactionService = interactionService;
         }
-
         [HttpGet]
         public IActionResult Login(string returnUrl)
         {
@@ -61,7 +55,6 @@ namespace MyFaceApi.IdentityServer.Controllers
             return Redirect(logoutRequest.PostLogoutRedirectUri);
         }
         
-
         [HttpGet]
         public IActionResult Register(string returnUrl)
         {
@@ -76,7 +69,7 @@ namespace MyFaceApi.IdentityServer.Controllers
             {
                 return View(registerViewModel);
             }
-            var user = new AppUser
+            var user = new ApplicationUser
             {
                 Id = Guid.NewGuid(),
                 UserName = registerViewModel.Login,

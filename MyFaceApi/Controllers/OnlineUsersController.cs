@@ -29,7 +29,7 @@ namespace MyFaceApi.Api.Controllers
 			_logger = logger;
 			_userService = userService;
 		}
-		[HttpGet("{userId}", Name = "GetOnlineFriends")]
+		[HttpGet(Name = "GetOnlineFriends")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]

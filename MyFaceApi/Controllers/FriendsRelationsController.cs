@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -22,7 +21,6 @@ namespace MyFaceApi.Api.Controllers
 
 		private readonly IFriendsRelationService _relationService;
 		private readonly ILogger<FriendsRelationsController> _logger;
-		private readonly IMapper _mapper;
 		private readonly IUserService _userService;
 
 		public FriendsRelationsController(IFriendsRelationService relationService,

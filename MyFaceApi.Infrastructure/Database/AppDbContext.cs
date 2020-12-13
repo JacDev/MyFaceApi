@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MyFaceApi.Api.Domain.DatabasesInterfaces;
 using MyFaceApi.Api.Domain.Entities;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Infrastructure.Database
@@ -17,10 +19,18 @@ namespace MyFaceApi.Api.Infrastructure.Database
 		public DbSet<PostReaction> PostReactions { get; set; }
 		public DbSet<OnlineUser> OnlineUsers { get; set; }
 		public DbSet<Message> Messages { get; set; }
+		public override DbSet<TEntity> Set<TEntity>()
+		{
+			return Set<TEntity>();
+		}
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
 			modelBuilder.Entity<FriendsRelation>().HasKey(s => new { s.UserId, s.FriendId });
+		}
+		public override EntityEntry Entry([NotNullAttribute] object entity)
+		{
+			return Entry(entity);
 		}
 		public async Task<int> SaveAsync()
 		{

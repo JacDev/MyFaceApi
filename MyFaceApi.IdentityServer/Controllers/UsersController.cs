@@ -1,42 +1,28 @@
-﻿using AutoFixture;
-using AutoFixture.AutoMoq;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
-using MyFaceApi.IdentityServer.DataAccess.Data;
-using MyFaceApi.IdentityServer.DataAccess.Entities;
+using MyFaceApi.Api.IdentityServer.Application.DtoModels.User;
+using MyFaceApi.IdentityServer.Application.Interfaces;
 using SemesterProject.MyFaceApi.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MyFaceApi.IdentityServer.Controllers
 {
 	public class UsersController : Controller
 	{
-		private readonly IdentityServerDbContext _identityServerDbContext;
-		private readonly IMapper _mapper;
-		private readonly UserManager<AppUser> _userManager;
+		private readonly IIdentityUserService _identityUserService;
 
-		public UsersController(IdentityServerDbContext identityServerDbContext,
-			IMapper mapper, UserManager<AppUser> userManager)
+		public UsersController(IIdentityUserService identityUserService)
 		{
-			_identityServerDbContext = identityServerDbContext;
-			_mapper = mapper;
-			_userManager = userManager;
+			_identityUserService = identityUserService;
 		}
 
 		[HttpGet("users/{userId}")]
-		public ActionResult<BasicUserData> GetUser(string userId)
+		public ActionResult<IdentityUserDto> GetUser(string userId)
 		{
 			if (Guid.TryParse(userId, out Guid gUserId))
 			{
-				AppUser user = _identityServerDbContext.Users.FirstOrDefault(x => x.Id == gUserId);
-				return _mapper.Map<BasicUserData>(user);
+				return _identityUserService.GetUser(gUserId);
 			}
 			else
 			{
@@ -44,46 +30,33 @@ namespace MyFaceApi.IdentityServer.Controllers
 			}
 		}
 		[HttpGet("users/getall")]
-		public ActionResult<List<BasicUserData>> GetUsersById([ModelBinder(typeof(ArrayModelBinder))] string[] ids)
+		public ActionResult<List<IdentityUserDto>> GetUsersById([ModelBinder(typeof(ArrayModelBinder))] string[] ids)
 		{
-			List<AppUser> usersToReturn = new List<AppUser>();
 			try
 			{
-				foreach (var id in ids)
-				{
-					if (Guid.TryParse(id, out Guid gId))
-					{
-						usersToReturn.Add(_identityServerDbContext.Users.FirstOrDefault(x => x.Id == gId));
-					}
-					else
-					{
-						return BadRequest($"{gId} is not valid guid.");
-					}
-				}
-				return Ok(_mapper.Map<IEnumerable<BasicUserData>>(usersToReturn));
-
+				List<IdentityUserDto> usersToReturn = _identityUserService.GetUsers(ids);
+				return Ok(usersToReturn);
 			}
 			catch
 			{
 				return StatusCode(StatusCodes.Status500InternalServerError);
 			}
 		}
-		
-		[HttpGet("users")]
-		public ActionResult<List<BasicUserData>> GetUsers()
-		{
-			List<AppUser> usersToReturn = _identityServerDbContext.Users.ToList();
-			try
-			{
+		//[HttpGet("users")]
+		//public ActionResult<List<IdentityUserDto>> GetUsers()
+		//{
+		//	List<AppUser> usersToReturn = _identityServerDbContext.Users.ToList();
+		//	try
+		//	{
 
-				return Ok(_mapper.Map<IEnumerable<BasicUserData>>(usersToReturn));
+		//		return Ok(_mapper.Map<IEnumerable<IdentityUserDto>>(usersToReturn));
 
-			}
-			catch
-			{
-				//_logger.LogError(ex, "Error occured during getting the user posts. User id: {user}", userId);
-				return StatusCode(StatusCodes.Status500InternalServerError);
-			}
-		}
+		//	}
+		//	catch
+		//	{
+		//		_logger.LogError(ex, "Error occured during getting the user posts. User id: {user}", userId);
+		//		return StatusCode(StatusCodes.Status500InternalServerError);
+		//	}
+		//}
 	}
 }
