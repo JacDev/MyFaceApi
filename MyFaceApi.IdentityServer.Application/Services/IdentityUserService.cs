@@ -13,9 +13,11 @@ namespace MyFaceApi.IdentityServer.Application.Services
 	{
 		private readonly IdentityServerDbContext _dbContext;
 		private readonly IMapper _mapper;
-		public IdentityUserService(IdentityServerDbContext dbContext)
+		public IdentityUserService(IdentityServerDbContext dbContext, 
+			IMapper mapper)
 		{
 			_dbContext = dbContext;
+			_mapper = mapper;
 		}
 		public IdentityUserDto GetUser(Guid userId)
 		{

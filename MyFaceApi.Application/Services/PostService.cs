@@ -129,8 +129,13 @@ namespace MyFaceApi.Api.Application.Services
 			}
 			try
 			{
-				Post postFromRepo = _postRepository.GetById(postId);
-				return _mapper.Map<PostDto>(postFromRepo);
+				var postsFromRepo = _postRepository.Get(x => x.Id == postId, includeProperties: "PostComments,PostReactions").ToList();
+				if (postsFromRepo.Count > 0)
+				{
+					Post postToReturn = postsFromRepo.ElementAt(0);
+					return _mapper.Map<PostDto>(postToReturn);
+				}
+				return null;
 			}
 			catch (Exception ex)
 			{

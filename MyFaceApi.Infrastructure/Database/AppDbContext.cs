@@ -21,7 +21,7 @@ namespace MyFaceApi.Api.Infrastructure.Database
 		public DbSet<Message> Messages { get; set; }
 		public override DbSet<TEntity> Set<TEntity>()
 		{
-			return Set<TEntity>();
+			return base.Set<TEntity>();
 		}
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -30,7 +30,7 @@ namespace MyFaceApi.Api.Infrastructure.Database
 		}
 		public override EntityEntry Entry([NotNullAttribute] object entity)
 		{
-			return Entry(entity);
+			return base.Entry(entity);
 		}
 		public async Task<int> SaveAsync()
 		{

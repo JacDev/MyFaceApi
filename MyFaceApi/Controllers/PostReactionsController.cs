@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Controllers
 {
+	[AllowAnonymous]
 	[Route("api/users/{userId}/posts/{postId}/reactions")]
 	[ApiController]
 	public class PostReactionsController : ControllerBase
@@ -90,6 +92,7 @@ namespace MyFaceApi.Api.Controllers
 		/// <response code="400"> If parameter is not a valid guid</response>    
 		/// <response code="404"> If post not found</response>   
 		/// <response code="500"> If internal error occured</response>
+		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]

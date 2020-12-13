@@ -12,16 +12,14 @@ namespace MyFaceApi.Api.Infrastructure.Repository
 	public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 	{
 		private readonly IAppDbContext _dbContext;
-		private readonly DbSet<TEntity> _dbSet;
 		public Repository(IAppDbContext appDbContext)
 		{
 			_dbContext = appDbContext;
-			_dbSet = _dbContext.Set<TEntity>();
 		}
 
 		public async Task<TEntity> AddAsync(TEntity entity)
 		{
-			var addedEntity = await _dbSet.AddAsync(entity);
+			var addedEntity = await _dbContext.Set<TEntity>().AddAsync(entity);
 			await _dbContext.SaveAsync();
 			return addedEntity.Entity;
 		}
@@ -30,19 +28,19 @@ namespace MyFaceApi.Api.Infrastructure.Repository
 		{
 			if (_dbContext.Entry(entityToDelete).State == EntityState.Detached)
 			{
-				_dbSet.Attach(entityToDelete);
+				_dbContext.Set<TEntity>().Attach(entityToDelete);
 			}
-			_dbSet.Remove(entityToDelete);
+			_dbContext.Set<TEntity>().Remove(entityToDelete);
 		}
 
 		public void Remove(object id)
 		{
-			TEntity entityToDelete = _dbSet.Find(id);
+			TEntity entityToDelete = _dbContext.Set<TEntity>().Find(id);
 			Remove(entityToDelete);
 		}
 		public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = "")
 		{
-			IQueryable<TEntity> query = _dbSet;
+			IQueryable<TEntity> query = _dbContext.Set<TEntity>();
 
 			if (filter != null)
 			{
@@ -67,12 +65,12 @@ namespace MyFaceApi.Api.Infrastructure.Repository
 		}
 		public TEntity GetById(object id)
 		{
-			return _dbSet.Find(id);
+			return _dbContext.Set<TEntity>().Find(id);
 		}
 
 		public void Update(TEntity entityToUpdate)
 		{
-			_dbSet.Attach(entityToUpdate);
+			_dbContext.Set<TEntity>().Attach(entityToUpdate);
 			_dbContext.Entry(entityToUpdate).State = EntityState.Modified;
 		}
 		public async Task SaveAsync()

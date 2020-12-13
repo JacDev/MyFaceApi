@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using MyFaceApi.Api.Application.DtoModels.User;
+using MyFaceApi.Api.Domain.Entities;
 
 namespace MyFaceApi.AutoMapperProfiles
 {
@@ -6,7 +8,8 @@ namespace MyFaceApi.AutoMapperProfiles
 	{
 		public UserProfiles()
 		{
-
+			CreateMap<OnlineUserDto, OnlineUser>();
+			CreateMap<OnlineUser, OnlineUserDto>();
 		}
 	}
 }

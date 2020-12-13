@@ -92,7 +92,8 @@ namespace MyFaceApi
 
 			services.AddDbContext<AppDbContext>(
 				options => {
-					options.UseSqlServer(Configuration.GetConnectionString("MyFaceApi"));
+					options.UseSqlServer(Configuration.GetConnectionString("MyFaceApi")
+						,b => b.MigrationsAssembly("MyFaceApi.Api"));
 					});
 
 			services.AddHttpClient();
@@ -107,15 +108,14 @@ namespace MyFaceApi
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
+				app.UseSwagger();
+				app.UseSwaggerUI(c =>
+				{
+					c.SwaggerEndpoint("v1/swagger.json", "My API V1");
+					c.DocumentTitle = "Api Doc";
+				});
 			}
-
-			app.UseSwagger();
-			app.UseSwaggerUI(c =>
-			{
-				c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-				c.DocumentTitle = "Api Doc";
-			});
-
+			app.UseHsts();
 			app.UseHttpsRedirection();
 
 			app.UseSerilogRequestLogging();
