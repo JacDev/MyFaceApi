@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MyFaceApi.IdentityServer.Domain\MyFaceApi.IdentityServer.Domain.csproj" />
     <ProjectReference Include="..\MyFaceApi.IdentityServer.Infrastructure\MyFaceApi.IdentityServer.Infrastructure.csproj" />
+    <ProjectReference Include="..\Pagination\Pagination.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace SemesterProject.MyFaceApi.Helpers
+namespace MyFaceApi.IdentityServer.Helpers
 {
 	public class ArrayModelBinder : IModelBinder
 	{

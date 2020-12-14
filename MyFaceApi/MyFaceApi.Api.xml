@@ -81,7 +81,7 @@
             <response code="404"> If user or post not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Api.Controllers.PostCommentsController.GetComments(System.String,MyFaceApi.Api.Application.Helpers.PaginationParams)">
+        <member name="M:MyFaceApi.Api.Controllers.PostCommentsController.GetComments(System.String,Pagination.Helpers.PaginationParams)">
             <summary>
             Return the found post comments
             </summary>
@@ -205,7 +205,7 @@
             <response code="404"> If post not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Api.Controllers.PostsController.GetPosts(System.String,MyFaceApi.Api.Application.Helpers.PaginationParams)">
+        <member name="M:MyFaceApi.Api.Controllers.PostsController.GetPosts(System.String,Pagination.Helpers.PaginationParams)">
             <summary>
             Return the found user posts
             </summary>

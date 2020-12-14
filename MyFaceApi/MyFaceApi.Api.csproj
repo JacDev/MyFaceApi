@@ -35,6 +35,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MyFaceApi.Application\MyFaceApi.Api.Application.csproj" />
     <ProjectReference Include="..\MyFaceApi.Infrastructure\MyFaceApi.Api.Infrastructure.csproj" />
+    <ProjectReference Include="..\Pagination\Pagination.csproj" />
   </ItemGroup>
 
 

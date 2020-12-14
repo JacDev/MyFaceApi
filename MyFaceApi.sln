@@ -17,11 +17,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.Api.Infrastructur
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.Api.Domain", "MyFaceApi.Domain\MyFaceApi.Api.Domain.csproj", "{7623DC54-721F-4B5B-8C2D-31953B1B484B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFaceApi.IdentityServer.Domain", "MyFaceApi.IdentityServer.Domain\MyFaceApi.IdentityServer.Domain.csproj", "{B5F35BA6-DAD9-4388-B424-F7FADE3CE825}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.IdentityServer.Domain", "MyFaceApi.IdentityServer.Domain\MyFaceApi.IdentityServer.Domain.csproj", "{B5F35BA6-DAD9-4388-B424-F7FADE3CE825}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFaceApi.IdentityServer.Application", "MyFaceApi.IdentityServer.Application\MyFaceApi.IdentityServer.Application.csproj", "{6FD44D70-5D0D-4AAE-B9FA-AAC423DFE94D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.IdentityServer.Application", "MyFaceApi.IdentityServer.Application\MyFaceApi.IdentityServer.Application.csproj", "{6FD44D70-5D0D-4AAE-B9FA-AAC423DFE94D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFaceApi.IdentityServer.Infrastructure", "MyFaceApi.IdentityServer.Infrastructure\MyFaceApi.IdentityServer.Infrastructure.csproj", "{5B118FD4-2E2F-4A9D-8EA4-950CC098693F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFaceApi.IdentityServer.Infrastructure", "MyFaceApi.IdentityServer.Infrastructure\MyFaceApi.IdentityServer.Infrastructure.csproj", "{5B118FD4-2E2F-4A9D-8EA4-950CC098693F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pagination", "Pagination\Pagination.csproj", "{F992E01A-9DDD-48C0-9D6F-9F310AFA0B82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +67,10 @@ Global
 		{5B118FD4-2E2F-4A9D-8EA4-950CC098693F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B118FD4-2E2F-4A9D-8EA4-950CC098693F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B118FD4-2E2F-4A9D-8EA4-950CC098693F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F992E01A-9DDD-48C0-9D6F-9F310AFA0B82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F992E01A-9DDD-48C0-9D6F-9F310AFA0B82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F992E01A-9DDD-48C0-9D6F-9F310AFA0B82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F992E01A-9DDD-48C0-9D6F-9F310AFA0B82}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

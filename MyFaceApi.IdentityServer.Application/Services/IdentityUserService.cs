@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MyFaceApi.IdentityServer.Infrastructure.Database;
+using Pagination.Helpers;
 
 namespace MyFaceApi.IdentityServer.Application.Services
 {
@@ -13,7 +14,7 @@ namespace MyFaceApi.IdentityServer.Application.Services
 	{
 		private readonly IdentityServerDbContext _dbContext;
 		private readonly IMapper _mapper;
-		public IdentityUserService(IdentityServerDbContext dbContext, 
+		public IdentityUserService(IdentityServerDbContext dbContext,
 			IMapper mapper)
 		{
 			_dbContext = dbContext;
@@ -40,6 +41,17 @@ namespace MyFaceApi.IdentityServer.Application.Services
 				}
 			}
 			return usersToReturn;
+		}
+		public PagedList<IdentityUserDto> GetUsers(string searchString, PaginationParams paginationParams)
+		{
+			List<ApplicationUser> foundUsers = _dbContext.Users
+					.Where(s => s.LastName.Contains(searchString) || s.FirstName.Contains(searchString)).ToList();
+			List<IdentityUserDto> usersToReturn = _mapper.Map<List<IdentityUserDto>>(foundUsers);
+
+			return PagedList<IdentityUserDto>.Create(usersToReturn,
+							paginationParams.PageNumber,
+							paginationParams.PageSize,
+							(paginationParams.PageNumber - 1) * paginationParams.PageSize + paginationParams.Skip);
 		}
 	}
 }

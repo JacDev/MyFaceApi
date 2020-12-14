@@ -1,6 +1,6 @@
 ﻿using MyFaceApi.Api.Application.DtoModels.FriendsRelation;
 using MyFaceApi.Api.Application.DtoModels.User;
-using MyFaceApi.Api.Application.Helpers;
+using Pagination.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

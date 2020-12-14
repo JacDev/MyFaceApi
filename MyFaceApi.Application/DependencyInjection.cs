@@ -15,16 +15,16 @@ namespace MyFaceApi.Api.Application
 		public static IServiceCollection AddApplication(this IServiceCollection services)
 		{
 			services.AddAutoMapper(Assembly.GetExecutingAssembly());
-			services.AddScoped<IHttpService, IdentityServerHttpService>();
-			services.AddScoped<IUserService, UserService>();
-			services.AddScoped<IImageManager, ImageManager>();
-			services.AddScoped<IFriendsRelationService, FriendsRelationService>();
-			services.AddScoped<IMessageService, MessageService>();
-			services.AddScoped<INotificationService, NotificationService>();
-			services.AddScoped<IOnlineUsersService, OnlineUsersService>();
-			services.AddScoped<IPostService, PostService>();
-			services.AddScoped<IPostReactionService, PostReactionService>();
-			services.AddScoped<IPostCommentService, PostCommentService>();
+			services.AddTransient<IHttpService, IdentityServerHttpService>();
+			services.AddTransient<IUserService, UserService>();
+			services.AddTransient<IImageManager, ImageManager>();
+			services.AddTransient<IFriendsRelationService, FriendsRelationService>();
+			services.AddTransient<IMessageService, MessageService>();
+			services.AddTransient<INotificationService, NotificationService>();
+			services.AddTransient<IOnlineUsersService, OnlineUsersService>();
+			services.AddTransient<IPostService, PostService>();
+			services.AddTransient<IPostReactionService, PostReactionService>();
+			services.AddTransient<IPostCommentService, PostCommentService>();
 
 			return services;
 		}

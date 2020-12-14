@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MyFaceApi.Domain\MyFaceApi.Api.Domain.csproj" />
+    <ProjectReference Include="..\Pagination\Pagination.csproj" />
   </ItemGroup>
   
 </Project>

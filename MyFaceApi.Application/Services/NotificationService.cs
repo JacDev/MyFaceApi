@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.Application.DtoModels.Notification;
-using MyFaceApi.Api.Application.Helpers;
 using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Domain.Entities;
 using MyFaceApi.Api.Domain.RepositoryInterfaces;
@@ -10,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MyFaceApi.Api.Application.Helpers;
 
 namespace MyFaceApi.Api.Application.Services
 {

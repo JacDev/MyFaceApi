@@ -1,5 +1,5 @@
 ﻿using MyFaceApi.Api.Application.DtoModels.Message;
-using MyFaceApi.Api.Application.Helpers;
+using Pagination.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

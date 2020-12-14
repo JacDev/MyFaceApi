@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MyFaceApi.Api.Application.Helpers
+namespace Pagination.Helpers
 {
 	public class PagedList<T> : List<T>
 	{
@@ -44,6 +44,13 @@ namespace MyFaceApi.Api.Application.Helpers
 			{
 				return new PagedList<T>(null, 0, 0, 0);
 			}
+		}
+		public void AddMetadataParams(PaginationMetadata paginationMetadata)
+		{
+			TotalCount = paginationMetadata.TotalCount;
+			PageSize = paginationMetadata.PageSize;
+			CurrentPage = paginationMetadata.CurrentPage;
+			TotalPages = paginationMetadata.TotalPages;
 		}
 	}
 }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.Application.DtoModels.Post;
 using MyFaceApi.Api.Application.FileManagerInterfaces;
 using MyFaceApi.Api.Application.Helpers;
+using Pagination.Helpers;
 using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Domain.Entities;
 using MyFaceApi.Api.Domain.RepositoryInterfaces;

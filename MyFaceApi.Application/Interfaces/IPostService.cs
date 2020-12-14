@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MyFaceApi.Api.Application.DtoModels.Post;
-using MyFaceApi.Api.Application.Helpers;
+using Pagination.Helpers;
 using System;
 using System.Threading.Tasks;
 

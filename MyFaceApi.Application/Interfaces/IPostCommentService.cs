@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using MyFaceApi.Api.Application.DtoModels.Comment;
-using MyFaceApi.Api.Application.Helpers;
+using Pagination.Helpers;
 using System;
 using System.Threading.Tasks;
 

@@ -1,6 +1,6 @@
-﻿using MyFaceApi.Api.Application.Helpers;
+﻿using Pagination.Helpers;
 
-namespace MyFaceApi.Api.Application.DtoModels
+namespace Pagination.DtoModels
 {
 	public class CollectionWithPaginationData<T>
 	{

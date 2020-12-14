@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.Application.DtoModels.User;
 using MyFaceApi.Api.Application.Interfaces;
+using Pagination.Helpers;
+using Pagination.DtoModels;
+using Pagination.Extensions;
+using System.Collections.Generic;
 
 namespace MyFaceApi.Api.Controllers
 {
+	[AllowAnonymous]
 	[Produces("application/json")]
 	[Route("api/[controller]")]
 	[ApiController]
@@ -56,6 +62,30 @@ namespace MyFaceApi.Api.Controllers
 			else
 			{
 				return BadRequest($"{userId} is not valid guid.");
+			}
+		}
+		[HttpGet("find", Name = "FindUsers")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<ActionResult<UserDto>> GetFoundUsers([FromQuery] PaginationParams paginationParams, [FromQuery] string searchName = null)
+		{
+			try
+			{
+				PagedList<UserDto> foundUsers = await _userService.GetUsersAsync(searchName, paginationParams);
+				if (searchName != null)
+				{
+					var queryParams = new Dictionary<object, object>
+				{
+					{ nameof(searchName), searchName }
+				};
+					return Ok(this.CreateCollectionWithPagination(foundUsers, paginationParams, "FindUsers", queryParams));
+				}
+				return Ok(this.CreateCollectionWithPagination(foundUsers, paginationParams, "FindUsers"));
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occured during getting users with: {searchString}", searchName);
+				return StatusCode(StatusCodes.Status500InternalServerError);
 			}
 		}
 	}

@@ -12,7 +12,7 @@ namespace MyFaceApi.IdentityServer.Application
 		public static IServiceCollection AddApplication(this IServiceCollection services)
 		{
 			services.AddAutoMapper(Assembly.GetExecutingAssembly());
-			services.AddScoped<IIdentityUserService, IdentityUserService>();
+			services.AddTransient<IIdentityUserService, IdentityUserService>();
 			return services;
 		}
 	}

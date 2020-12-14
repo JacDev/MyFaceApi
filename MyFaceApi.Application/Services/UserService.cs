@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using MyFaceApi.Api.Domain.Extensions;
 using System.Collections.Generic;
 using MyFaceApi.Api.Application.Interfaces;
+using System.Net.Http;
+using Pagination.Helpers;
+using Pagination.DtoModels;
 
 namespace MyFaceApi.Api.Application.Services
 {
@@ -17,7 +20,7 @@ namespace MyFaceApi.Api.Application.Services
 		}
 		public async Task<UserDto> GetUserAsync(Guid userId)
 		{
-			var response = await _identityServerHttpService.Client.GetAsync($"/users/{userId}");
+			HttpResponseMessage response = await _identityServerHttpService.Client.GetAsync($"/users/{userId}");
 			return await response.ReadContentAs<UserDto>();
 		}
 
@@ -33,8 +36,16 @@ namespace MyFaceApi.Api.Application.Services
 				query += id.ToString() + ",";
 			}
 			query = query.Remove(query.LastIndexOf(","));
-			var response = await _identityServerHttpService.Client.GetAsync($"/users/getall?ids={query}");
+			HttpResponseMessage response = await _identityServerHttpService.Client.GetAsync($"/users/getall?ids={query}");
 			return await response.ReadContentAs<List<UserDto>>();
+		}
+		public async Task<PagedList<UserDto>> GetUsersAsync(string searchString, PaginationParams paginationParams)
+		{
+			HttpResponseMessage response = await _identityServerHttpService.Client
+			.GetAsync($"/users/with?searchString={searchString}&pageNumber={paginationParams.PageNumber}&pageSize={paginationParams.PageSize}&skip={paginationParams.Skip}");
+			var content =  await response.ReadContentAs<CollectionWithPaginationData<UserDto>>();
+			content.Collection.AddMetadataParams(content.PaginationMetadata);
+			return content.Collection;
 		}
 	}
 }

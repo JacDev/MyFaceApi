@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using MyFaceApi.Api.IdentityServer.Application.DtoModels.User;
 using MyFaceApi.IdentityServer.Application.Interfaces;
-using SemesterProject.MyFaceApi.Helpers;
+using MyFaceApi.IdentityServer.Helpers;
+using Pagination.Extensions;
+using Pagination.Helpers;
 using System;
 using System.Collections.Generic;
 
@@ -36,6 +38,27 @@ namespace MyFaceApi.IdentityServer.Controllers
 			{
 				List<IdentityUserDto> usersToReturn = _identityUserService.GetUsers(ids);
 				return Ok(usersToReturn);
+			}
+			catch
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError);
+			}
+		}
+		[HttpGet("users/with", Name ="GetUsersWith")]
+		public ActionResult<PagedList<IdentityUserDto>> GetUsersWith(PaginationParams paginationParams, [FromQuery] string searchString = null)
+		{
+			try
+			{				
+				PagedList<IdentityUserDto> usersToReturn = _identityUserService.GetUsers(searchString, paginationParams);
+				if (searchString != null)
+				{
+					var queryParams = new Dictionary<object, object>
+				{
+					{ nameof(searchString), searchString }
+				};
+					return Ok(this.CreateCollectionWithPagination(usersToReturn, paginationParams, "GetUsersWith", queryParams));
+				}
+				return Ok(this.CreateCollectionWithPagination(usersToReturn, paginationParams, "GetUsersWith"));
 			}
 			catch
 			{

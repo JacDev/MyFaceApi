@@ -48,3 +48,5 @@
 /MyFaceApi.IdentityServer.Domain/obj
 /MyFaceApi.IdentityServer.Infrastructure/bin/Debug/netcoreapp3.1
 /MyFaceApi.IdentityServer.Infrastructure/obj
+/Pagination/bin/Debug/netcoreapp3.1
+/Pagination/obj

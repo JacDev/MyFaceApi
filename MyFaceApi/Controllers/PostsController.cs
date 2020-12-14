@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.Api.Application.DtoModels;
 using MyFaceApi.Api.Application.DtoModels.Post;
-using MyFaceApi.Api.Application.Helpers;
 using MyFaceApi.Api.Application.Interfaces;
-using MyFaceApi.Api.Extensions;
+using Pagination.Helpers;
+using Pagination.DtoModels;
+using Pagination.Extensions;
 using System;
 using System.Threading.Tasks;
 

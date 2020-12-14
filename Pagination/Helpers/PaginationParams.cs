@@ -1,4 +1,4 @@
-﻿namespace MyFaceApi.Api.Application.Helpers
+﻿namespace Pagination.Helpers
 {
 	public enum ResourceUriType
 	{
@@ -7,7 +7,7 @@
 	}
 	public class PaginationParams
 	{
-		public int Skip { get; set; }
+		public int Skip { get; set; } = 0;
 		const int maxPageSize = 20;
 		public int PageNumber { get; set; } = 1;
 		private int _pageSize = 10;

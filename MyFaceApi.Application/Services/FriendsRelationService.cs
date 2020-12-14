@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.Application.DtoModels.FriendsRelation;
 using MyFaceApi.Api.Application.DtoModels.User;
-using MyFaceApi.Api.Application.Helpers;
+using Pagination.Helpers;
 using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Domain.Entities;
 using MyFaceApi.Api.Domain.RepositoryInterfaces;
