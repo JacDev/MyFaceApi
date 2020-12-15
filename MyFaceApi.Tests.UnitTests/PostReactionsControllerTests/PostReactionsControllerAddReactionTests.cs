@@ -2,41 +2,40 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.Models.PostReactionModels;
 using System;
 using Xunit;
 using AutoFixture;
+using MyFaceApi.Api.Application.DtoModels.PostReaction;
 
 namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 {
 	public class PostReactionsControllerAddReactionTests : PostReactionsPreparation
 	{
-		protected readonly PostReactionToAdd _postReactionToAdd;
+		protected readonly PostReactionToAddDto _postReactionToAdd;
 		public PostReactionsControllerAddReactionTests() : base()
 		{
-			_postReactionToAdd = _fixture.Create<PostReactionToAdd>();
+			_postReactionToAdd = _fixture.Create<PostReactionToAddDto>();
 		}
 		[Fact]
 		public async void AddPostReaction_ReturnsCreatedAtRouteResult_WithReactionData()
 		{
 			//Arrange
-			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
 				.Returns(true)
 				.Verifiable();
-			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
+			_mockUserService.Setup(Service => Service.CheckIfUserExists(It.IsAny<Guid>()))
 				.ReturnsAsync(true)
 				.Verifiable();
 
-			PostReaction reactionEntity = _mapper.Map<PostReaction>(_postReactionToAdd);
+			PostReactionDto reactionEntity = _mapper.Map<PostReactionDto>(_postReactionToAdd);
 			reactionEntity.Id = new Guid(ConstIds.ExampleReactionId);
 			reactionEntity.PostId = new Guid(ConstIds.ExamplePostId);
 
-			_mockReactionRepo.Setup(repo => repo.AddPostReactionAsync(It.IsAny<PostReaction>()))
+			_mockReactionService.Setup(Service => Service.AddPostReactionAsync(It.IsAny<Guid>(), It.IsAny<PostReactionToAddDto>()))
 				.ReturnsAsync(reactionEntity)
 				.Verifiable();
 
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 
 			//Act
 			var result = await controller.AddPostReaction(ConstIds.ExampleUserId, ConstIds.ExamplePostId, _postReactionToAdd);
@@ -47,9 +46,9 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			Assert.Equal(ConstIds.ExamplePostId, redirectToActionResult.RouteValues["postId"].ToString());
 			Assert.Equal(ConstIds.ExampleReactionId, redirectToActionResult.RouteValues["commentId"].ToString());
 			Assert.Equal("GetReaction", redirectToActionResult.RouteName);
-			_mockUserRepo.Verify();
-			_mockReactionRepo.Verify();
-			_mockPostRepo.Verify();
+			_mockUserService.Verify();
+			_mockReactionService.Verify();
+			_mockPostService.Verify();
 		}
 		
 		[Theory]
@@ -58,8 +57,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 		public async void AddPostReaction_ReturnsBadRequestObjectResult_WhenTheUserOrPostIdIsInvalid(string userTestId, string postTestId)
 		{
 			//Arrange
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
-
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 			//Act
 			var result = await controller.AddPostReaction(userTestId, postTestId, _postReactionToAdd);
 
@@ -73,16 +71,15 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 		public async void AddPostReaction_ReturnsNotFoundObjectResult_WhenTheUserOrPostDoesntExist(bool doesTheUserExists, bool doesThePostExists)
 		{
 			//Arrange
-			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
 				.Returns(doesThePostExists)
 				.Verifiable();
 
-			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
+			_mockUserService.Setup(Service => Service.CheckIfUserExists(It.IsAny<Guid>()))
 				.ReturnsAsync(doesTheUserExists)
 				.Verifiable();
 
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
-
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 			//Act
 			var result = await controller.AddPostReaction(ConstIds.ExampleUserId, ConstIds.ExamplePostId, _postReactionToAdd);
 
@@ -93,27 +90,26 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			//if post doesnt exist the user will not be checked
 			if (doesThePostExists)
 			{
-				_mockUserRepo.Verify();
+				_mockUserService.Verify();
 			}
-			_mockPostRepo.Verify();
+			_mockPostService.Verify();
 		}
 		[Fact]
-		public async void AddPostReaction_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
+		public async void AddPostReaction_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()
 		{
 			//Arrange
-			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
-
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 			//Act
 			var result = await controller.AddPostReaction(ConstIds.ExampleUserId, ConstIds.ExamplePostId, _postReactionToAdd);
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockUserRepo.Verify();
-			_mockPostRepo.Verify();
+			_mockUserService.Verify();
+			_mockPostService.Verify();
 		}
 	}
 }

@@ -1,44 +1,60 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoFixture;
+using AutoFixture.AutoMoq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
+using MyFaceApi.Api.Application.DtoModels.User;
+using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.DataAccess.ModelsBasicInfo;
 using System;
 using Xunit;
 
 namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 {
-	public class UsersControllerGetUserTests : UsersControllerPreparation
+	public class UsersControllerGetUserTests
 	{
-		public UsersControllerGetUserTests() : base()
+		protected readonly Mock<IUserService> _mockUserService;
+		protected readonly Mock<ILogger<UsersController>> _loggerMock;
+		protected readonly IFixture _fixture;
+		public UsersControllerGetUserTests()
 		{
+			//mocking UserService
+			_mockUserService = new Mock<IUserService>();
+			//mocking logger
+			_loggerMock = new Mock<ILogger<UsersController>>();
+			_fixture = new Fixture().Customize(new AutoMoqCustomization());
+		}
+		protected UserDto GetTestUserData()
+		{
+			return _fixture.Create<UserDto>();
 		}
 		[Fact]
-		public async void GetUser_ReturnsOkObjectResult_WithUserData()
+		public async void GetUser_ReturnsOkObjectResult_WithUserDDto()
 		{
 			//Arrange
 			var user = GetTestUserData();
-			_mockUserRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
+			_mockUserService.Setup(Service => Service.GetUserAsync(It.IsAny<Guid>()))
 				.ReturnsAsync(user)
 				.Verifiable();
 
-			var controller = new UsersController(_loggerMock.Object, _mockUserRepo.Object, _mapper);
+			var controller = new UsersController(_loggerMock.Object, _mockUserService.Object);
 			//Act
 			var result = await controller.GetUser(ConstIds.ExampleUserId);
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-			var model = Assert.IsType<BasicUserData>(actionResult.Value);
+			var model = Assert.IsType<UserDto>(actionResult.Value);
 			Assert.Equal(user.FirstName, model.FirstName);
 			Assert.Equal(user.LastName, model.LastName);
 			Assert.Equal(user.Id, model.Id);
-			_mockUserRepo.Verify();
+			_mockUserService.Verify();
 		}
 		[Fact]
 		public async void GetUser_ReturnsBadRequestObjectResult_WhenTheUserIdIsInvalid()
 		{
 			//Arrange
-			var controller = new UsersController(_loggerMock.Object, _mockUserRepo.Object, _mapper);
+			var controller = new UsersController(_loggerMock.Object, _mockUserService.Object);
 
 			//Act
 			var result = await controller.GetUser(ConstIds.InvalidGuid);
@@ -48,14 +64,14 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			Assert.Equal($"{ConstIds.InvalidGuid} is not valid guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
-		public async void GetUser_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
+		public async void GetUser_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()
 		{
 			//Arrange
-			_mockUserRepo.Setup(repo => repo.GetUserAsync(It.IsAny<Guid>()))
+			_mockUserService.Setup(Service => Service.GetUserAsync(It.IsAny<Guid>()))
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new UsersController(_loggerMock.Object, _mockUserRepo.Object, _mapper);
+			var controller = new UsersController(_loggerMock.Object, _mockUserService.Object);
 
 			//Act
 			var result = await controller.GetUser(ConstIds.ExampleUserId);
@@ -63,7 +79,7 @@ namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockUserRepo.Verify();
+			_mockUserService.Verify();
 		}
 	}
 }

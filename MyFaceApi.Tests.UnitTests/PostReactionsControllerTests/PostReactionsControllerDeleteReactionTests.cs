@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.DataAccess.Entities;
 using System;
-using System.Linq;
 using Xunit;
 
 namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
@@ -18,28 +16,23 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 		public async void DeletePostReaction_ReturnsNoContentResult_WhenThePostHasBeenRemoved()
 		{
 			//Arrange
-			var reactionToRemove = GetTestPostData().PostReactions.ElementAt(0);
-			_mockReactionRepo.Setup(repo => repo.GetPostReaction(It.IsAny<Guid>()))
-				.Returns(reactionToRemove)
-				.Verifiable();
-			_mockReactionRepo.Setup(repo => repo.DeletePostReactionAsync(It.IsAny<PostReaction>()))
+			_mockReactionService.Setup(Service => Service.DeletePostReactionAsync(It.IsAny<Guid>()))
 				.Verifiable();
 
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 
 			//Act
 			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId, ConstIds.ExampleFromWhoId);
 
 			//Act
 			var noContentResult = Assert.IsType<NoContentResult>(result);
-			_mockReactionRepo.Verify();
+			_mockReactionService.Verify();
 		}
 		[Fact]
 		public async void DeletePostReaction_ReturnsBadRequestObjectResult_WhenThePostReactionGuidIdIsInvalid()
 		{
 			//Arrange
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
-
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 			//Act
 			var result = await controller.DeletePostReaction(ConstIds.InvalidGuid, ConstIds.ExampleFromWhoId);
 
@@ -47,40 +40,63 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
 			Assert.Equal($"{ConstIds.InvalidGuid} is not valid Guid.", badRequestObjectResult.Value);
 		}
-		[Fact]
-		public async void DeletePostReaction_ReturnsNotFoundResult_WhenTheReactionDoesntExist()
+		[Theory]
+		[InlineData(true, false)]
+		[InlineData(false, true)]
+		public async void DeletePostReaction_ReturnsNotFoundResult_WhenTheUserOrPostDoesntyExist(bool doesTheUserExists, bool doesThePostExists)
 		{
 			//Arrange
-			_mockReactionRepo.Setup(repo => repo.GetPostReaction(It.IsAny<Guid>()))
-				.Returns((PostReaction)null)
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
+				.Returns(doesThePostExists)
+				.Verifiable();
+			_mockUserService.Setup(Service => Service.CheckIfUserExists(It.IsAny<Guid>()))
+				.ReturnsAsync(doesTheUserExists)
 				.Verifiable();
 
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
-
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 			//Act
 			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId, ConstIds.ExampleFromWhoId);
 
 			//Assert
-			var notFoundResult = Assert.IsType<NotFoundResult>(result);
-			_mockReactionRepo.Verify();
+			var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result);
+			Assert.Equal($"User: {ConstIds.ExampleUserId} or post {ConstIds.ExamplePostId} not found.", notFoundObjectResult.Value);
+			_mockPostService.Verify();
+			//if post doesnt exist the user will not be checked
+			if (doesThePostExists)
+			{
+				_mockUserService.Verify();
+			}
 		}
-		[Fact]
-		public async void DeletePostReaction_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
+		[Theory]
+		[InlineData(ConstIds.ExampleUserId, ConstIds.InvalidGuid)]
+		[InlineData(ConstIds.InvalidGuid, ConstIds.ExamplePostId)]
+		public async void DeletePostReaction_ReturnsBadRequestObjectResult_WhenThePostOrUserIdIsInvalid(string userTestId, string postTestId)
 		{
 			//Arrange
-			_mockReactionRepo.Setup(repo => repo.GetPostReaction(It.IsAny<Guid>()))
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
+			//Act
+			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId, ConstIds.ExampleFromWhoId);
+
+			//Assert
+			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+			Assert.Equal($"{userTestId} or {postTestId} is not valid Guid.", badRequestObjectResult.Value);
+		}
+		[Fact]
+		public async void DeletePostReaction_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()
+		{
+			//Arrange
+			_mockReactionService.Setup(Service => Service.DeletePostReactionAsync(It.IsAny<Guid>()))
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
-
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 			//Act
 			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId, ConstIds.ExampleFromWhoId);
 
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockReactionRepo.Verify();
+			_mockReactionService.Verify();
 		}
 	}
 }

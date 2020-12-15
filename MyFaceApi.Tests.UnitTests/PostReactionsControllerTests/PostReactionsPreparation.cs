@@ -4,32 +4,31 @@ using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Moq;
-using MyFaceApi.AutoMapperProfiles;
+using MyFaceApi.Api.Application.DtoModels.PostReaction;
+using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.Models.PostReactionModels;
-using MyFaceApi.Api.Repository.Interfaces;
+using MyFaceApi.Api.Domain.Enums;
+using MyFaceApi.AutoMapperProfiles;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
-using MyFaceApi.Api.DataAccess.Enums;
 
 namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 {
 	public class PostReactionsPreparation
 	{
-		protected readonly Mock<IUserRepository> _mockUserRepo;
-		protected readonly Mock<IPostRepository> _mockPostRepo;
-		protected readonly Mock<IPostReactionRepository> _mockReactionRepo;
+		protected readonly Mock<IUserService> _mockUserService;
+		protected readonly Mock<IPostService> _mockPostService;
+		protected readonly Mock<IPostReactionService> _mockReactionService;
 		protected readonly Mock<ILogger<PostReactionsController>> _loggerMock;
 		protected readonly IMapper _mapper;
 		protected readonly IFixture _fixture;
 		protected PostReactionsPreparation()
 		{
-			//mocking repos
-			_mockUserRepo = new Mock<IUserRepository>();
-			_mockPostRepo = new Mock<IPostRepository>();
-			_mockReactionRepo = new Mock<IPostReactionRepository>();
+			//mocking Services
+			_mockUserService = new Mock<IUserService>();
+			_mockPostService = new Mock<IPostService>();
+			_mockReactionService = new Mock<IPostReactionService>();
 			//mocking logger
 			_loggerMock = new Mock<ILogger<PostReactionsController>>();
 			//mocking automapper
@@ -38,17 +37,11 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			_mapper = new Mapper(configuration);
 			_fixture = new Fixture().Customize(new AutoMoqCustomization());
 		}
-		protected Post GetTestPostData()
+		protected List<PostReactionDto> GetTestPostData()
 		{
-			var post = new Post()
+			var reactions = new List<PostReactionDto>()
 			{
-				WhenAdded = DateTime.Now,
-				Id = new Guid(ConstIds.ExamplePostId),
-				Text = "Example text",
-				UserId = new Guid(ConstIds.ExampleUserId),
-				PostReactions = new List<PostReaction>
-				{
-					new PostReaction
+					new PostReactionDto
 					{
 						Id = new Guid(ConstIds.ExampleReactionId),
 						WhenAdded = DateTime.Now,
@@ -57,7 +50,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 						Reaction = ReactionType.Like
 
 					},
-					new PostReaction
+					new PostReactionDto
 					{
 						Id = new Guid("2D748217-9B12-4F56-831D-F2D3A6A3B074"),
 						WhenAdded = DateTime.Now,
@@ -65,13 +58,12 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 						PostId = new Guid(ConstIds.ExamplePostId),
 						Reaction = ReactionType.Like
 					}
-				}
 			};
-			return post;
+			return reactions;
 		}
-		protected JsonPatchDocument<PostReactionToUpdate> GetJsonPatchDocument()
+		protected JsonPatchDocument<PostReactionToUpdateDto> GetJsonPatchDocument()
 		{
-			var jsonobject = new JsonPatchDocument<PostReactionToUpdate>
+			var jsonobject = new JsonPatchDocument<PostReactionToUpdateDto>
 			{
 				ContractResolver = new CamelCasePropertyNamesContractResolver()
 			};

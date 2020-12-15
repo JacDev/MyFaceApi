@@ -10,6 +10,8 @@ namespace MyFaceApi.AutoMapperProfiles
 		{
 			CreateMap<FriendsRelationToAddDto, FriendsRelation>();
 			CreateMap<FriendsRelation, FriendsRelationToAddDto>();
+			CreateMap<FriendsRelation, FriendsRelationDto>();
+			CreateMap<FriendsRelationToAddDto, FriendsRelationDto>();
 		}
 	}
 }

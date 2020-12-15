@@ -14,6 +14,6 @@ namespace MyFaceApi.Api.Application.Interfaces
 		List<PostReactionDto> GetPostReactions(Guid postId);
 		PostReactionDto GetPostReaction(Guid reactionId);
 		PostReactionDto GetPostReaction(Guid fromWho, Guid postId);
-		Task<bool> TryUpdatePostReactionAsync(Guid reactionId, JsonPatchDocument<PostReactionToUpdate> patchDocument);
+		Task<bool> TryUpdatePostReactionAsync(Guid reactionId, JsonPatchDocument<PostReactionToUpdateDto> patchDocument);
 	}
 }

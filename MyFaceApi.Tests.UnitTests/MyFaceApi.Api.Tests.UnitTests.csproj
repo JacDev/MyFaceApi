@@ -17,4 +17,9 @@
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MyFaceApi.Application\MyFaceApi.Api.Application.csproj" />
+    <ProjectReference Include="..\MyFaceApi\MyFaceApi.Api.csproj" />
+  </ItemGroup>
+
 </Project>

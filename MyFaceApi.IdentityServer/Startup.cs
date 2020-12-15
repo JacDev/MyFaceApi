@@ -39,7 +39,8 @@ namespace MyFaceApi.IdentityServer
 				});
 			});
 
-			services.AddControllersWithViews();
+			services.AddControllersWithViews()
+				.AddRazorRuntimeCompilation();
 			var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
 			services.AddDbContext<IdentityServerDbContext>(
@@ -91,7 +92,7 @@ namespace MyFaceApi.IdentityServer
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
-			InitializeDatabase(app);
+			//InitializeDatabase(app);
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();

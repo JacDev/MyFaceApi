@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Moq;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.DataAccess.Enums;
+using MyFaceApi.Api.Domain.Enums;
 using System;
 using System.Linq;
 using Xunit;
@@ -20,22 +18,13 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 		public async void PartiallyUpdatePostReaction_ReturnsNoContentResult_WhenTheReactionHasBeenUpdated()
 		{
 			//Arrange
-			var reaction = GetTestPostData().PostReactions.ElementAt(0);
+			var reaction = GetTestPostData().ElementAt(0);
 
-			_mockReactionRepo.Setup(repo => repo.GetPostReaction(It.IsAny<Guid>()))
-				.Returns(reaction)
-				.Verifiable();
-			_mockReactionRepo.Setup(repo => repo.UpdatePostReactionAsync(It.IsAny<PostReaction>()))
+			_mockReactionService.Setup(Service => Service.TryUpdatePostReactionAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+				.ReturnsAsync(true)
 				.Verifiable();
 
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
-
-			var objectValidator = new Mock<IObjectModelValidator>();
-			objectValidator.Setup(o => o.Validate(It.IsAny<ActionContext>(),
-											  It.IsAny<ValidationStateDictionary>(),
-											  It.IsAny<string>(),
-											  It.IsAny<Object>()));
-			controller.ObjectValidator = objectValidator.Object;
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 
 			//Act
 			var result = await controller.PartiallyUpdatePostReaction(ConstIds.ExampleReactionId, GetJsonPatchDocument());
@@ -43,47 +32,49 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			//Assert
 			var noContentResult = Assert.IsType<NoContentResult>(result);
 			Assert.Equal(ReactionType.Haha, reaction.Reaction);
-			_mockReactionRepo.Verify();
+			_mockReactionService.Verify();
+		}
+		[Fact]
+		public async void PartiallyUpdatePostReaction_ReturnsBadRequestResult_WhenTheReactionHasNotBeenUpdated()
+		{
+			//Arrange
+			var reaction = GetTestPostData().ElementAt(0);
+
+			_mockReactionService.Setup(Service => Service.TryUpdatePostReactionAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+				.ReturnsAsync(false)
+				.Verifiable();
+
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
+
+			//Act
+			var result = await controller.PartiallyUpdatePostReaction(ConstIds.ExampleReactionId, GetJsonPatchDocument());
+
+			//Assert
+			var badRequestResult = Assert.IsType<BadRequestResult>(result);
+			_mockReactionService.Verify();
 		}
 		[Fact]
 		public async void PartiallyUpdatePostReaction_ReturnsBadRequestObjectResult_WhenTheReactionIdIsInvalid()
 		{
 			//Arrange
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 
 			//Act
 			var result = await controller.PartiallyUpdatePostReaction(ConstIds.InvalidGuid, GetJsonPatchDocument());
 
 			//Assert
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
-			Assert.Equal($"{ConstIds.InvalidGuid} is not valid Guid.", badRequestObjectResult.Value);
+			Assert.Equal($"{ConstIds.InvalidGuid} is not valid guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
-		public async void PartiallyUpdatePostReaction_NotFoundRequest_WhenTheReactionIsNotInTheDatabase()
+		public async void PartiallyUpdatePostReaction_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()
 		{
 			//Arrange
-			_mockReactionRepo.Setup(repo => repo.GetPostReaction(It.IsAny<Guid>()))
-				.Returns((PostReaction)null)
-				.Verifiable();
-
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
-
-			//Act
-			var result = await controller.PartiallyUpdatePostReaction(ConstIds.ExampleReactionId, GetJsonPatchDocument());
-
-			//Assert
-			var notFoundResult = Assert.IsType<NotFoundResult>(result);
-			_mockReactionRepo.Verify();
-		}
-		[Fact]
-		public async void PartiallyUpdatePostReaction_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
-		{
-			//Arrange
-			_mockReactionRepo.Setup(repo => repo.GetPostReaction(It.IsAny<Guid>()))
+			_mockReactionService.Setup(Service => Service.DeletePostReactionAsync(It.IsAny<Guid>()))
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 
 			//Act
 			var result = await controller.PartiallyUpdatePostReaction(ConstIds.ExampleReactionId, GetJsonPatchDocument());
@@ -91,7 +82,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockReactionRepo.Verify();
+			_mockReactionService.Verify();
 		}
 	}
 }

@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Moq;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.DataAccess.Entities;
 using System;
-using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
@@ -19,36 +17,41 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		public async void PartiallyUpdatePost_ReturnsNoContentResult_WhenThePostHasBeenUpdated()
 		{
 			//Arrange
-			var post = GetTestUserData().ElementAt(0).Posts.ElementAt(0);
-
-			_mockPostRepo.Setup(repo => repo.GetPost(It.IsAny<Guid>()))
-				.Returns(post)
-				.Verifiable();
-			_mockPostRepo.Setup(repo => repo.UpdatePostAsync(It.IsAny<Post>()))
+			_mockPostService.Setup(Service => Service.TryUpdatePostAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+				.ReturnsAsync(true)
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
-
-			var objectValidator = new Mock<IObjectModelValidator>();
-			objectValidator.Setup(o => o.Validate(It.IsAny<ActionContext>(),
-											  It.IsAny<ValidationStateDictionary>(),
-											  It.IsAny<string>(),
-											  It.IsAny<Object>()));
-			controller.ObjectValidator = objectValidator.Object;
+			var controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object);
 
 			//Act
 			var result = await controller.PartiallyUpdatePost(ConstIds.ExamplePostId, GetJsonPatchDocument());
 
 			//Assert
 			var noContentResult = Assert.IsType<NoContentResult>(result);
-			Assert.Equal("Changed", post.Text);
-			_mockPostRepo.Verify();
+			_mockPostService.Verify();
+		}
+		[Fact]
+		public async void PartiallyUpdatePost_ReturnsBadRequestResult_WhenThePostHasNotBeenUpdated()
+		{
+			//Arrange
+			_mockPostService.Setup(Service => Service.TryUpdatePostAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+				.ReturnsAsync(false)
+				.Verifiable();
+
+			var controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object);
+
+			//Act
+			var result = await controller.PartiallyUpdatePost(ConstIds.ExamplePostId, GetJsonPatchDocument());
+
+			//Assert
+			var noContentResult = Assert.IsType<BadRequestResult>(result);
+			_mockPostService.Verify();
 		}
 		[Fact]
 		public async void PartiallyUpdatePost_ReturnsBadRequestObjectResult_WhenThePostIdIsInvalid()
 		{
 			//Arrange
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
+			var controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object);
 
 			//Act
 			var result = await controller.PartiallyUpdatePost(ConstIds.InvalidGuid, GetJsonPatchDocument());
@@ -58,31 +61,14 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			Assert.Equal($"{ConstIds.InvalidGuid} is not valid guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
-		public async void PartiallyUpdatePost_NotFoundRequest_WhenThePostIsNotInTheDatabase()
+		public async void PartiallyUpdatePost_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()
 		{
 			//Arrange
-			_mockPostRepo.Setup(repo => repo.GetPost(It.IsAny<Guid>()))
-				.Returns((Post)null)
+			_mockPostService.Setup(Service => Service.TryUpdatePostAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+				.ThrowsAsync(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
-
-			//Act
-			var result = await controller.PartiallyUpdatePost(ConstIds.ExamplePostId, GetJsonPatchDocument());
-
-			//Assert
-			var notFoundResult = Assert.IsType<NotFoundResult>(result);
-			_mockPostRepo.Verify();
-		}
-		[Fact]
-		public async void PartiallyUpdatePost_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
-		{
-			//Arrange
-			_mockPostRepo.Setup(repo => repo.GetPost(It.IsAny<Guid>()))
-				.Throws(new ArgumentNullException(nameof(Guid)))
-				.Verifiable();
-
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
+			var controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object);
 
 			//Act
 			var result = await controller.PartiallyUpdatePost(ConstIds.ExamplePostId, GetJsonPatchDocument());
@@ -90,7 +76,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockPostRepo.Verify();
+			_mockPostService.Verify();
 		}
 	}
 }

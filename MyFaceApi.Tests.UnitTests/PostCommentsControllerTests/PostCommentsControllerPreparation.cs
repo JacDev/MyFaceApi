@@ -6,21 +6,20 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using MyFaceApi.AutoMapperProfiles;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.Models.CommentModels;
-using MyFaceApi.Api.Repository.Interfaces;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
-using MyFaceApi.Api.Repository.Helpers;
+using MyFaceApi.Api.Application.Interfaces;
+using Pagination.Helpers;
+using MyFaceApi.Api.Application.DtoModels.PostComment;
 
 namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 {
 	public class PostCommentsControllerPreparation
 	{
-		protected readonly Mock<IPostCommentRepository> _mockCommentRepo;
-		protected readonly Mock<IUserRepository> _mockUserRepo;
-		protected readonly Mock<IPostRepository> _mockPostRepo;
+		protected readonly Mock<IPostCommentService> _mockCommentService;
+		protected readonly Mock<IUserService> _mockUserService;
+		protected readonly Mock<IPostService> _mockPostService;
 		protected readonly Mock<ILogger<PostCommentsController>> _loggerMock;
 		protected readonly IMapper _mapper;
 		protected readonly IFixture _fixture;
@@ -28,10 +27,10 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 
 		protected PostCommentsControllerPreparation()
 		{
-			//mocking repos
-			_mockCommentRepo = new Mock<IPostCommentRepository>();
-			_mockUserRepo = new Mock<IUserRepository>();
-			_mockPostRepo = new Mock<IPostRepository>();
+			//mocking Services
+			_mockCommentService = new Mock<IPostCommentService>();
+			_mockUserService = new Mock<IUserService>();
+			_mockPostService = new Mock<IPostService>();
 			//mocking logger
 			_loggerMock = new Mock<ILogger<PostCommentsController>>();
 			//mocking automapper
@@ -46,11 +45,11 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 				Skip = 0
 			};
 		}
-		protected List<PostComment> GetTestPostData()
+		protected List<PostCommentDto> GetTestPostData()
 		{
-			var database = new List<PostComment>()
+			var database = new List<PostCommentDto>()
 			{
-				new PostComment()
+				new PostCommentDto()
 				{
 				WhenAdded = DateTime.Now,
 				Id = new Guid(ConstIds.ExampleCommentId),
@@ -58,7 +57,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 				FromWho = new Guid(ConstIds.ExampleFromWhoId),
 				PostId = new Guid(ConstIds.ExamplePostId)
 				},
-				new PostComment()
+				new PostCommentDto()
 				{
 				WhenAdded = DateTime.Now,
 				Id = new Guid("A5A276EE-4936-4162-A2AC-880E525BD992"),
@@ -69,9 +68,9 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 			};
 			return database;
 		}
-		protected JsonPatchDocument<CommentToUpdate> GetJsonPatchDocument()
+		protected JsonPatchDocument<PostCommentToUpdateDto> GetJsonPatchDocument()
 		{
-			var jsonobject = new JsonPatchDocument<CommentToUpdate>
+			var jsonobject = new JsonPatchDocument<PostCommentToUpdateDto>
 			{
 				ContractResolver = new CamelCasePropertyNamesContractResolver()
 			};

@@ -5,17 +5,17 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using MyFaceApi.AutoMapperProfiles;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.Repository.Interfaces;
 using System.Collections.Generic;
-using MyFaceApi.Api.Repository.Helpers;
+using MyFaceApi.Api.Application.Interfaces;
+using Pagination.Helpers;
+using MyFaceApi.Api.Application.DtoModels.FriendsRelation;
 
 namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 {
 	public class FriendsRelationsControllerTestsPreparation
 	{
-		protected readonly Mock<IUserRepository> _mockUserRepo;
-		protected readonly Mock<IFriendsRelationRepository> _mockRelationRepo;
+		protected readonly Mock<IUserService> _mockUserService;
+		protected readonly Mock<IFriendsRelationService> _mockRelationService;
 		protected readonly Mock<ILogger<FriendsRelationsController>> _loggerMock;
 		protected readonly IMapper _mapper;
 		protected readonly IFixture _fixture;
@@ -23,9 +23,9 @@ namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 
 		protected FriendsRelationsControllerTestsPreparation()
 		{
-			//mocking repos
-			_mockUserRepo = new Mock<IUserRepository>();
-			_mockRelationRepo = new Mock<IFriendsRelationRepository>();
+			//mocking Services
+			_mockUserService = new Mock<IUserService>();
+			_mockRelationService = new Mock<IFriendsRelationService>();
 			//mocking logger
 			_loggerMock = new Mock<ILogger<FriendsRelationsController>>();
 			//mocking automapper
@@ -40,12 +40,12 @@ namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 				Skip = 0
 			};
 		}
-		protected List<FriendsRelation> GetTestRelationData()
+		protected List<FriendsRelationDto> GetTestRelationData()
 		{
-			var listToReturn = new List<FriendsRelation>
+			var listToReturn = new List<FriendsRelationDto>
 			{
-				_fixture.Create<FriendsRelation>(),
-				_fixture.Create<FriendsRelation>()
+				_fixture.Create<FriendsRelationDto>(),
+				_fixture.Create<FriendsRelationDto>()
 			};
 			return listToReturn;
 		}

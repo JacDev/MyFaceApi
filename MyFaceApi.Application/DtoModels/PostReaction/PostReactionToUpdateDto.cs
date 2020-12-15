@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MyFaceApi.Api.Application.DtoModels.PostReaction
 {
-	public class PostReactionToUpdate
+	public class PostReactionToUpdateDto
 	{
 		[Required]
 		public ReactionType Reaction { get; set; }

@@ -1,6 +1,4 @@
-using System;
-
-namespace MyFaceApi.IdentityServer.Models
+namespace MyFaceApi.IdentityServer.Application.ViewModels
 {
 	public class ErrorViewModel
 	{

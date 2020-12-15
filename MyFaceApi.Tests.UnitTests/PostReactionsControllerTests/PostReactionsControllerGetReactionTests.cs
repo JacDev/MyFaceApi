@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using MyFaceApi.Api.Application.DtoModels.PostReaction;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.DataAccess.Entities;
 using System;
 using System.Linq;
 using Xunit;
@@ -18,27 +18,26 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 		public void GetPostReaction_ReturnsOkObjectResult_WithReactionData()
 		{
 			//Arrange
-			var reaction = GetTestPostData().PostReactions.ElementAt(0);
+			var reaction = GetTestPostData().ElementAt(0);
 
-			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
 				.Returns(true)
 				.Verifiable();
 
-			_mockReactionRepo.Setup(repo => repo.GetPostReaction(It.IsAny<Guid>()))
+			_mockReactionService.Setup(Service => Service.GetPostReaction(It.IsAny<Guid>()))
 				.Returns(reaction)
 				.Verifiable();
 
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
-
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 			//Act
 			var result = controller.GetPostReaction(ConstIds.ExamplePostId, ConstIds.ExampleReactionId);
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-			var model = Assert.IsType<PostReaction>(actionResult.Value);
+			var model = Assert.IsType<PostReactionDto>(actionResult.Value);
 			Assert.Equal(reaction, model);
-			_mockPostRepo.Verify();
-			_mockReactionRepo.Verify();
+			_mockPostService.Verify();
+			_mockReactionService.Verify();
 		}
 		[Theory]
 		[InlineData(ConstIds.InvalidGuid, ConstIds.ExampleReactionId)]
@@ -46,57 +45,42 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 		public void GetPostReaction_ReturnsBadRequestObjectResult_WhenThePostOrReactionIdIsInvalid(string testPostId, string testReactionId)
 		{
 			//Arrange
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);  
 			//Act
 			var result = controller.GetPostReaction(testPostId, testReactionId);
 
 			//Assert
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-			Assert.Equal($"{testPostId} or {testReactionId} is not valid Guid.", badRequestObjectResult.Value);
+			Assert.Equal($"{testPostId} or {testReactionId} is not valid guid.", badRequestObjectResult.Value);
 		}
-		[Theory]
-		[InlineData(true, null)]
-		[InlineData(false, null)]
-		public void GetPostReaction_ReturnsNotFoundObjectResult_WhenTheReactionDoesntExist(bool doesThePostExists, PostReaction testPostReaction)
+		[Fact]
+		public void GetPostReaction_ReturnsNotFoundObjectResult_WhenThePostDoesntExist()
 		{
 			//Arrange
-			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
-				.Returns(doesThePostExists)
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
+				.Returns(false)
 				.Verifiable();
 
-			_mockReactionRepo.Setup(repo => repo.GetPostReaction(It.IsAny<Guid>()))
-				.Returns(testPostReaction)
-				.Verifiable();
-
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 
 			//Act
 			var result = controller.GetPostReaction(ConstIds.ExamplePostId, ConstIds.ExampleReactionId);
 
 			//Assert
 			var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
-			if (doesThePostExists)
-			{
-				Assert.Equal($"Reaction: {ConstIds.ExampleReactionId} not found.", notFoundObjectResult.Value);
-				_mockReactionRepo.Verify();
-			}
-			else
-			{
-				Assert.Equal($"Post: {ConstIds.ExamplePostId} not found.", notFoundObjectResult.Value);
-			}
+			Assert.Equal($"Post: {ConstIds.ExamplePostId} not found.", notFoundObjectResult.Value);
 			
-			_mockPostRepo.Verify();
-		}
-		
+			_mockPostService.Verify();
+		}		
 		[Fact]
-		public void GetPostReaction_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
+		public void GetPostReaction_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()
 		{
 			//Arrange
-			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockReactionRepo.Object);
+			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 
 			//Act
 			var result = controller.GetPostReaction(ConstIds.ExamplePostId, ConstIds.ExampleReactionId);
@@ -104,7 +88,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockPostRepo.Verify();
+			_mockPostService.Verify();
 		}
 	}
 }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyFaceApi.Api.IdentityServer.Application.DtoModels.User;
+using MyFaceApi.IdentityServer.Application.Helpers;
 using MyFaceApi.IdentityServer.Application.Interfaces;
-using MyFaceApi.IdentityServer.Helpers;
 using Pagination.Extensions;
 using Pagination.Helpers;
 using System;

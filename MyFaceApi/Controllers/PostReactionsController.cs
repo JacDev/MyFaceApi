@@ -184,7 +184,7 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult> PartiallyUpdatePostReaction(string reactionId, JsonPatchDocument<PostReactionToUpdate> patchDocument)
+		public async Task<ActionResult> PartiallyUpdatePostReaction(string reactionId, JsonPatchDocument<PostReactionToUpdateDto> patchDocument)
 		{
 			if (Guid.TryParse(reactionId, out Guid gReactionId))
 			{

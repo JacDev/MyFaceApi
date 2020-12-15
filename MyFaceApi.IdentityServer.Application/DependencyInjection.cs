@@ -13,6 +13,7 @@ namespace MyFaceApi.IdentityServer.Application
 		{
 			services.AddAutoMapper(Assembly.GetExecutingAssembly());
 			services.AddTransient<IIdentityUserService, IdentityUserService>();
+			services.AddTransient<IAuthService, AuthService>();
 			return services;
 		}
 	}

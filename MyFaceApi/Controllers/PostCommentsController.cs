@@ -1,10 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.Api.Application.DtoModels.Comment;
+using MyFaceApi.Api.Application.DtoModels.PostComment;
 using MyFaceApi.Api.Application.Interfaces;
 using Pagination.Helpers;
 using Pagination.DtoModels;
@@ -23,17 +22,14 @@ namespace MyFaceApi.Api.Controllers
 		private readonly IPostService _postService;
 		private readonly IUserService _userService;
 		private readonly IPostCommentService _postCommentService;
-		private readonly IMapper _mapper;
 		public PostCommentsController(ILogger<PostCommentsController> logger,
 			IPostService postService,
 			IUserService userService,
-			IMapper mapper,
 			IPostCommentService postCommentService)
 		{
 			_logger = logger;
 			_postService = postService;
 			_userService = userService;
-			_mapper = mapper;
 			_postCommentService = postCommentService;
 			_logger.LogTrace("PostCommentController created");
 		}
@@ -54,7 +50,7 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<CommentDto>> AddComment(string userId, string postId, [FromBody] CommentToAddDto postComment)
+		public async Task<ActionResult<PostCommentDto>> AddComment(string userId, string postId, [FromBody] PostCommentToAddDto postComment)
 		{
 			if (Guid.TryParse(postId, out Guid gPostId) && Guid.TryParse(userId, out Guid gUserId))
 			{
@@ -62,7 +58,7 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (_postService.CheckIfPostExists(gPostId) && await _userService.CheckIfUserExists(gUserId))
 					{
-						CommentDto addedComment = await _postCommentService.AddCommentAsync(gPostId, postComment);
+						PostCommentDto addedComment = await _postCommentService.AddCommentAsync(gPostId, postComment);
 						return CreatedAtRoute("GetComment",
 							new
 							{
@@ -85,7 +81,7 @@ namespace MyFaceApi.Api.Controllers
 			}
 			else
 			{
-				return BadRequest($"{userId} or {postId} is not valid Guid.");
+				return BadRequest($"{userId} or {postId} is not valid guid.");
 			}
 		}
 		/// <summary>
@@ -104,7 +100,7 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<CollectionWithPaginationData<CommentDto>> GetComments(string postId, [FromQuery] PaginationParams paginationParams)
+		public ActionResult<CollectionWithPaginationData<PostCommentDto>> GetComments(string postId, [FromQuery] PaginationParams paginationParams)
 		{
 			try
 			{
@@ -112,7 +108,7 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (_postService.CheckIfPostExists(gPostId))
 					{
-						PagedList<CommentDto> commentsToReturn = _postCommentService.GetPostComments(gPostId, paginationParams);
+						PagedList<PostCommentDto> commentsToReturn = _postCommentService.GetPostComments(gPostId, paginationParams);
 						return Ok(this.CreateCollectionWithPagination(commentsToReturn, paginationParams, "GetPosts"));
 					}
 					else
@@ -122,7 +118,7 @@ namespace MyFaceApi.Api.Controllers
 				}
 				else
 				{
-					return BadRequest($"{postId} is not valid Guid.");
+					return BadRequest($"{postId} is not valid guid.");
 				}
 			}
 			catch (Exception ex)
@@ -145,7 +141,7 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public ActionResult<List<CommentDto>> GetComment(string postId, string commentId)
+		public ActionResult<List<PostCommentDto>> GetComment(string postId, string commentId)
 		{
 			try
 			{
@@ -162,7 +158,7 @@ namespace MyFaceApi.Api.Controllers
 				}
 				else
 				{
-					return BadRequest($"{postId} or {commentId} is not valid Guid.");
+					return BadRequest($"{postId} or {commentId} is not valid guid.");
 				}
 			}
 			catch (Exception ex)
@@ -186,7 +182,7 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult> PartiallyUpdateComment(string commentId, JsonPatchDocument<CommentToUpdateDto> patchDocument)
+		public async Task<ActionResult> PartiallyUpdateComment(string commentId, JsonPatchDocument<PostCommentToUpdateDto> patchDocument)
 		{
 			try
 			{
@@ -203,7 +199,7 @@ namespace MyFaceApi.Api.Controllers
 				}
 				else
 				{
-					return BadRequest($"{commentId} is not valid Guid.");
+					return BadRequest($"{commentId} is not valid guid.");
 				}
 			}
 			catch (Exception ex)

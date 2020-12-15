@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
-using MyFaceApi.Api.Application.DtoModels.Comment;
+using MyFaceApi.Api.Application.DtoModels.PostComment;
 using Pagination.Helpers;
 using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Domain.Entities;
@@ -28,7 +28,7 @@ namespace MyFaceApi.Api.Application.Services
 			_logger = logger;
 			_mapper = mapper;
 		}
-		public async Task<CommentDto> AddCommentAsync(Guid postId, CommentToAddDto postComment)
+		public async Task<PostCommentDto> AddCommentAsync(Guid postId, PostCommentToAddDto postComment)
 		{
 			_logger.LogDebug("Trying to add comment: {postComment} to post.", postComment);
 			if (postComment is null)
@@ -45,7 +45,7 @@ namespace MyFaceApi.Api.Application.Services
 				commentToAdd.PostId = postId;
 				PostComment addedComment = await _postCommentRepository.AddAsync(commentToAdd);
 				await _postCommentRepository.SaveAsync();
-				return _mapper.Map<CommentDto>(addedComment);
+				return _mapper.Map<PostCommentDto>(addedComment);
 			}
 			catch (Exception ex)
 			{
@@ -76,7 +76,7 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public PagedList<CommentDto> GetPostComments(Guid postId, PaginationParams paginationParams)
+		public PagedList<PostCommentDto> GetPostComments(Guid postId, PaginationParams paginationParams)
 		{
 			_logger.LogDebug("Trying to get comments of the post: {postId}.", postId);
 			if (postId == Guid.Empty)
@@ -87,9 +87,9 @@ namespace MyFaceApi.Api.Application.Services
 			{
 				List<PostComment> commentsFromRepo = _postCommentRepository.Get(x => x.PostId == postId)
 					.ToList();
-				List<CommentDto> commentsToReturn = _mapper.Map<List<CommentDto>>(commentsFromRepo);
+				List<PostCommentDto> commentsToReturn = _mapper.Map<List<PostCommentDto>>(commentsFromRepo);
 
-				return PagedList<CommentDto>.Create(commentsToReturn,
+				return PagedList<PostCommentDto>.Create(commentsToReturn,
 							paginationParams.PageNumber,
 							paginationParams.PageSize,
 							(paginationParams.PageNumber - 1) * paginationParams.PageSize + paginationParams.Skip);
@@ -100,7 +100,7 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public CommentDto GetComment(Guid commentId)
+		public PostCommentDto GetComment(Guid commentId)
 		{
 			_logger.LogDebug("Trying to get comment: {commentId}.", commentId);
 			if (commentId == Guid.Empty)
@@ -110,7 +110,7 @@ namespace MyFaceApi.Api.Application.Services
 			try
 			{
 				PostComment commentFromRepo = _postCommentRepository.GetById(commentId);
-				return _mapper.Map<CommentDto>(commentFromRepo);
+				return _mapper.Map<PostCommentDto>(commentFromRepo);
 			}
 			catch (Exception ex)
 			{
@@ -133,7 +133,7 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public async Task<bool> TryUpdatePostCommentAsync(Guid commentId, JsonPatchDocument<CommentToUpdateDto> patchDocument)
+		public async Task<bool> TryUpdatePostCommentAsync(Guid commentId, JsonPatchDocument<PostCommentToUpdateDto> patchDocument)
 		{
 			_logger.LogDebug("Trying to update comment: {id}", commentId);
 			try
@@ -143,7 +143,7 @@ namespace MyFaceApi.Api.Application.Services
 				{
 					return false;
 				}
-				CommentToUpdateDto commentToPatch = _mapper.Map<CommentToUpdateDto>(commentFromRepo);
+				PostCommentToUpdateDto commentToPatch = _mapper.Map<PostCommentToUpdateDto>(commentFromRepo);
 				patchDocument.ApplyTo(commentToPatch);
 				if (!ValidatorHelper.ValidateModel(commentToPatch))
 				{

@@ -88,7 +88,7 @@ namespace MyFaceApi.Api.Application.Services
 					await _friendsRelationRepository.SaveAsync();
 					_logger.LogDebug("Users relation: {firstUser} and {secondUser} has been removed.", firstUser, secondUser);
 				}
-				
+
 			}
 			catch (Exception ex)
 			{
@@ -105,10 +105,14 @@ namespace MyFaceApi.Api.Application.Services
 			}
 			try
 			{
-				FriendsRelation relation = _friendsRelationRepository.GetById(new { firstUser, secondUser });
-				if (relation != null)
+				var relation = _friendsRelationRepository.Get(x =>
+					x.FriendId == firstUser && x.UserId == secondUser
+					|| x.FriendId == secondUser && x.UserId == firstUser)
+					.ToList();
+
+				if (relation.Count > 0)
 				{
-					return _mapper.Map<FriendsRelationDto>(relation);
+					return _mapper.Map<FriendsRelationDto>(relation.ElementAt(0));
 				}
 				return null;
 			}

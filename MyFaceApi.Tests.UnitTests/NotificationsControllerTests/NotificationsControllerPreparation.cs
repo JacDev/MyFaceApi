@@ -6,29 +6,28 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using MyFaceApi.AutoMapperProfiles;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.DataAccess.Enums;
-using MyFaceApi.Api.Models.NotificationModels;
-using MyFaceApi.Api.Repository.Interfaces;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using MyFaceApi.Api.Application.Interfaces;
+using MyFaceApi.Api.Application.DtoModels.Notification;
+using MyFaceApi.Api.Domain.Enums;
 
 namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 {
 	public class NotificationsControllerPreparation
 	{
-		protected readonly Mock<IUserRepository> _mockUserRepo;
-		protected readonly Mock<INotificationRepository> _mockNotificationRepo;
+		protected readonly Mock<IUserService> _mockUserService;
+		protected readonly Mock<INotificationService> _mockNotificationService;
 		protected readonly Mock<ILogger<NotificationsController>> _loggerMock;
 		protected readonly IMapper _mapper;
 		protected readonly IFixture _fixture;
 
 		protected NotificationsControllerPreparation()
 		{
-			//mocking repos
-			_mockUserRepo = new Mock<IUserRepository>();
-			_mockNotificationRepo = new Mock<INotificationRepository>();
+			//mocking Services
+			_mockUserService = new Mock<IUserService>();
+			_mockNotificationService = new Mock<INotificationService>();
 			//mocking logger
 			_loggerMock = new Mock<ILogger<NotificationsController>>();
 			//mocking automapper
@@ -37,37 +36,35 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 			_mapper = new Mapper(configuration);
 			_fixture = new Fixture().Customize(new AutoMoqCustomization());
 		}
-		protected List<Notification> GetTestNotificationData()
+		protected List<NotificationDto> GetTestNotificationData()
 		{
-			var listToReturn = new List<Notification>
+			var listToReturn = new List<NotificationDto>
 			{
-				new Notification
+				new NotificationDto
 					{
-						ToWhoId = new Guid(ConstIds.ExampleUserId),
 						Id = new Guid(ConstIds.ExampleNotificationId),
 						WhenAdded = DateTime.Now,
 						EventId = new Guid(ConstIds.ExampleEventId),
 						FromWho = new Guid(ConstIds.ExampleFromWhoId),
 						HasSeen = false,
-						NotificationType = NotificationType.Comment,
+						NotificationType = NotificationType.Comment
 					},
-				new Notification
+				new NotificationDto
 					{
-						ToWhoId = new Guid(ConstIds.ExampleUserId),
 						Id = new Guid("CEE52E51-F4A4-4AC8-8AB7-1ACF73AA863F"),
 						WhenAdded = DateTime.Now,
 						EventId = new Guid("56F23FBA-66F8-44A2-BAFD-3C69520781CF"),
 						FromWho = new Guid(ConstIds.ExampleFromWhoId),
 						HasSeen = false,
-						NotificationType = NotificationType.FriendRequiest,
+						NotificationType = NotificationType.FriendRequiest
 					}
 			};
 			return listToReturn;
 		}
 
-		protected JsonPatchDocument<NotificationToUpdate> GetJsonPatchDocument()
+		protected JsonPatchDocument<NotificationToUpdateDto> GetJsonPatchDocument()
 		{
-			var jsonobject = new JsonPatchDocument<NotificationToUpdate>
+			var jsonobject = new JsonPatchDocument<NotificationToUpdateDto>
 			{
 				ContractResolver = new CamelCasePropertyNamesContractResolver()
 			};

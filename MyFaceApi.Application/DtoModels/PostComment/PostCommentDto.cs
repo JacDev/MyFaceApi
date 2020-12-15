@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace MyFaceApi.Api.Application.DtoModels.Comment
+namespace MyFaceApi.Api.Application.DtoModels.PostComment
 {
-	public class CommentDto
+	public class PostCommentDto
 	{
 		public Guid Id { get; set; }
 		public Guid PostId { get; set; }

@@ -68,7 +68,7 @@
             <response code="404"> If the notification not found</response>
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Api.Controllers.PostCommentsController.AddComment(System.String,System.String,MyFaceApi.Api.Application.DtoModels.Comment.CommentToAddDto)">
+        <member name="M:MyFaceApi.Api.Controllers.PostCommentsController.AddComment(System.String,System.String,MyFaceApi.Api.Application.DtoModels.PostComment.PostCommentToAddDto)">
             <summary>
             Add post to database
             </summary>
@@ -105,7 +105,7 @@
             <response code="404"> If post or comment not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Api.Controllers.PostCommentsController.PartiallyUpdateComment(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Api.Application.DtoModels.Comment.CommentToUpdateDto})">
+        <member name="M:MyFaceApi.Api.Controllers.PostCommentsController.PartiallyUpdateComment(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Api.Application.DtoModels.PostComment.PostCommentToUpdateDto})">
             <summary>
             Update comment in database
             </summary>
@@ -166,7 +166,7 @@
             <response code="404"> If post or comment not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Api.Controllers.PostReactionsController.PartiallyUpdatePostReaction(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Api.Application.DtoModels.PostReaction.PostReactionToUpdate})">
+        <member name="M:MyFaceApi.Api.Controllers.PostReactionsController.PartiallyUpdatePostReaction(System.String,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{MyFaceApi.Api.Application.DtoModels.PostReaction.PostReactionToUpdateDto})">
             <summary>
             Update reaction in database
             </summary>

@@ -2,40 +2,39 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.Models.CommentModels;
 using System;
 using Xunit;
 using AutoFixture;
+using MyFaceApi.Api.Application.DtoModels.PostComment;
 
 namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 {
 	public class PostCommentsControllerAddCommentTests : PostCommentsControllerPreparation
 	{
-		protected readonly CommentToAdd _commentToAdd;
+		protected readonly PostCommentToAddDto _commentToAdd;
 		public PostCommentsControllerAddCommentTests() : base()
 		{
-			_commentToAdd = _fixture.Create<CommentToAdd>();
+			_commentToAdd = _fixture.Create<PostCommentToAddDto>();
 		}
 		[Fact]
 		public async void AddComment_ReturnsCreatedAtRouteResult_WithPostCommentData()
 		{
 			//Arrange
-			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
 				.Returns(true)
 				.Verifiable();
-			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
+			_mockUserService.Setup(Service => Service.CheckIfUserExists(It.IsAny<Guid>()))
 				.ReturnsAsync(true)
 				.Verifiable();
 
-			PostComment commentEntity = _mapper.Map<PostComment>(_commentToAdd);
+			var commentEntity = _mapper.Map<PostCommentDto>(_commentToAdd);
 			commentEntity.Id = new Guid(ConstIds.ExampleCommentId);
 
-			_mockCommentRepo.Setup(repo => repo.AddCommentAsync(It.IsAny<PostComment>()))
+			_mockCommentService.Setup(Service => Service.AddCommentAsync(It.IsAny<Guid>(), It.IsAny<PostCommentToAddDto>()))
 				.ReturnsAsync(commentEntity)
 				.Verifiable();
 
-			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
+			var controller = new PostCommentsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockCommentService.Object);
 
 			//Act
 			var result = await controller.AddComment(ConstIds.ExampleUserId, ConstIds.ExamplePostId, _commentToAdd);
@@ -46,9 +45,9 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 			//Assert.Equal(_commentToAdd.PostId.ToString(), redirectToActionResult.RouteValues["postId"].ToString());
 			Assert.Equal(ConstIds.ExampleCommentId, redirectToActionResult.RouteValues["commentId"].ToString());
 			Assert.Equal("GetComment", redirectToActionResult.RouteName);
-			_mockCommentRepo.Verify();
-			_mockPostRepo.Verify();
-			_mockUserRepo.Verify();
+			_mockCommentService.Verify();
+			_mockPostService.Verify();
+			_mockUserService.Verify();
 		}
 		[Theory]
 		[InlineData(ConstIds.ExampleUserId, ConstIds.InvalidGuid)]
@@ -56,14 +55,14 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 		public async void AddComment_ReturnsBadRequestObjectResult_WhenThePostOrUserIdIsInvalid(string userTestId, string postTestId)
 		{
 			//Arrange
-			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
+			var controller = new PostCommentsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockCommentService.Object);
 
 			//Act
 			var result = await controller.AddComment(userTestId, postTestId, _commentToAdd);
 
 			//Assert
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-			Assert.Equal($"{userTestId} or {postTestId} is not valid Guid.", badRequestObjectResult.Value);
+			Assert.Equal($"{userTestId} or {postTestId} is not valid guid.", badRequestObjectResult.Value);
 		}
 		[Theory]
 		[InlineData(true, false)]
@@ -71,13 +70,13 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 		public async void AddComment_ReturnsNotFoundObjectResult_WhenThePostOrUserDoesntExist(bool doesTheUserExists, bool doesThePostExists)
 		{
 			//Arrange
-			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
 				.Returns(doesThePostExists)
 				.Verifiable();
-			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
+			_mockUserService.Setup(Service => Service.CheckIfUserExists(It.IsAny<Guid>()))
 				.ReturnsAsync(doesTheUserExists)
 				.Verifiable();
-			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
+			var controller = new PostCommentsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockCommentService.Object);
 
 			//Act
 			var result = await controller.AddComment(ConstIds.ExampleUserId, ConstIds.ExamplePostId, _commentToAdd);
@@ -85,22 +84,22 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 			//Assert
 			var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
 			Assert.Equal($"User: {ConstIds.ExampleUserId} or post {ConstIds.ExamplePostId} not found.", notFoundObjectResult.Value);
-			_mockPostRepo.Verify();
+			_mockPostService.Verify();
 			//if post doesnt exist the user will not be checked
 			if (doesThePostExists)
 			{
-				_mockUserRepo.Verify();
+				_mockUserService.Verify();
 			}
 		}
 		[Fact]
-		public async void AddComment_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
+		public async void AddComment_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()
 		{
 			//Arrange
-			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
+			var controller = new PostCommentsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockCommentService.Object);
 
 			//Act
 			var result = await controller.AddComment(ConstIds.ExampleUserId, ConstIds.ExamplePostId, _commentToAdd);
@@ -108,7 +107,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockPostRepo.Verify();
+			_mockPostService.Verify();
 		}
 	}
 }

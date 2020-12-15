@@ -1,26 +1,18 @@
-﻿using IdentityServer4.Services;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using MyFaceApi.IdentityServer.Domain.Entities;
-using MyFaceApi.IdentityServer.Models;
-using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using MyFaceApi.IdentityServer.Application.Interfaces;
+using MyFaceApi.IdentityServer.Application.ViewModels;
 using System.Threading.Tasks;
 
 namespace MyFaceApi.IdentityServer.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IIdentityServerInteractionService _interactionService;
+		private readonly IAuthService _authService;
 
-        public AuthController(UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            IIdentityServerInteractionService interactionService)
+
+        public AuthController(IAuthService authService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _interactionService = interactionService;
+            _authService = authService;
         }
         [HttpGet]
         public IActionResult Login(string returnUrl)
@@ -32,7 +24,7 @@ namespace MyFaceApi.IdentityServer.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(loginViewModel.Login, loginViewModel.Password, false, false);
+				var result = await _authService.SignUserAsync(loginViewModel);
                 if (result.Succeeded)
                 {
                     return Redirect(loginViewModel.ReturnUrl);
@@ -43,45 +35,30 @@ namespace MyFaceApi.IdentityServer.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout(string logoutId)
         {
-            await _signInManager.SignOutAsync();
+            string logoutRedirect = await _authService.LogOutUserAcync(logoutId);
 
-            var logoutRequest = await _interactionService.GetLogoutContextAsync(logoutId);
-
-            if (string.IsNullOrEmpty(logoutRequest.PostLogoutRedirectUri))
+            if (string.IsNullOrEmpty(logoutRedirect))
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            return Redirect(logoutRequest.PostLogoutRedirectUri);
+            return Redirect(logoutRedirect);
         }
-        
+       
         [HttpGet]
         public IActionResult Register(string returnUrl)
         {
             return View(new RegisterViewModel { ReturnUrl = returnUrl });
         }
-
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
-
             if (!ModelState.IsValid)
             {
                 return View(registerViewModel);
             }
-            var user = new ApplicationUser
-            {
-                Id = Guid.NewGuid(),
-                UserName = registerViewModel.Login,
-                Email = registerViewModel.Email,
-                FirstName = registerViewModel.FirstName,
-                LastName = registerViewModel.LastName,
-                ProfileImagePath = "",
-                DateOfBirht = DateTime.Now
-            };
+            await _authService.RegisterUser(registerViewModel);
 
-            var result = await _userManager.CreateAsync(user, registerViewModel.Password);        
- 
             return RedirectToAction("Login", new {
                 returnUrl = registerViewModel.ReturnUrl});
         }

@@ -139,7 +139,7 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public async Task<bool> TryUpdatePostReactionAsync(Guid reactionId, JsonPatchDocument<PostReactionToUpdate> patchDocument)
+		public async Task<bool> TryUpdatePostReactionAsync(Guid reactionId, JsonPatchDocument<PostReactionToUpdateDto> patchDocument)
 		{
 			_logger.LogDebug("Trying to update post reaction: {id}.", reactionId);
 			try
@@ -149,7 +149,7 @@ namespace MyFaceApi.Api.Application.Services
 				{
 					return false;
 				}
-				PostReactionToUpdate reactionToPatch = _mapper.Map<PostReactionToUpdate>(reactionFromRepo);
+				PostReactionToUpdateDto reactionToPatch = _mapper.Map<PostReactionToUpdateDto>(reactionFromRepo);
 				patchDocument.ApplyTo(reactionToPatch);
 				if (!ValidatorHelper.ValidateModel(reactionToPatch))
 				{

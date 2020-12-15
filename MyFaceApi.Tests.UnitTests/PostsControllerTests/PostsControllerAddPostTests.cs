@@ -2,36 +2,34 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.DataAccess.Entities;
-using MyFaceApi.Api.Models.PostModels;
 using System;
 using Xunit;
 using AutoFixture;
+using MyFaceApi.Api.Application.DtoModels.Post;
 
 namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 {
 	public class PostsControllerAddPostTests : PostsControllerPreparation
 	{
-		protected readonly PostToAdd _postToAdd;
+		protected readonly PostToAddDto _postToAdd;
 		public PostsControllerAddPostTests() : base()
 		{
-			_postToAdd = _fixture.Create<PostToAdd>();
+			_postToAdd = _fixture.Create<PostToAddDto>();
 		}
 		[Fact]
 		public async void AddPost_ReturnsCreatedAtRouteResult_WithPostData()
 		{
 			//Arrange
-			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
+			_mockUserService.Setup(Service => Service.CheckIfUserExists(It.IsAny<Guid>()))
 				.ReturnsAsync(true)
 				.Verifiable();
-			Post postEntity = _mapper.Map<Post>(_postToAdd);
-			postEntity.Id = new Guid(ConstIds.ExamplePostId);
 
-			_mockPostRepo.Setup(repo => repo.AddPostAsync(It.IsAny<Post>()))
+			var postEntity = _mapper.Map<PostDto>(_postToAdd);
+
+			_mockPostService.Setup(Service => Service.AddPostAsync(Guid.Parse(ConstIds.ExampleUserId), It.IsAny<PostToAddDto>()))
 				.ReturnsAsync(postEntity)
 				.Verifiable();
-
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
+			var controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object);
 
 			//Act
 			var result = await controller.AddPost(ConstIds.ExampleUserId, _postToAdd);
@@ -39,18 +37,18 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			//Assert
 			var redirectToActionResult = Assert.IsType<CreatedAtRouteResult>(result.Result);
 			Assert.Equal(ConstIds.ExampleUserId, redirectToActionResult.RouteValues["userId"].ToString());
-			Assert.Equal(ConstIds.ExamplePostId, redirectToActionResult.RouteValues["postId"].ToString());
+			Assert.Equal(Guid.Empty.ToString(), redirectToActionResult.RouteValues["postId"].ToString());
 			Assert.Equal("GetPost", redirectToActionResult.RouteName);
-			Assert.IsType<Post>(redirectToActionResult.Value);
+			Assert.IsType<PostDto>(redirectToActionResult.Value);
 
-			_mockUserRepo.Verify();
-			_mockPostRepo.Verify();
+			_mockUserService.Verify();
+			_mockPostService.Verify();
 		}
 		[Fact]
 		public async void AddPost_ReturnsBadRequestObjectResult_WhenTheUserIdIsInvalid()
 		{
 			//Arrange
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
+			var controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object);
 
 			//Act
 			var result = await controller.AddPost(ConstIds.InvalidGuid, _postToAdd);
@@ -63,11 +61,11 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		public async void AddPost_ReturnsNotFoundObjectResult_WhenTheUserDoesntExist()
 		{
 			//Arrange
-			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
+			_mockUserService.Setup(Service => Service.CheckIfUserExists(It.IsAny<Guid>()))
 				.ReturnsAsync(false)
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
+			var controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object);
 
 			//Act
 			var result = await controller.AddPost(ConstIds.ExampleUserId, _postToAdd);
@@ -75,24 +73,24 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			//Assert
 			var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
 			Assert.Equal($"User: {ConstIds.ExampleUserId} not found.", notFoundObjectResult.Value);
-			_mockUserRepo.Verify();
+			_mockUserService.Verify();
 		}
 		[Fact]
-		public async void AddPost_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
+		public async void AddPost_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()
 		{
 			//Arrange
-			_mockUserRepo.Setup(repo => repo.CheckIfUserExists(It.IsAny<Guid>()))
+			_mockUserService.Setup(Service => Service.CheckIfUserExists(It.IsAny<Guid>()))
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
+			var controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object);
 
 			//Act
 			var result = await controller.AddPost(ConstIds.ExampleUserId, _postToAdd);
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockUserRepo.Verify();
+			_mockUserService.Verify();
 		}
 	}
 }

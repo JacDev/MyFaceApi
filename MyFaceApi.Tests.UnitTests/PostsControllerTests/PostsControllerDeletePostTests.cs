@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.DataAccess.Entities;
 using System;
-using System.Linq;
 using Xunit;
 
 namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
@@ -18,28 +16,22 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		public async void DeletePost_ReturnsNoContentResult_WhenThePostHasBeenRemoved()
 		{
 			//Arrange
-			var postToRemove = GetTestUserData().ElementAt(0).Posts.ElementAt(0);
-			_mockPostRepo.Setup(repo => repo.GetPost(It.IsAny<Guid>()))
-				.Returns(postToRemove)
-				.Verifiable();
-			_mockPostRepo.Setup(repo => repo.DeletePostAsync(It.IsAny<Post>()))
+			_mockPostService.Setup(Service => Service.DeletePostAsync(It.IsAny<Guid>()))
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
-
+			var controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object);
 			//Act
 			var result = await controller.DeletePost(ConstIds.ExamplePostId);
 
 			//Act
 			var noContentResult = Assert.IsType<NoContentResult>(result);
-			_mockPostRepo.Verify();
+			_mockPostService.Verify();
 		}
 		[Fact]
 		public async void DeletePost_ReturnsBadRequestObjectResult_WhenThePostGuidIdIsInvalid()
 		{
 			//Arrange
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
-
+			var controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object);
 			//Act
 			var result = await controller.DeletePost(ConstIds.InvalidGuid);
 
@@ -48,39 +40,21 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			Assert.Equal($"{ConstIds.InvalidGuid} is not valid guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
-		public async void DeletePost_ReturnsNotFoundResult_WhenThePostDoesntExist()
+		public async void DeletePost_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()
 		{
 			//Arrange
-			_mockPostRepo.Setup(repo => repo.GetPost(It.IsAny<Guid>()))
-				.Returns((Post)null)
-				.Verifiable();
-
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
-
-			//Act
-			var result = await controller.DeletePost(ConstIds.ExamplePostId);
-
-			//Assert
-			var notFoundResult = Assert.IsType<NotFoundResult>(result);
-			_mockPostRepo.Verify();
-		}
-		[Fact]
-		public async void DeletePost_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
-		{
-			//Arrange
-			_mockPostRepo.Setup(repo => repo.GetPost(It.IsAny<Guid>()))
+			_mockPostService.Setup(Service => Service.DeletePostAsync(It.IsAny<Guid>()))
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockRelationsRepo.Object, _mockImageManager.Object);
-
+			var controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object);
 			//Act
 			var result = await controller.DeletePost(ConstIds.ExamplePostId);
 
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockPostRepo.Verify();
+			_mockPostService.Verify();
 		}
 	}
 }

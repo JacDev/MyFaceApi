@@ -9,6 +9,7 @@ namespace MyFaceApi.AutoMapperProfiles
 		public PostProfiles()
 		{
 			CreateMap<PostToAddDto, Post>();
+			CreateMap<PostToAddDto, PostDto>();
 			CreateMap<PostToUpdateDto, Post>();
 			CreateMap<Post, PostToUpdateDto>();
 			CreateMap<Post, PostDto>()

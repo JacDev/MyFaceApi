@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace MyFaceApi.Api.Application.DtoModels.Comment
+namespace MyFaceApi.Api.Application.DtoModels.PostComment
 {
-	public class CommentToAddDto
+	public class PostCommentToAddDto
 	{
 		[Required]
 		public string Text { get; set; }

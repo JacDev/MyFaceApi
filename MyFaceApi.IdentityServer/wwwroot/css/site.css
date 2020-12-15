@@ -1,0 +1,18 @@
+﻿.auth-page {
+    background-color: rgb(58, 58, 59);
+    color: white;
+}
+
+.btn.btn-dark:hover {
+    background-color: rgb(120, 120, 120);
+}
+
+.btn.btn-dark {
+    background-color: dimgrey;
+    border: none;
+}
+
+.input-box, .input-box:focus, .input-box:hover{
+    background-color: rgb(120, 120, 120);
+    color: white;
+}

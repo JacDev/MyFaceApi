@@ -23,9 +23,9 @@ namespace MyFaceApi.Api.Controllers
 		private readonly ILogger<FriendsRelationsController> _logger;
 		private readonly IUserService _userService;
 
-		public FriendsRelationsController(IFriendsRelationService relationService,
-			IUserService userService,
-			ILogger<FriendsRelationsController> logger)
+		public FriendsRelationsController(ILogger<FriendsRelationsController> logger,
+			IUserService userService, 
+			IFriendsRelationService relationService)
 		{
 			_logger = logger;
 			_relationService = relationService;

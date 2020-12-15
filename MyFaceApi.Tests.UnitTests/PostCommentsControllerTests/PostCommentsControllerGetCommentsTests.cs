@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using MyFaceApi.Api.Application.DtoModels.PostComment;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.DataAccess.Entities;
+using Pagination.Helpers;
 using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
@@ -19,46 +19,47 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 		{
 			//Arrange
 			var comments = GetTestPostData();
-			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
+			var pagedList = PagedList<PostCommentDto>.Create(comments, _paginationsParams.PageNumber, _paginationsParams.PageSize, _paginationsParams.Skip);
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
 				.Returns(true)
 				.Verifiable();
-			_mockCommentRepo.Setup(repo => repo.GetComments(It.IsAny<Guid>()))
-				.Returns(comments)
+			_mockCommentService.Setup(Service => Service.GetPostComments(It.IsAny<Guid>(), _paginationsParams))
+				.Returns(pagedList)
 				.Verifiable();
 
-			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
+			var controller = new PostCommentsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockCommentService.Object);
 
 			//Act
 			var result = controller.GetComments(ConstIds.ExamplePostId, _paginationsParams);
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-			var model = Assert.IsType<List<PostComment>>(actionResult.Value);
-			_mockCommentRepo.Verify();
-			_mockPostRepo.Verify();
+			var model = Assert.IsType<PagedList<PostCommentDto>>(actionResult.Value);
+			_mockCommentService.Verify();
+			_mockPostService.Verify();
 		}
 		[Fact]
 		public void GetComments_ReturnsBadRequestObjectResult_WhenThePostIdIsInvalid()
 		{
 			//Arrange
-			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
+			var controller = new PostCommentsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockCommentService.Object);
 
 			//Act
 			var result = controller.GetComments(ConstIds.InvalidGuid, _paginationsParams);
 
 			//Assert
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-			Assert.Equal($"{ConstIds.InvalidGuid} is not valid Guid.", badRequestObjectResult.Value);
+			Assert.Equal($"{ConstIds.InvalidGuid} is not valid guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
 		public void GetComments_ReturnsNotFoundObjectResult_WhenThePostDoesntExist()
 		{
 			//Arrange
-			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
 				.Returns(false)
 				.Verifiable();
 
-			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
+			var controller = new PostCommentsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockCommentService.Object);
 
 			//Act
 			var result = controller.GetComments(ConstIds.ExamplePostId, _paginationsParams);
@@ -66,17 +67,17 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 			//Assert
 			var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result.Result);
 			Assert.Equal($"Post: {ConstIds.ExamplePostId} not found.", notFoundObjectResult.Value);
-			_mockPostRepo.Verify();
+			_mockPostService.Verify();
 		}
 		[Fact]
-		public void GetComments_ReturnsInternalServerErrorResult_WhenExceptionThrownInRepository()
+		public void GetComments_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()
 		{
 			//Arrange
-			_mockPostRepo.Setup(repo => repo.CheckIfPostExists(It.IsAny<Guid>()))
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostCommentsController(_loggerMock.Object, _mockPostRepo.Object, _mockUserRepo.Object, _mapper, _mockCommentRepo.Object);
+			var controller = new PostCommentsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockCommentService.Object);
 
 			//Act
 			var result = controller.GetComments(ConstIds.ExamplePostId, _paginationsParams);
@@ -84,7 +85,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result.Result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockPostRepo.Verify();
+			_mockPostService.Verify();
 		}
 	}
 }
