@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using MyFaceApi.Api.Application.DtoModels.PostReaction;
 using MyFaceApi.Api.Controllers;
-using MyFaceApi.Api.Domain.Enums;
 using System;
-using System.Linq;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostReactionsControllerTests
 {
 	public class PostReactionsControllerPatchReactionTests : PostReactionsPreparation
 	{
@@ -18,9 +18,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 		public async void PartiallyUpdatePostReaction_ReturnsNoContentResult_WhenTheReactionHasBeenUpdated()
 		{
 			//Arrange
-			var reaction = GetTestPostData().ElementAt(0);
-
-			_mockReactionService.Setup(Service => Service.TryUpdatePostReactionAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+			_mockReactionService.Setup(Service => Service.TryUpdatePostReactionAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<PostReactionToUpdateDto>>()))
 				.ReturnsAsync(true)
 				.Verifiable();
 
@@ -31,16 +29,13 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 
 			//Assert
 			var noContentResult = Assert.IsType<NoContentResult>(result);
-			Assert.Equal(ReactionType.Haha, reaction.Reaction);
 			_mockReactionService.Verify();
 		}
 		[Fact]
 		public async void PartiallyUpdatePostReaction_ReturnsBadRequestResult_WhenTheReactionHasNotBeenUpdated()
 		{
 			//Arrange
-			var reaction = GetTestPostData().ElementAt(0);
-
-			_mockReactionService.Setup(Service => Service.TryUpdatePostReactionAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+			_mockReactionService.Setup(Service => Service.TryUpdatePostReactionAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<PostReactionToUpdateDto>>()))
 				.ReturnsAsync(false)
 				.Verifiable();
 
@@ -70,7 +65,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 		public async void PartiallyUpdatePostReaction_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()
 		{
 			//Arrange
-			_mockReactionService.Setup(Service => Service.DeletePostReactionAsync(It.IsAny<Guid>()))
+			_mockReactionService.Setup(Service => Service.TryUpdatePostReactionAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<PostReactionToUpdateDto>>()))
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 

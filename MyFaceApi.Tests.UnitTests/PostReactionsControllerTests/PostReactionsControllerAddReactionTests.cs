@@ -7,7 +7,7 @@ using Xunit;
 using AutoFixture;
 using MyFaceApi.Api.Application.DtoModels.PostReaction;
 
-namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostReactionsControllerTests
 {
 	public class PostReactionsControllerAddReactionTests : PostReactionsPreparation
 	{
@@ -44,7 +44,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			var redirectToActionResult = Assert.IsType<CreatedAtRouteResult>(result.Result);
 			Assert.Equal(ConstIds.ExampleUserId, redirectToActionResult.RouteValues["userId"].ToString());
 			Assert.Equal(ConstIds.ExamplePostId, redirectToActionResult.RouteValues["postId"].ToString());
-			Assert.Equal(ConstIds.ExampleReactionId, redirectToActionResult.RouteValues["commentId"].ToString());
+			Assert.Equal(ConstIds.ExampleReactionId, redirectToActionResult.RouteValues["reactionId"].ToString());
 			Assert.Equal("GetReaction", redirectToActionResult.RouteName);
 			_mockUserService.Verify();
 			_mockReactionService.Verify();
@@ -63,7 +63,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 
 			//Assert
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-			Assert.Equal($"{userTestId} or {postTestId} is not valid Guid.", badRequestObjectResult.Value);
+			Assert.Equal($"{userTestId} or {postTestId} is not valid guid.", badRequestObjectResult.Value);
 		}
 		[Theory]
 		[InlineData(true, false)]

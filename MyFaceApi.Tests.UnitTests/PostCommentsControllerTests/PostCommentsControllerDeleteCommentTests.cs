@@ -5,7 +5,7 @@ using MyFaceApi.Api.Controllers;
 using System;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostCommentsControllerTests
 {
 	public class PostCommentsControllerDeleteCommentTests : PostCommentsControllerPreparation
 	{
@@ -39,7 +39,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 
 			//Assert
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
-			Assert.Equal($"{ConstIds.InvalidGuid} is not valid Guid.", badRequestObjectResult.Value);
+			Assert.Equal($"{ConstIds.InvalidGuid} is not valid guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
 		public async void DeleteComment_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()

@@ -8,12 +8,11 @@ using MyFaceApi.Api.Application.DtoModels.PostReaction;
 using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Controllers;
 using MyFaceApi.Api.Domain.Enums;
-using MyFaceApi.AutoMapperProfiles;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 
-namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostReactionsControllerTests
 {
 	public class PostReactionsPreparation
 	{
@@ -32,7 +31,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			//mocking logger
 			_loggerMock = new Mock<ILogger<PostReactionsController>>();
 			//mocking automapper
-			var myProfile = new ReactionProfiles();
+			var myProfile = new ReactionProfile();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
 			_fixture = new Fixture().Customize(new AutoMoqCustomization());

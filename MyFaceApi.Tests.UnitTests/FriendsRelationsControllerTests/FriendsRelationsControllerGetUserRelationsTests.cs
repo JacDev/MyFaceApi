@@ -8,7 +8,7 @@ using Xunit;
 using AutoFixture;
 using System.Linq;
 
-namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.FriendsRelationsControllerTests
 {
 	public class FriendsRelationsControllerGetUserRelationsTests : FriendsRelationsControllerTestsPreparation
 	{

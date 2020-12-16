@@ -2,7 +2,7 @@
 using MyFaceApi.Api.Application.DtoModels.PostComment;
 using MyFaceApi.Api.Domain.Entities;
 
-namespace MyFaceApi.AutoMapperProfiles
+namespace MyFaceApi.Api.Application.AutoMapperProfiles
 {
 	public class CommentProfiles : Profile
 	{
@@ -10,8 +10,8 @@ namespace MyFaceApi.AutoMapperProfiles
 		{
 			CreateMap<PostCommentToAddDto, PostComment>();
 			CreateMap<PostComment, PostCommentDto>();
-			CreateMap<PostCommentToAddDto, PostComment>();
 			CreateMap<PostComment, PostCommentToUpdateDto>();
+			CreateMap<PostCommentToUpdateDto, PostComment>();
 		}
 	}
 }

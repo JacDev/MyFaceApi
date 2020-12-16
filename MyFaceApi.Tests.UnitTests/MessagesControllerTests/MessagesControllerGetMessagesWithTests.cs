@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Pagination.Helpers;
 using MyFaceApi.Api.Application.DtoModels.Message;
 
-namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.MessagesControllerTests
 {
 	public class MessagesControllerGetMessagesWithTests : MessagesControllerPreparation
 	{
@@ -19,7 +19,7 @@ namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
 			_paginationParams = new PaginationParams { PageNumber = 1, PageSize = 10, Skip = 0 };
 		}
 		[Fact]
-		public void GetMessagesWith_ReturnsOkObjectResult_WithAPagedListOfMessagesData()
+		public async void GetMessagesWith_ReturnsOkObjectResult_WithAPagedListOfMessagesData()
 		{
 			//Arrange
 			var messages = new List<MessageDto>();
@@ -40,7 +40,7 @@ namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
 			var controller = new MessagesController(_loggerMock.Object, _mockMessagesService.Object, _mockUserService.Object);
 
 			//Act
-			var result = controller.GetMessagesWith(ConstIds.ExampleUserId, ConstIds.ExampleFromWhoId, _paginationParams);
+			var result = await controller.GetMessagesWith(ConstIds.ExampleUserId, ConstIds.ExampleFromWhoId, _paginationParams);
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);

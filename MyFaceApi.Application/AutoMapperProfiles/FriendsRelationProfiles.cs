@@ -2,7 +2,7 @@
 using MyFaceApi.Api.Application.DtoModels.FriendsRelation;
 using MyFaceApi.Api.Domain.Entities;
 
-namespace MyFaceApi.AutoMapperProfiles
+namespace MyFaceApi.Api.Application.AutoMapperProfiles
 {
 	public class FriendsRelationProfiles : Profile
 	{
@@ -11,7 +11,6 @@ namespace MyFaceApi.AutoMapperProfiles
 			CreateMap<FriendsRelationToAddDto, FriendsRelation>();
 			CreateMap<FriendsRelation, FriendsRelationToAddDto>();
 			CreateMap<FriendsRelation, FriendsRelationDto>();
-			CreateMap<FriendsRelationToAddDto, FriendsRelationDto>();
 		}
 	}
 }

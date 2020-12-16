@@ -3,14 +3,13 @@ using AutoFixture.AutoMoq;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Moq;
-using MyFaceApi.AutoMapperProfiles;
 using MyFaceApi.Api.Controllers;
 using System.Collections.Generic;
 using MyFaceApi.Api.Application.Interfaces;
 using Pagination.Helpers;
 using MyFaceApi.Api.Application.DtoModels.FriendsRelation;
 
-namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.FriendsRelationsControllerTests
 {
 	public class FriendsRelationsControllerTestsPreparation
 	{
@@ -29,7 +28,7 @@ namespace MyFaceApi.Tests.UnitTests.FriendsRelationsControllerTests
 			//mocking logger
 			_loggerMock = new Mock<ILogger<FriendsRelationsController>>();
 			//mocking automapper
-			var myProfile = new FriendsRelationProfiles();
+			var myProfile = new FriendsRelationProfile();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
 			_fixture = new Fixture().Customize(new AutoMoqCustomization());

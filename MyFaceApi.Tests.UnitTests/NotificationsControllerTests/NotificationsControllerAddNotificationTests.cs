@@ -7,7 +7,7 @@ using Xunit;
 using AutoFixture;
 using MyFaceApi.Api.Application.DtoModels.Notification;
 
-namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.NotificationsControllerTests
 {
 	public class NotificationsControllerAddNotificationTests : NotificationsControllerPreparation
 	{
@@ -36,7 +36,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 			//Assert
 			var redirectToActionResult = Assert.IsType<CreatedAtRouteResult>(result.Result);
 			Assert.Equal(ConstIds.ExampleUserId, redirectToActionResult.RouteValues["userId"].ToString());
-			Assert.Equal(ConstIds.ExampleNotificationId, redirectToActionResult.RouteValues["notificationId"].ToString());
+			Assert.NotNull(redirectToActionResult.RouteValues["notificationId"].ToString());
 			Assert.Equal("GetNotification", redirectToActionResult.RouteName);
 			_mockUserService.Verify();
 			_mockNotificationService.Verify();

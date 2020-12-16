@@ -5,7 +5,7 @@ using MyFaceApi.Api.Controllers;
 using System;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.NotificationsControllerTests
 {
 	public class NotificationsControllerDeleteNotificationTests : NotificationsControllerPreparation
 	{

@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using MyFaceApi.Api.Application.DtoModels.PostComment;
 using MyFaceApi.Api.Controllers;
 using System;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostCommentsControllerTests
 {
 	public class PostCommentsControllerPatchCommentTests: PostCommentsControllerPreparation
 	{
@@ -16,7 +18,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 		public async void PartiallyUpdateComment_ReturnsNoContentResult_WhenTheCommentHasBeenUpdated()
 		{
 			//Arrange
-			_mockCommentService.Setup(Service => Service.TryUpdatePostCommentAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+			_mockCommentService.Setup(Service => Service.TryUpdatePostCommentAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<PostCommentToUpdateDto>>()))
 				.ReturnsAsync(true)
 				.Verifiable();
 
@@ -33,7 +35,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 		public async void PartiallyUpdateComment_ReturnsBadRequestResult_WhenTheCommentHasNotBeenUpdated()
 		{
 			//Arrange
-			_mockCommentService.Setup(Service => Service.TryUpdatePostCommentAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+			_mockCommentService.Setup(Service => Service.TryUpdatePostCommentAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<PostCommentToUpdateDto>>()))
 				.ReturnsAsync(false)
 				.Verifiable();
 
@@ -63,7 +65,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 		public async void PartiallyUpdateComment_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()
 		{
 			//Arrange
-			_mockCommentService.Setup(Service => Service.TryUpdatePostCommentAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+			_mockCommentService.Setup(Service => Service.TryUpdatePostCommentAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<PostCommentToUpdateDto>>()))
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 

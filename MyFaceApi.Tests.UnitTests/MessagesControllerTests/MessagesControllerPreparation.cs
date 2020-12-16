@@ -4,10 +4,9 @@ using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Moq;
 using MyFaceApi.Api.Application.Interfaces;
-using MyFaceApi.Api.AutoMapperProfiles;
 using MyFaceApi.Api.Controllers;
 
-namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.MessagesControllerTests
 {
 	public class MessagesControllerPreparation
 	{
@@ -24,7 +23,7 @@ namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
 			//mocking logger
 			_loggerMock = new Mock<ILogger<MessagesController>>();
 			//mocking automapper
-			var myProfile = new MessageProfiles();
+			var myProfile = new MessageProfile();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
 			_fixture = new Fixture().Customize(new AutoMoqCustomization());

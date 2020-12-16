@@ -7,9 +7,9 @@ namespace MyFaceApi.Api.Application.Helpers
 	{
 		public static bool ValidateModel<T>(T data)
 		{
-			var context = new ValidationContext(typeof(T), serviceProvider: null, items: null);
+			var context = new ValidationContext(data, serviceProvider: null, items: null);
 			var results = new List<ValidationResult>();
-			var isValid = Validator.TryValidateObject(data, context, results);
+			var isValid = Validator.TryValidateObject(data, context, results, true);
 			return isValid;
 		}
 	}

@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using MyFaceApi.Api.Application.DtoModels.Notification;
 using MyFaceApi.Api.Controllers;
 using System;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.NotificationsControllerTests
 {
 	public class NotificationsControllerPatchNotificationTests : NotificationsControllerPreparation
 	{
@@ -19,7 +21,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 			_mockUserService.Setup(Service => Service.CheckIfUserExists(It.IsAny<Guid>()))
 				.ReturnsAsync(true)
 				.Verifiable();
-			_mockNotificationService.Setup(Service => Service.TryUpdateNotificationAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+			_mockNotificationService.Setup(Service => Service.TryUpdateNotificationAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<NotificationToUpdateDto>>()))
 				.ReturnsAsync(true)
 				.Verifiable();
 
@@ -40,7 +42,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 			_mockUserService.Setup(Service => Service.CheckIfUserExists(It.IsAny<Guid>()))
 				.ReturnsAsync(true)
 				.Verifiable();
-			_mockNotificationService.Setup(Service => Service.TryUpdateNotificationAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+			_mockNotificationService.Setup(Service => Service.TryUpdateNotificationAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<NotificationToUpdateDto>>()))
 				.ReturnsAsync(false)
 				.Verifiable();
 

@@ -7,7 +7,7 @@ using Xunit;
 using AutoFixture;
 using MyFaceApi.Api.Application.DtoModels.PostComment;
 
-namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostCommentsControllerTests
 {
 	public class PostCommentsControllerAddCommentTests : PostCommentsControllerPreparation
 	{

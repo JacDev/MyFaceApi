@@ -2,14 +2,13 @@
 using MyFaceApi.Api.Application.DtoModels.Post;
 using MyFaceApi.Api.Domain.Entities;
 
-namespace MyFaceApi.AutoMapperProfiles
+namespace MyFaceApi.Api.Application.AutoMapperProfiles
 {
 	public class PostProfiles : Profile
 	{
 		public PostProfiles()
 		{
 			CreateMap<PostToAddDto, Post>();
-			CreateMap<PostToAddDto, PostDto>();
 			CreateMap<PostToUpdateDto, Post>();
 			CreateMap<Post, PostToUpdateDto>();
 			CreateMap<Post, PostDto>()

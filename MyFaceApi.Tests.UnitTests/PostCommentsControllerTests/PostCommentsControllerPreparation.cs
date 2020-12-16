@@ -4,7 +4,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Moq;
-using MyFaceApi.AutoMapperProfiles;
 using MyFaceApi.Api.Controllers;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -13,7 +12,7 @@ using MyFaceApi.Api.Application.Interfaces;
 using Pagination.Helpers;
 using MyFaceApi.Api.Application.DtoModels.PostComment;
 
-namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostCommentsControllerTests
 {
 	public class PostCommentsControllerPreparation
 	{
@@ -34,7 +33,7 @@ namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
 			//mocking logger
 			_loggerMock = new Mock<ILogger<PostCommentsController>>();
 			//mocking automapper
-			var myProfile = new CommentProfiles();
+			var myProfile = new CommentProfile();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
 			_fixture = new Fixture().Customize(new AutoMoqCustomization());

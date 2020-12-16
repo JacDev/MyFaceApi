@@ -15,13 +15,12 @@ namespace MyFaceApi.Api.Application.FileManager
 	{
 		public string ImagePath { get; set; }
 		private readonly ILogger<ImageManager> _logger;
-		public ImageManager(IConfiguration config, 
+		public ImageManager(IConfiguration config,
 			ILogger<ImageManager> logger)
 		{
 			ImagePath = config["Path:Images"];
 			Console.Write(ImagePath);
 			_logger = logger;
-			_logger.LogError(ImagePath);
 		}
 
 		public FileStream ImageStream(string imageName)
@@ -31,29 +30,23 @@ namespace MyFaceApi.Api.Application.FileManager
 
 		public async Task<Tuple<string, string>> SaveImage(IFormFile image)
 		{
-			try
+
+			var savePath = Path.Combine(ImagePath);
+			if (!Directory.Exists(savePath))
 			{
-				var savePath = Path.Combine(ImagePath);
-				if (!Directory.Exists(savePath))
-				{
-					Directory.CreateDirectory(savePath);
-				}
-				var mime = image.FileName.Substring(image.FileName.LastIndexOf('.'));
-				var fileName = $"{DateTime.Now:dd-MM-yyy-HH-mm-ss}_{Guid.NewGuid()}{mime}";
-
-				var fileStream = new FileStream(Path.Combine(savePath, fileName), FileMode.Create);
-
-				await image.CopyToAsync(fileStream);
-				fileStream.Close();
-
-				return new Tuple<string, string>(fileName, Path.Combine(savePath, fileName));
+				Directory.CreateDirectory(savePath);
 			}
-			catch
-			{
-				throw;
-			}
+			var mime = image.FileName.Substring(image.FileName.LastIndexOf('.'));
+			var fileName = $"{DateTime.Now:dd-MM-yyy-HH-mm-ss}_{Guid.NewGuid()}{mime}";
+
+			var fileStream = new FileStream(Path.Combine(savePath, fileName), FileMode.Create);
+
+			await image.CopyToAsync(fileStream);
+			fileStream.Close();
+
+			return new Tuple<string, string>(fileName, Path.Combine(savePath, fileName));
 		}
-		public string AddProfileImage(string imageName, int width =100, int height=100)
+		public string AddProfileImage(string imageName, int width = 100, int height = 100)
 		{
 			var destRect = new Rectangle(0, 0, width, height);
 			var destImage = new Bitmap(width, height);

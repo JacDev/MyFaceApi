@@ -1,4 +1,4 @@
-﻿namespace MyFaceApi.Tests.UnitTests
+﻿namespace MyFaceApi.Api.Tests.UnitTests
 {
 	public static class ConstIds
 	{

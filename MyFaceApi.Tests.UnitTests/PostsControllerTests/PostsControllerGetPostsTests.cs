@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostsControllerTests
 {
 	public class PostsControllerGetPostsTests : PostsControllerPreparation
 	{

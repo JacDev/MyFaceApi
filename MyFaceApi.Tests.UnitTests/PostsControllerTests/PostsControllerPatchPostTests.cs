@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using MyFaceApi.Api.Application.DtoModels.Post;
 using MyFaceApi.Api.Controllers;
 using System;
-using System.Threading.Tasks;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostsControllerTests
 {
 	public class PostsControllerPatchPostTests : PostsControllerPreparation
 	{
@@ -17,7 +18,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		public async void PartiallyUpdatePost_ReturnsNoContentResult_WhenThePostHasBeenUpdated()
 		{
 			//Arrange
-			_mockPostService.Setup(Service => Service.TryUpdatePostAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+			_mockPostService.Setup(Service => Service.TryUpdatePostAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<PostToUpdateDto>>()))
 				.ReturnsAsync(true)
 				.Verifiable();
 
@@ -34,7 +35,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		public async void PartiallyUpdatePost_ReturnsBadRequestResult_WhenThePostHasNotBeenUpdated()
 		{
 			//Arrange
-			_mockPostService.Setup(Service => Service.TryUpdatePostAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+			_mockPostService.Setup(Service => Service.TryUpdatePostAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<PostToUpdateDto>>()))
 				.ReturnsAsync(false)
 				.Verifiable();
 
@@ -64,11 +65,11 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 		public async void PartiallyUpdatePost_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()
 		{
 			//Arrange
-			_mockPostService.Setup(Service => Service.TryUpdatePostAsync(It.IsAny<Guid>(), GetJsonPatchDocument()))
+			_mockPostService.Setup(Service => Service.TryUpdatePostAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<PostToUpdateDto>>()))
 				.ThrowsAsync(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object);
+			PostsController controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object);
 
 			//Act
 			var result = await controller.PartiallyUpdatePost(ConstIds.ExamplePostId, GetJsonPatchDocument());

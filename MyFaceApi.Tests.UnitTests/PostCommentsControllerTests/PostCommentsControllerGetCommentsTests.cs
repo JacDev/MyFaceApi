@@ -7,7 +7,7 @@ using Pagination.Helpers;
 using System;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostCommentsControllerTests
 {
 	public class PostCommentsControllerGetCommentsTests : PostCommentsControllerPreparation
 	{

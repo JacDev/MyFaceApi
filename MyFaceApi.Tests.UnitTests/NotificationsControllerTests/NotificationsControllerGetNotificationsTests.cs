@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.NotificationsControllerTests
 {
 	public class NotificationsControllerGetNotificationsTests : NotificationsControllerPreparation
 	{

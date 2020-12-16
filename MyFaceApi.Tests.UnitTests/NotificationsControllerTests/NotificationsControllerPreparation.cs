@@ -4,7 +4,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Moq;
-using MyFaceApi.AutoMapperProfiles;
 using MyFaceApi.Api.Controllers;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -13,7 +12,7 @@ using MyFaceApi.Api.Application.Interfaces;
 using MyFaceApi.Api.Application.DtoModels.Notification;
 using MyFaceApi.Api.Domain.Enums;
 
-namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.NotificationsControllerTests
 {
 	public class NotificationsControllerPreparation
 	{
@@ -31,7 +30,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 			//mocking logger
 			_loggerMock = new Mock<ILogger<NotificationsController>>();
 			//mocking automapper
-			var myProfile = new NotificationProfiles();
+			var myProfile = new NotificationProfile();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 			_mapper = new Mapper(configuration);
 			_fixture = new Fixture().Customize(new AutoMoqCustomization());

@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.NotificationsControllerTests
 {
 	public class NotificationsControllerGetNotificationTests : NotificationsControllerPreparation
 	{
@@ -15,7 +15,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 		{
 		}
 		[Fact]
-		public void GetNotification_ReturnsOkObjectResult_WithNotificationData()
+		public async void GetNotification_ReturnsOkObjectResult_WithNotificationData()
 		{
 			//Arrange
 			var notification = GetTestNotificationData().ElementAt(0);
@@ -29,7 +29,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 			var controller = new NotificationsController(_loggerMock.Object, _mockNotificationService.Object, _mockUserService.Object);
 
 			//Act
-			var result = controller.GetNotification(ConstIds.ExampleUserId, ConstIds.ExampleNotificationId);
+			var result = await controller.GetNotification(ConstIds.ExampleUserId, ConstIds.ExampleNotificationId);
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -51,7 +51,7 @@ namespace MyFaceApi.Tests.UnitTests.NotificationsControllerTests
 
 			//Assert
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-			Assert.Equal($"User id: {testUserId} or  notification id: {testNotificationId} is not valid guid.", badRequestObjectResult.Value);
+			Assert.Equal($"User id: {testUserId} or notification id: {testNotificationId} is not valid guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
 		public async void GetNotification_ReturnsNotFoundObjectResult_WhenUserDoesntExist()

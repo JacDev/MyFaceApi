@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using MyFaceApi.Api.Application.DtoModels.Message;
 
-namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.MessagesControllerTests
 {
 	public class MessagesControllerAddMessageTests : MessagesControllerPreparation
 	{

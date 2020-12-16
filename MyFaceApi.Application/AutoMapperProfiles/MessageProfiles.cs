@@ -2,7 +2,7 @@
 using MyFaceApi.Api.Application.DtoModels.Message;
 using MyFaceApi.Api.Domain.Entities;
 
-namespace MyFaceApi.Api.AutoMapperProfiles
+namespace MyFaceApi.Api.Application.AutoMapperProfiles
 {
 	public class MessageProfiles : Profile
 	{

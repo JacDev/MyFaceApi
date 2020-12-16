@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostReactionsControllerTests
 {
 	public class PostReactionsControllerGetReactionTests : PostReactionsPreparation
 	{

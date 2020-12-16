@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostReactionsControllerTests
 {
 	public class PostReactionsControllerGetReactionsTests : PostReactionsPreparation
 	{
@@ -29,6 +29,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 				.Verifiable();
 
 			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
+
 			//Act
 			var result = controller.GetPostReactions(ConstIds.ExamplePostId);
 
@@ -44,6 +45,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 		{
 			//Arrange
 			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object); 
+
 			//Act
 			var result = controller.GetPostReactions(ConstIds.InvalidGuid);
 
@@ -65,7 +67,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 
 			//Assert
 			var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
-			Assert.Equal($"Post: {ConstIds.ExamplePostId} not found.", notFoundResult.Value);
+			Assert.Equal($"Post: {ConstIds.ExamplePostId} doesnt exists.", notFoundResult.Value);
 			_mockPostService.Verify();
 		}
 		[Fact]

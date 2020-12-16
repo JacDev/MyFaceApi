@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostsControllerTests
 {
 	public class PostsControllerGetPostTests : PostsControllerPreparation
 	{
@@ -63,8 +63,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-			var model = Assert.IsType<PostDto>(actionResult.Value);
-			Assert.Null(model);
+			Assert.Null(actionResult.Value);
 			_mockPostService.Verify();
 		}
 		[Fact]

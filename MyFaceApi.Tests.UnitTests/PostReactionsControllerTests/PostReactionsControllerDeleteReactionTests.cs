@@ -5,7 +5,7 @@ using MyFaceApi.Api.Controllers;
 using System;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostReactionsControllerTests
 {
 	public class PostReactionsControllerDeleteReactionTests : PostReactionsPreparation
 	{
@@ -16,7 +16,13 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 		public async void DeletePostReaction_ReturnsNoContentResult_WhenThePostHasBeenRemoved()
 		{
 			//Arrange
-			_mockReactionService.Setup(Service => Service.DeletePostReactionAsync(It.IsAny<Guid>()))
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
+				.Returns(true)
+				.Verifiable();
+			_mockUserService.Setup(Service => Service.CheckIfUserExists(It.IsAny<Guid>()))
+				.ReturnsAsync(true)
+				.Verifiable();
+			_mockReactionService.Setup(Service => Service.DeletePostReactionAsync(It.IsAny<Guid>(), It.IsAny<Guid>()))
 				.Verifiable();
 
 			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
@@ -26,19 +32,9 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 
 			//Act
 			var noContentResult = Assert.IsType<NoContentResult>(result);
+			_mockPostService.Verify();
+			_mockUserService.Verify();
 			_mockReactionService.Verify();
-		}
-		[Fact]
-		public async void DeletePostReaction_ReturnsBadRequestObjectResult_WhenThePostReactionGuidIdIsInvalid()
-		{
-			//Arrange
-			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
-			//Act
-			var result = await controller.DeletePostReaction(ConstIds.InvalidGuid, ConstIds.ExampleFromWhoId);
-
-			//Assert
-			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
-			Assert.Equal($"{ConstIds.InvalidGuid} is not valid Guid.", badRequestObjectResult.Value);
 		}
 		[Theory]
 		[InlineData(true, false)]
@@ -55,11 +51,11 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 
 			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 			//Act
-			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId, ConstIds.ExampleFromWhoId);
+			var result = await controller.DeletePostReaction(ConstIds.ExamplePostId, ConstIds.ExampleFromWhoId);
 
 			//Assert
 			var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result);
-			Assert.Equal($"User: {ConstIds.ExampleUserId} or post {ConstIds.ExamplePostId} not found.", notFoundObjectResult.Value);
+			Assert.Equal($"User: {ConstIds.ExampleFromWhoId} or post {ConstIds.ExamplePostId} not found.", notFoundObjectResult.Value);
 			_mockPostService.Verify();
 			//if post doesnt exist the user will not be checked
 			if (doesThePostExists)
@@ -75,17 +71,17 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			//Arrange
 			var controller = new PostReactionsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockReactionService.Object);
 			//Act
-			var result = await controller.DeletePostReaction(ConstIds.ExampleReactionId, ConstIds.ExampleFromWhoId);
+			var result = await controller.DeletePostReaction(postTestId, userTestId);
 
 			//Assert
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
-			Assert.Equal($"{userTestId} or {postTestId} is not valid Guid.", badRequestObjectResult.Value);
+			Assert.Equal($"{userTestId} or {postTestId} is not valid guid.", badRequestObjectResult.Value);
 		}
 		[Fact]
 		public async void DeletePostReaction_ReturnsInternalServerErrorResult_WhenExceptionThrownInService()
 		{
 			//Arrange
-			_mockReactionService.Setup(Service => Service.DeletePostReactionAsync(It.IsAny<Guid>()))
+			_mockPostService.Setup(Service => Service.CheckIfPostExists(It.IsAny<Guid>()))
 				.Throws(new ArgumentNullException(nameof(Guid)))
 				.Verifiable();
 
@@ -96,7 +92,7 @@ namespace MyFaceApi.Tests.UnitTests.PostReactionsControllerTests
 			//Assert
 			var internalServerErrorResult = Assert.IsType<StatusCodeResult>(result);
 			Assert.Equal(StatusCodes.Status500InternalServerError, internalServerErrorResult.StatusCode);
-			_mockReactionService.Verify();
+			_mockPostService.Verify();
 		}
 	}
 }

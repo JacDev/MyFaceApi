@@ -253,7 +253,7 @@ namespace MyFaceApi.Api.Controllers
 			}
 			else
 			{
-				return BadRequest($"{fromWho} or {postId} is not valid Guid.");
+				return BadRequest($"{fromWho} or {postId} is not valid guid.");
 			}
 		}
 	}

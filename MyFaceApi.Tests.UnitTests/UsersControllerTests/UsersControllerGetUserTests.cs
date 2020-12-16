@@ -10,7 +10,7 @@ using MyFaceApi.Api.Controllers;
 using System;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.UsersControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.UsersControllerTests
 {
 	public class UsersControllerGetUserTests
 	{

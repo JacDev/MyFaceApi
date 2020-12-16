@@ -4,7 +4,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Moq;
-using MyFaceApi.AutoMapperProfiles;
 using MyFaceApi.Api.Controllers;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -14,7 +13,7 @@ using MyFaceApi.Api.Application.FileManagerInterfaces;
 using Pagination.Helpers;
 using MyFaceApi.Api.Application.DtoModels.Post;
 
-namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostsControllerTests
 {
 	public abstract class PostsControllerPreparation
 	{
@@ -35,7 +34,7 @@ namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
 			//mocking logger
 			_loggerMock = new Mock<ILogger<PostsController>>();
 			//mocking automapper
-			var myProfile = new PostProfiles();
+			var myProfile = new PostProfile();
 			var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
 
 			_mockImageManager = new Mock<IImageManager>();

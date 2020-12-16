@@ -50,13 +50,13 @@ namespace MyFaceApi.Api.Application.Services
 			}
 			try
 			{
-				if (post.Picture != null)
-				{
-					(post.ImagePath, post.ImageFullPath) = await _imageManager.SaveImage(post.Picture);
-				}
-
 				Post postToAdd = _mapper.Map<Post>(post);
 				postToAdd.UserId = userId;
+
+				if (post.Picture != null)
+				{
+					(postToAdd.ImagePath, postToAdd.ImageFullPath) = await _imageManager.SaveImage(post.Picture);
+				}
 
 				Post addedPost = await _postRepository.AddAsync(postToAdd);
 				await _postRepository.SaveAsync();

@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace MyFaceApi.Tests.UnitTests.PostCommentsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostCommentsControllerTests
 {
 	public class PostCommentsControllerGetCommentTests : PostCommentsControllerPreparation
 	{

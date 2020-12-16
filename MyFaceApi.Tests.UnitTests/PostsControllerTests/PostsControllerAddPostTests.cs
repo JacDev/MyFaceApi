@@ -7,7 +7,7 @@ using Xunit;
 using AutoFixture;
 using MyFaceApi.Api.Application.DtoModels.Post;
 
-namespace MyFaceApi.Tests.UnitTests.PostsControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.PostsControllerTests
 {
 	public class PostsControllerAddPostTests : PostsControllerPreparation
 	{

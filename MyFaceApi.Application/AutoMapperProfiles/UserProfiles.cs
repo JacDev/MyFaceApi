@@ -2,7 +2,7 @@
 using MyFaceApi.Api.Application.DtoModels.User;
 using MyFaceApi.Api.Domain.Entities;
 
-namespace MyFaceApi.AutoMapperProfiles
+namespace MyFaceApi.Api.Application.AutoMapperProfiles
 {
 	public class UserProfiles : Profile
 	{

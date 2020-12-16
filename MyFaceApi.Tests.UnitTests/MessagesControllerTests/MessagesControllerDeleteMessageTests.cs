@@ -5,7 +5,7 @@ using MyFaceApi.Api.Controllers;
 using Moq;
 using Microsoft.AspNetCore.Http;
 
-namespace MyFaceApi.Tests.UnitTests.MessagesControllerTests
+namespace MyFaceApi.Api.Tests.UnitTests.MessagesControllerTests
 {
 	public class MessagesControllerDeleteMessageTests : MessagesControllerPreparation
 	{

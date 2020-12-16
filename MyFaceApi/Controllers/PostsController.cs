@@ -51,7 +51,7 @@ namespace MyFaceApi.Api.Controllers
 			{
 				try
 				{
-					return _postService.GetPost(gPostId);
+					return Ok(_postService.GetPost(gPostId));
 				}
 				catch (Exception ex)
 				{
@@ -153,7 +153,7 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<PostDto>> AddPost(string userId, [FromForm] PostToAddDto postToAdd)
+		public async Task<ActionResult<PostDto>> AddPost(string userId, [FromBody] PostToAddDto postToAdd)
 		{
 			if (Guid.TryParse(userId, out Guid gUserId))
 			{
