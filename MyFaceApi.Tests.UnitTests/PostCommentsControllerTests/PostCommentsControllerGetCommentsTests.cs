@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MyFaceApi.Api.Application.DtoModels.PostComment;
 using MyFaceApi.Api.Controllers;
+using Pagination.DtoModels;
 using Pagination.Helpers;
 using System;
 using Xunit;
@@ -27,14 +28,23 @@ namespace MyFaceApi.Api.Tests.UnitTests.PostCommentsControllerTests
 				.Returns(pagedList)
 				.Verifiable();
 
-			var controller = new PostCommentsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockCommentService.Object);
+			var mockUrlHelper = new Mock<IUrlHelper>();
+			mockUrlHelper
+				.Setup(m => m.Link("GetMessagesWith", It.IsAny<object>()))
+				.Returns("some url")
+				.Verifiable();
+
+			var controller = new PostCommentsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object, _mockCommentService.Object)
+			{
+				Url = mockUrlHelper.Object
+			};
 
 			//Act
 			var result = controller.GetComments(ConstIds.ExamplePostId, _paginationsParams);
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-			var model = Assert.IsType<PagedList<PostCommentDto>>(actionResult.Value);
+			var model = Assert.IsType<CollectionWithPaginationData<PostCommentDto>>(actionResult.Value);
 			_mockCommentService.Verify();
 			_mockPostService.Verify();
 		}

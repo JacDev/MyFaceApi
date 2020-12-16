@@ -15,7 +15,7 @@ namespace MyFaceApi.Api.Tests.UnitTests.NotificationsControllerTests
 		{
 		}
 		[Fact]
-		public void GetNotifications_ReturnsOkObjectResult_WithAListOfNotificationsData()
+		public async void GetNotifications_ReturnsOkObjectResult_WithAListOfNotificationsData()
 		{
 			//Arrange
 			var notifications = GetTestNotificationData();
@@ -30,7 +30,7 @@ namespace MyFaceApi.Api.Tests.UnitTests.NotificationsControllerTests
 			var controller = new NotificationsController(_loggerMock.Object, _mockNotificationService.Object, _mockUserService.Object);
 
 			//Act
-			var result = controller.GetNotifications(ConstIds.ExampleUserId);
+			var result = await controller.GetNotifications(ConstIds.ExampleUserId);
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using Moq;
 using MyFaceApi.Api.Application.DtoModels.Post;
 using MyFaceApi.Api.Controllers;
+using Pagination.DtoModels;
 using Pagination.Helpers;
 using System;
 using System.Collections.Generic;
@@ -16,7 +18,7 @@ namespace MyFaceApi.Api.Tests.UnitTests.PostsControllerTests
 		{
 		}
 		[Fact]
-		public void GetPosts_ReturnsOkObjectResult_WithAListOfPostsData()
+		public async void GetPosts_ReturnsOkObjectResult_WithAListOfPostsData()
 		{
 			//Arrange
 			var posts = GetTestPostData();
@@ -28,16 +30,25 @@ namespace MyFaceApi.Api.Tests.UnitTests.PostsControllerTests
 				.Returns(pagedList)
 				.Verifiable();
 
-			var controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object);
+			var mockUrlHelper = new Mock<IUrlHelper>();
+			mockUrlHelper
+				.Setup(m => m.Link("GetPosts", It.IsAny<object>()))
+				.Returns("some url")
+				.Verifiable();
+
+			var controller = new PostsController(_loggerMock.Object, _mockPostService.Object, _mockUserService.Object)
+			{
+				Url = mockUrlHelper.Object
+			};
 
 			//Act
-			var result = controller.GetPosts(ConstIds.ExampleUserId, _paginationsParams);
+			var result = await  controller.GetPosts(ConstIds.ExampleUserId, _paginationsParams);
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-			var model = Assert.IsType<List<PostDto>>(actionResult.Value);
+			var model = Assert.IsType<CollectionWithPaginationData<PostDto>>(actionResult.Value);
 
-			Assert.Equal(posts.Count, model.Count);
+			Assert.Equal(posts.Count, model.Collection.Count);
 			_mockUserService.Verify();
 			_mockPostService.Verify();
 		}

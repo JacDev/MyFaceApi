@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Pagination.Helpers;
 using MyFaceApi.Api.Application.DtoModels.Message;
+using Pagination.DtoModels;
 
 namespace MyFaceApi.Api.Tests.UnitTests.MessagesControllerTests
 {
@@ -36,17 +37,25 @@ namespace MyFaceApi.Api.Tests.UnitTests.MessagesControllerTests
 				.Returns(pagedList)
 				.Verifiable();
 
+			var mockUrlHelper = new Mock<IUrlHelper>();
+			mockUrlHelper
+				.Setup(m => m.Link("GetMessagesWith", It.IsAny<object>()))
+				.Returns("some url")
+				.Verifiable();
 
-			var controller = new MessagesController(_loggerMock.Object, _mockMessagesService.Object, _mockUserService.Object);
+			var controller = new MessagesController(_loggerMock.Object, _mockMessagesService.Object, _mockUserService.Object)
+			{
+				Url = mockUrlHelper.Object
+			};
 
 			//Act
 			var result = await controller.GetMessagesWith(ConstIds.ExampleUserId, ConstIds.ExampleFromWhoId, _paginationParams);
 
 			//Assert
 			var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-			var model = Assert.IsType<PagedList<MessageDto>>(actionResult.Value);
+			var model = Assert.IsType<CollectionWithPaginationData<MessageDto>>(actionResult.Value);
 
-			Assert.Equal(_paginationParams.PageSize, model.Count);
+			Assert.Equal(_paginationParams.PageSize, model.Collection.Count);
 			_mockUserService.Verify();
 			_mockMessagesService.Verify();
 		}
