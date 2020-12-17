@@ -60,7 +60,7 @@ namespace MyFaceApi
 						var accessToken = context.Request.Query["token"];
 
 						var path = context.HttpContext.Request.Path;
-						if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/messagesHub")))
+						if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/notificationHub")))
 						{
 							context.Token = accessToken;
 						}
@@ -130,7 +130,7 @@ namespace MyFaceApi
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
-				endpoints.MapHub<MessagesHub>("/messagesHub");
+				endpoints.MapHub<NotificationHub>("/notificationHub");
 			});
 		}
 	}

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.Application.DtoModels.Message;
+using MyFaceApi.Api.Application.DtoModels.Notification;
 using MyFaceApi.Api.Application.DtoModels.User;
 using MyFaceApi.Api.Application.Interfaces;
+using MyFaceApi.Api.Domain.Enums;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -10,16 +12,16 @@ using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Hubs
 {
-	public class MessagesHub : Hub
+	public class NotificationHub : Hub
 	{
 		private readonly IOnlineUsersService _onlineUsersService;
 		private readonly IMessageService _messageService;
-		private readonly ILogger<MessagesHub> _logger;
+		private readonly ILogger<NotificationHub> _logger;
 		private readonly INotificationService _notificationService;
 
-		public MessagesHub(IOnlineUsersService onlineUsersService,
+		public NotificationHub(IOnlineUsersService onlineUsersService,
 			IMessageService messageService,
-			ILogger<MessagesHub> logger,
+			ILogger<NotificationHub> logger,
 			INotificationService notificationService)
 		{
 			_onlineUsersService = onlineUsersService;
@@ -58,6 +60,47 @@ namespace MyFaceApi.Api.Hubs
 			}
 			return;
 		}
+		public async Task SendNotificationToUser(string toWhoId, string type, DateTime when, string eventId)
+		{
+			try
+			{
+				var notificationType = type switch
+				{
+					"comment" => NotificationType.Comment,
+					"friendRequiest" => NotificationType.FriendRequiest,
+					"reaction" => NotificationType.Reaction,
+					_ => throw new ArgumentNullException(nameof(NotificationType)),
+				};
+
+				var fromWhoUser = GetLoggedUser().Id;
+				if (!string.IsNullOrWhiteSpace(toWhoId) && Guid.TryParse(toWhoId, out Guid gToWhoId) && Guid.TryParse(eventId, out Guid gEventId))
+				{
+					if (_onlineUsersService.IsUserOnline(toWhoId))
+					{
+						string toWhoConnectionId = _onlineUsersService.GetOnlineUser(toWhoId).ConnectionId;
+						await Clients.Client(toWhoConnectionId).SendAsync("ReceiveNotification");
+					}
+					await _notificationService.AddNotificationAsync(gToWhoId, new NotificationToAddDto
+					{
+						FromWho = Guid.Parse(fromWhoUser),
+						WhenAdded = when,
+						EventId = gEventId,
+						HasSeen = false,
+						NotificationType = notificationType
+					});
+				}
+				else
+				{
+					throw new ArgumentNullException(nameof(toWhoId));
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError("Something went wrong during sending notification to the user: {userId}", toWhoId);
+				_logger.LogError("{0}", ex);
+			}
+			return;
+		}
 		public override async Task OnConnectedAsync()
 		{
 			OnlineUserDto _loggedUser = GetLoggedUser();
@@ -65,7 +108,7 @@ namespace MyFaceApi.Api.Hubs
 			{
 				if (_onlineUsersService.IsUserOnline(_loggedUser.Id))
 				{
-					await _onlineUsersService.RemoveUserAsync(_loggedUser.Id);
+					_loggedUser.ConnectionId = Context.ConnectionId;
 				}
 				else
 				{
