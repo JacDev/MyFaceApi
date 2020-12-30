@@ -77,17 +77,20 @@ namespace MyFaceApi.Api.Controllers
 		/// </summary>
 		/// <param name="userId">User guid as a string </param>
 		/// <param name="paginationParams"></param>
+		/// <param name="fromWhoId"></param>
+		/// <param name="notificationType"></param>
 		/// <returns>Found user notifications</returns>
 		/// <response code="200"> Returns the found user notifications</response>
 		/// <response code="400"> If parameter is not a valid guid</response>    
-		/// <response code="404"> If user or notifications not found</response>   
+		/// <response code="404"> If the user not found</response>   
 		/// <response code="500"> If internal error occured</response>
 		[HttpGet(Name = "GetNotifications")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<CollectionWithPaginationData<NotificationDto>>> GetNotifications(string userId, [FromQuery] PaginationParams paginationParams)
+		public async Task<ActionResult<CollectionWithPaginationData<NotificationDto>>> GetNotifications(string userId,
+			[FromQuery] PaginationParams paginationParams, [FromQuery] string fromWhoId = null, [FromQuery] int notificationType = 0)
 		{
 			if (Guid.TryParse(userId, out Guid gUserId))
 			{
@@ -95,7 +98,7 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						PagedList<NotificationDto> notificationsToReturn = _notificationService.GetUserNotifications(gUserId, paginationParams);
+						PagedList<NotificationDto> notificationsToReturn = _notificationService.GetUserNotifications(gUserId, paginationParams, fromWhoId, notificationType);
 						return Ok(this.CreateCollectionWithPagination(notificationsToReturn, paginationParams, "GetNotifications"));
 					}
 					else

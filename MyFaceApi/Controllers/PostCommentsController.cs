@@ -109,7 +109,7 @@ namespace MyFaceApi.Api.Controllers
 					if (_postService.CheckIfPostExists(gPostId))
 					{
 						PagedList<PostCommentDto> commentsToReturn = _postCommentService.GetPostComments(gPostId, paginationParams);
-						return Ok(this.CreateCollectionWithPagination(commentsToReturn, paginationParams, "GetPosts"));
+						return Ok(this.CreateCollectionWithPagination(commentsToReturn, paginationParams, "GetComments"));
 					}
 					else
 					{

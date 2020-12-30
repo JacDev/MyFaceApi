@@ -11,6 +11,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using MyFaceApi.Api.Application.Helpers;
 using Pagination.Helpers;
+using System.Linq.Expressions;
+using MyFaceApi.Api.Domain.Enums;
+using LinqKit;
 
 namespace MyFaceApi.Api.Application.Services
 {
@@ -93,7 +96,7 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public PagedList<NotificationDto> GetUserNotifications(Guid userId, PaginationParams paginationParams)
+		public PagedList<NotificationDto> GetUserNotifications(Guid userId, PaginationParams paginationParams, string fromWhoId = null, int notificationType = 0)
 		{
 			_logger.LogDebug("Trying to get user notifications: {userid}", userId);
 			if (userId == Guid.Empty)
@@ -102,7 +105,26 @@ namespace MyFaceApi.Api.Application.Services
 			}
 			try
 			{
-				List<Notification> notificationsFromRepo = _notificationRepository.Get(x => x.ToWhoId == userId).ToList();
+				var predicate = PredicateBuilder.New<Notification>();
+				predicate = predicate.And(x => x.ToWhoId == userId);
+				
+				if(fromWhoId!= null)
+				{
+					Guid.TryParse(fromWhoId, out Guid gFromWhoId);
+
+					predicate = predicate.And(x => x.FromWho == gFromWhoId);
+
+				}
+				if(notificationType!=0)
+				{
+					predicate = predicate.And(x => x.NotificationType == (NotificationType)notificationType);
+				}
+				
+
+				List<Notification> notificationsFromRepo = _notificationRepository
+					.Get(predicate)
+					.OrderByDescending(x => x.WhenAdded)
+					.ToList();
 				List<NotificationDto> notificationsToReturn =  _mapper.Map<List<NotificationDto>>(notificationsFromRepo);
 				return PagedList<NotificationDto>.Create(notificationsToReturn,
 							paginationParams.PageNumber,
@@ -114,6 +136,10 @@ namespace MyFaceApi.Api.Application.Services
 				_logger.LogError(ex, "Error occured during getting the user notifications.");
 				throw;
 			}
+		}
+		public static Expression<TDelegate> AndAlso<TDelegate>(Expression<TDelegate> left, Expression<TDelegate> right)
+		{
+			return Expression.Lambda<TDelegate>(Expression.AndAlso(left, right), left.Parameters);
 		}
 		public async Task<bool> TryUpdateNotificationAsync(Guid notificationId, JsonPatchDocument<NotificationToUpdateDto> patchDocument)
 		{

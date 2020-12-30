@@ -2,8 +2,7 @@
 {
 	public enum NotificationType
 	{
-		Message,
-		FriendRequiest,
+		FriendRequiest = 1,
 		Reaction,
 		Comment,
 	}

@@ -60,7 +60,7 @@ namespace MyFaceApi.Api.Hubs
 			}
 			return;
 		}
-		public async Task SendNotificationToUser(string toWhoId, string type, DateTime when, string eventId)
+		public async Task SendNotificationToUser(string toWhoId, string type, string when, string eventId)
 		{
 			try
 			{
@@ -83,7 +83,7 @@ namespace MyFaceApi.Api.Hubs
 					await _notificationService.AddNotificationAsync(gToWhoId, new NotificationToAddDto
 					{
 						FromWho = Guid.Parse(fromWhoUser),
-						WhenAdded = when,
+						WhenAdded = Convert.ToDateTime(when),
 						EventId = gEventId,
 						HasSeen = false,
 						NotificationType = notificationType
