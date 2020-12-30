@@ -16,11 +16,12 @@
             <response code="404"> If notification not found</response>   
             <response code="500"> If internal error occured</response>
         </member>
-        <member name="M:MyFaceApi.Api.Controllers.NotificationsController.GetNotifications(System.String)">
+        <member name="M:MyFaceApi.Api.Controllers.NotificationsController.GetNotifications(System.String,Pagination.Helpers.PaginationParams)">
             <summary>
             Return the found user notifications
             </summary>
             <param name="userId">User guid as a string </param>
+            <param name="paginationParams"></param>
             <returns>Found user notifications</returns>
             <response code="200"> Returns the found user notifications</response>
             <response code="400"> If parameter is not a valid guid</response>    

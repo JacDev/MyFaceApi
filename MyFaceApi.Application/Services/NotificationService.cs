@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MyFaceApi.Api.Application.Helpers;
+using Pagination.Helpers;
 
 namespace MyFaceApi.Api.Application.Services
 {
@@ -92,7 +93,7 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public List<NotificationDto> GetUserNotifications(Guid userId)
+		public PagedList<NotificationDto> GetUserNotifications(Guid userId, PaginationParams paginationParams)
 		{
 			_logger.LogDebug("Trying to get user notifications: {userid}", userId);
 			if (userId == Guid.Empty)
@@ -101,9 +102,12 @@ namespace MyFaceApi.Api.Application.Services
 			}
 			try
 			{
-				List<Notification> userNotifications = _notificationRepository.Get(x => x.ToWhoId == userId).ToList();
-				return _mapper.Map<List<NotificationDto>>(userNotifications);
-
+				List<Notification> notificationsFromRepo = _notificationRepository.Get(x => x.ToWhoId == userId).ToList();
+				List<NotificationDto> notificationsToReturn =  _mapper.Map<List<NotificationDto>>(notificationsFromRepo);
+				return PagedList<NotificationDto>.Create(notificationsToReturn,
+							paginationParams.PageNumber,
+							paginationParams.PageSize,
+							(paginationParams.PageNumber - 1) * paginationParams.PageSize + paginationParams.Skip);
 			}
 			catch (Exception ex)
 			{

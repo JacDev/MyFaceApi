@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 using Moq;
 using MyFaceApi.Api.Application.DtoModels.Post;
 using MyFaceApi.Api.Controllers;
 using Pagination.DtoModels;
 using Pagination.Helpers;
 using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace MyFaceApi.Api.Tests.UnitTests.PostsControllerTests

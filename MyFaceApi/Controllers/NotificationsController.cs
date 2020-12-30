@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyFaceApi.Api.Application.DtoModels.Notification;
 using MyFaceApi.Api.Application.Interfaces;
+using Pagination.DtoModels;
+using Pagination.Extensions;
+using Pagination.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Controllers
@@ -74,17 +76,18 @@ namespace MyFaceApi.Api.Controllers
 		/// Return the found user notifications
 		/// </summary>
 		/// <param name="userId">User guid as a string </param>
+		/// <param name="paginationParams"></param>
 		/// <returns>Found user notifications</returns>
 		/// <response code="200"> Returns the found user notifications</response>
 		/// <response code="400"> If parameter is not a valid guid</response>    
 		/// <response code="404"> If user or notifications not found</response>   
 		/// <response code="500"> If internal error occured</response>
-		[HttpGet]
+		[HttpGet(Name = "GetNotifications")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<List<NotificationDto>>> GetNotifications(string userId)
+		public async Task<ActionResult<CollectionWithPaginationData<NotificationDto>>> GetNotifications(string userId, [FromQuery] PaginationParams paginationParams)
 		{
 			if (Guid.TryParse(userId, out Guid gUserId))
 			{
@@ -92,8 +95,8 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						List<NotificationDto> notificationsToReturn = _notificationService.GetUserNotifications(gUserId);
-						return Ok(notificationsToReturn);
+						PagedList<NotificationDto> notificationsToReturn = _notificationService.GetUserNotifications(gUserId, paginationParams);
+						return Ok(this.CreateCollectionWithPagination(notificationsToReturn, paginationParams, "GetNotifications"));
 					}
 					else
 					{
