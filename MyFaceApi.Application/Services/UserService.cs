@@ -8,6 +8,7 @@ using MyFaceApi.Api.Application.Interfaces;
 using System.Net.Http;
 using Pagination.Helpers;
 using Pagination.DtoModels;
+using System.Linq;
 
 namespace MyFaceApi.Api.Application.Services
 {
@@ -30,14 +31,21 @@ namespace MyFaceApi.Api.Application.Services
 		}
 		public async Task<List<UserDto>> GetUsersAsync(IEnumerable<Guid> usersId)
 		{
-			string query = "";
-			foreach (var id in usersId)
+			if (usersId.Count() > 0)
 			{
-				query += id.ToString() + ",";
+				string query = "";
+				foreach (var id in usersId)
+				{
+					query += id.ToString() + ",";
+				}
+				query = query.Remove(query.LastIndexOf(","));
+				HttpResponseMessage response = await _identityServerHttpService.Client.GetAsync($"/users/getall?ids={query}");
+				return await response.ReadContentAs<List<UserDto>>();
 			}
-			query = query.Remove(query.LastIndexOf(","));
-			HttpResponseMessage response = await _identityServerHttpService.Client.GetAsync($"/users/getall?ids={query}");
-			return await response.ReadContentAs<List<UserDto>>();
+			else
+			{
+				return null;
+			}
 		}
 		public async Task<PagedList<UserDto>> GetUsersAsync(string searchString, PaginationParams paginationParams)
 		{

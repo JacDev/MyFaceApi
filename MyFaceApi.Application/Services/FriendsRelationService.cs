@@ -81,10 +81,18 @@ namespace MyFaceApi.Api.Application.Services
 			}
 			try
 			{
-				FriendsRelation relation = _friendsRelationRepository.GetById(new { firstUser, secondUser });
-				if (relation != null)
+				List<FriendsRelation> relationFromRepo = _friendsRelationRepository.Get(x =>
+					x.FriendId == firstUser && x.UserId == secondUser
+					|| x.FriendId == secondUser && x.UserId == firstUser)
+					.ToList();
+				FriendsRelation relationToRemove = null;
+				if (relationFromRepo.Count > 0)
 				{
-					_friendsRelationRepository.Remove(relation);
+					relationToRemove = relationFromRepo.ElementAt(0);
+				}
+				if (relationToRemove != null)
+				{
+					_friendsRelationRepository.Remove(relationToRemove);
 					await _friendsRelationRepository.SaveAsync();
 					_logger.LogDebug("Users relation: {firstUser} and {secondUser} has been removed.", firstUser, secondUser);
 				}
@@ -105,7 +113,7 @@ namespace MyFaceApi.Api.Application.Services
 			}
 			try
 			{
-				var relation = _friendsRelationRepository.Get(x =>
+				List<FriendsRelation> relation = _friendsRelationRepository.Get(x =>
 					x.FriendId == firstUser && x.UserId == secondUser
 					|| x.FriendId == secondUser && x.UserId == firstUser)
 					.ToList();

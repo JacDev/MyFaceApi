@@ -69,6 +69,7 @@ namespace MyFaceApi.Api.Hubs
 					"comment" => NotificationType.Comment,
 					"friendRequiest" => NotificationType.FriendRequiest,
 					"reaction" => NotificationType.Reaction,
+					"friendRequiestAccepted" => NotificationType.FriendRequiestAccepted,
 					_ => throw new ArgumentNullException(nameof(NotificationType)),
 				};
 

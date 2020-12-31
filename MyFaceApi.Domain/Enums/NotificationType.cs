@@ -5,5 +5,6 @@
 		FriendRequiest = 1,
 		Reaction,
 		Comment,
+		FriendRequiestAccepted
 	}
 }
