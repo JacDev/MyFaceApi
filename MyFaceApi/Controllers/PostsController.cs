@@ -153,7 +153,7 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public async Task<ActionResult<PostDto>> AddPost(string userId, [FromBody] PostToAddDto postToAdd)
+		public async Task<ActionResult<PostDto>> AddPost(string userId, [FromForm] PostToAddDto postToAdd)
 		{
 			if (Guid.TryParse(userId, out Guid gUserId))
 			{
