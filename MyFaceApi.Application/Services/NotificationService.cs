@@ -96,7 +96,7 @@ namespace MyFaceApi.Api.Application.Services
 				throw;
 			}
 		}
-		public PagedList<NotificationDto> GetUserNotifications(Guid userId, PaginationParams paginationParams, string fromWhoId = null, int notificationType = 0)
+		public PagedList<NotificationDto> GetUserNotifications(Guid userId, PaginationParams paginationParams, string fromWhoId = null, int notificationType = 0, string eventId = null)
 		{
 			_logger.LogDebug("Trying to get user notifications: {userid}", userId);
 			if (userId == Guid.Empty)
@@ -119,7 +119,14 @@ namespace MyFaceApi.Api.Application.Services
 				{
 					predicate = predicate.And(x => x.NotificationType == (NotificationType)notificationType);
 				}
-				
+				if (eventId != null)
+				{
+					Guid.TryParse(eventId, out Guid gEventId);
+
+					predicate = predicate.And(x => x.EventId == gEventId);
+
+				}
+
 
 				List<Notification> notificationsFromRepo = _notificationRepository
 					.Get(predicate)

@@ -11,35 +11,35 @@
         <form asp-action="Login" method="post">
             <input type="hidden" asp-for="ReturnUrl" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group row d-flex">
-                <div class="col-3 text-right align-self-center">
+            @*col-sm-2  *@
+            <div class="form-group d-flex">
+                <div class="col-2 col-sm-3 text-right align-self-center">
                     <label asp-for="Login" class="control-label"></label>
                 </div>
-                <div class="col-6">
-                    <input asp-for="Login" class="form-control input-box" />
+                <div class="col-md-6">
+                    <input asp-for="Login" class="form-control input-box" value="w"/>
                 </div>
                 <span asp-validation-for="Login" class="text-danger align-self-center"></span>
             </div>
 
-            <div class="form-group row d-flex">
-                <div class="col-3 text-right align-self-center">
+            <div class="form-group d-flex">
+                <div class="col-2 col-sm-3 text-right align-self-center">
                     <label asp-for="Password" class="control-label"></label>
                 </div>
-                <div class="col-6">
-                    <input asp-for="Password" class="form-control input-box" />
+                <div class="col-md-6">
+                    <input asp-for="Password" class="form-control input-box" value="w"/>
                 </div>
                 <span asp-validation-for="Password" class="text-danger align-self-center"></span>
             </div>
 
-            <div class="row">
-                <div class="btn-group-justified col-6 offset-3 d-flex">
+            <div class="col-9 col-sm-9 col-md-6 offset-3 mb-2">
+                <div class="btn-group d-flex">
                     <input type="submit" class="btn btn-dark btn-block mr-1" value="Zaloguj" />
                     <a asp-controller="Auth" asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl" class="btn btn-dark btn-block ml-1 mt-0">Utwórz konto</a>
 
                 </div>
             </div>
-            <a asp-controller="Auth" asp-action="ForgotPassword" asp-route-returnUrl="@Model.ReturnUrl" class="offset-7 ">Zapomniałeś hasła?</a>
+            <a asp-controller="Auth" asp-action="ForgotPassword" asp-route-returnUrl="@Model.ReturnUrl" class="offset-7 offset-md-6 offset-lg-7">Zapomniałeś hasła?</a>
         </form>
     </div>
 </div>

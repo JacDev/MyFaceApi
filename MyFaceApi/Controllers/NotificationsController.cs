@@ -90,7 +90,7 @@ namespace MyFaceApi.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<ActionResult<CollectionWithPaginationData<NotificationDto>>> GetNotifications(string userId,
-			[FromQuery] PaginationParams paginationParams, [FromQuery] string fromWhoId = null, [FromQuery] int notificationType = 0)
+			[FromQuery] PaginationParams paginationParams, [FromQuery] string fromWhoId = null, [FromQuery] int notificationType = 0, [FromQuery] string eventId = null)
 		{
 			if (Guid.TryParse(userId, out Guid gUserId))
 			{
@@ -98,7 +98,7 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						PagedList<NotificationDto> notificationsToReturn = _notificationService.GetUserNotifications(gUserId, paginationParams, fromWhoId, notificationType);
+						PagedList<NotificationDto> notificationsToReturn = _notificationService.GetUserNotifications(gUserId, paginationParams, fromWhoId, notificationType, eventId);
 						return Ok(this.CreateCollectionWithPagination(notificationsToReturn, paginationParams, "GetNotifications"));
 					}
 					else
@@ -147,8 +147,7 @@ namespace MyFaceApi.Api.Controllers
 							{
 								userId,
 								notificationId = addedNotification.Id
-							},
-							notificationToAdd);
+							});
 					}
 					else
 					{

@@ -8,7 +8,7 @@ namespace MyFaceApi.Api.Application.Interfaces
 {
 	public interface INotificationService
 	{
-		PagedList<NotificationDto> GetUserNotifications(Guid userId, PaginationParams paginationParams, string fromWhoId = null, int notificationType = 0);
+		PagedList<NotificationDto> GetUserNotifications(Guid userId, PaginationParams paginationParams, string fromWhoId = null, int notificationType = 0, string eventId = null);
 		Task<NotificationDto> AddNotificationAsync(Guid toThoId, NotificationToAddDto notification);
 		Task DeleteNotificationAsync(Guid notificationId);
 		NotificationDto GetNotification(Guid notificationId);
