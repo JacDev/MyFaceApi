@@ -53,3 +53,5 @@
 /MyFaceApi/p03-02-2021-00-58-08_da059851-55ca-4ec5-bf6f-0cfd908066e5.png
 /MyFaceApi/p03-02-2021-00-52-19_b0ad93dd-d61a-4b8e-a1d5-a0ef1462d537.jpg
 /MyFaceApi.IdentityServer/wwwroot/lib
+/MyFaceApi.IdentityServer/appsettings.Development.json
+/MyFaceApi/appsettings.Development.json

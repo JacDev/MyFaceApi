@@ -72,10 +72,6 @@ namespace MyFaceApi.IdentityServer
 					PostLogoutRedirectUris = { configurationSection.GetValue<string>("PostLogoutRedirectUris") },
 					AllowedCorsOrigins =     { configurationSection.GetValue<string>("AllowedCorsOrigins")},
 
-					//RedirectUris =           { "http://localhost:4200/signin-callback",  },
-					//PostLogoutRedirectUris = { "http://localhost:4200/signout-callback" },
-					//AllowedCorsOrigins =     { "http://localhost:4200" },
-
 					AllowedScopes =
 					{
 						IdentityServerConstants.StandardScopes.OpenId,
