@@ -12,5 +12,6 @@ namespace MyFaceApi.Api.Application.Interfaces
 		Task<bool> CheckIfUserExists(Guid userId);
 		Task<List<UserDto>> GetUsersAsync(IEnumerable<Guid> usersId);
 		Task<PagedList<UserDto>> GetUsersAsync(string searchString, PaginationParams paginationParams);
+		Task<UserDto> UpdateProfilePath(Guid userId, string path);
 	}
 }

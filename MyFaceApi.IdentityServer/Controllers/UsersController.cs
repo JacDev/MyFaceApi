@@ -7,6 +7,7 @@ using Pagination.Extensions;
 using Pagination.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MyFaceApi.IdentityServer.Controllers
 {
@@ -65,21 +66,17 @@ namespace MyFaceApi.IdentityServer.Controllers
 				return StatusCode(StatusCodes.Status500InternalServerError);
 			}
 		}
-		//[HttpGet("users")]
-		//public ActionResult<List<IdentityUserDto>> GetUsers()
-		//{
-		//	List<AppUser> usersToReturn = _identityServerDbContext.Users.ToList();
-		//	try
-		//	{
-
-		//		return Ok(_mapper.Map<IEnumerable<IdentityUserDto>>(usersToReturn));
-
-		//	}
-		//	catch
-		//	{
-		//		_logger.LogError(ex, "Error occured during getting the user posts. User id: {user}", userId);
-		//		return StatusCode(StatusCodes.Status500InternalServerError);
-		//	}
-		//}
+		[HttpPost("users/{userId}")]
+		public async Task<ActionResult<IdentityUserDto>> AddProfilePath(string userId, [FromBody] string path)
+		{
+			if (Guid.TryParse(userId, out Guid gUserId) && !string.IsNullOrEmpty(path))
+			{
+				return await _identityUserService.AddProfileImage(gUserId, path);
+			}
+			else
+			{
+				return BadRequest();
+			}
+		}
 	}
 }

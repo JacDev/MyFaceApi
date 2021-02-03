@@ -14,5 +14,6 @@ namespace MyFaceApi.IdentityServer.Application.ViewModels
         public string Password { get; set; }
 
         public string ReturnUrl { get; set; }
+        public bool AlreadySeenNotificaton { get; set; }
     }
 }

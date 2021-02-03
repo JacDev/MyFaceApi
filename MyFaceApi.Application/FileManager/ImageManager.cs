@@ -19,12 +19,12 @@ namespace MyFaceApi.Api.Application.FileManager
 			ILogger<ImageManager> logger)
 		{
 			ImagePath = config["Path:Images"];
-			Console.Write(ImagePath);
 			_logger = logger;
 		}
 
 		public FileStream ImageStream(string imageName)
 		{
+			var x = Path.Combine(ImagePath, imageName);
 			return new FileStream(Path.Combine(ImagePath, imageName), FileMode.Open, FileAccess.Read);
 		}
 
@@ -71,7 +71,8 @@ namespace MyFaceApi.Api.Application.FileManager
 			}
 			var newPath = "p" + imageName;
 			var savePath = Path.Combine(ImagePath);
-			destImage.Save(Path.Combine(savePath, newPath));
+			var x = Path.Combine(savePath, newPath);
+			destImage.Save(x);
 			return newPath;
 		}
 	}

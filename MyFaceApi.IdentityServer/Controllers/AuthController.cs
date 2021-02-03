@@ -15,9 +15,9 @@ namespace MyFaceApi.IdentityServer.Controllers
             _authService = authService;
         }
         [HttpGet]
-        public IActionResult Login(string returnUrl)
+        public IActionResult Login(string returnUrl, bool seenNotification = false)
         {
-            return View(new LoginViewModel { ReturnUrl = returnUrl });
+            return View(new LoginViewModel { ReturnUrl = returnUrl, AlreadySeenNotificaton = seenNotification });
         }
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel loginViewModel)
@@ -30,7 +30,7 @@ namespace MyFaceApi.IdentityServer.Controllers
                     return Redirect(loginViewModel.ReturnUrl);
                 }
             }
-            return View(new LoginViewModel { ReturnUrl = loginViewModel.ReturnUrl });
+            return View(new LoginViewModel { ReturnUrl = loginViewModel.ReturnUrl, AlreadySeenNotificaton = true });
         }
         [HttpGet]
         public async Task<IActionResult> Logout(string logoutId)
@@ -46,9 +46,9 @@ namespace MyFaceApi.IdentityServer.Controllers
         }
        
         [HttpGet]
-        public IActionResult Register(string returnUrl)
+        public IActionResult Register(string returnUrl, bool seenNotification = false)
         {
-            return View(new RegisterViewModel { ReturnUrl = returnUrl });
+            return View(new RegisterViewModel { ReturnUrl = returnUrl , AlreadySeenNotification = seenNotification });
         }
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)

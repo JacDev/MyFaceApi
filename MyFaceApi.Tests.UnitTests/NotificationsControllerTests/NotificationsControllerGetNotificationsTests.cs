@@ -32,7 +32,7 @@ namespace MyFaceApi.Api.Tests.UnitTests.NotificationsControllerTests
 			_mockUserService.Setup(Service => Service.CheckIfUserExists(It.IsAny<Guid>()))
 				.ReturnsAsync(true)
 				.Verifiable();
-			_mockNotificationService.Setup(Service => Service.GetUserNotifications(It.IsAny<Guid>(), _paginationsParams))
+			_mockNotificationService.Setup(Service => Service.GetUserNotifications(It.IsAny<Guid>(), _paginationsParams, null, 0, null))
 				.Returns(pagedList)
 				.Verifiable();
 

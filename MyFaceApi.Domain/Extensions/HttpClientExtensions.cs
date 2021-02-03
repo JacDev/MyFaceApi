@@ -36,5 +36,10 @@ namespace MyFaceApi.Api.Domain.Extensions
 			content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 			return content;
 		}
+		public static Task<HttpResponseMessage> PostToApiAsJsonAsync<T>(this HttpClient httpClient, string url, T data)
+		{
+			StringContent content = AddContent(data);
+			return httpClient.PostAsync(url, content);
+		}
 	}
 }

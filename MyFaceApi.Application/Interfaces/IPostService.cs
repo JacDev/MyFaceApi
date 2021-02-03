@@ -17,5 +17,6 @@ namespace MyFaceApi.Api.Application.Interfaces
 		PagedList<PostDto> GetLatestFriendsPosts(Guid userId, PaginationParams paginationParams);
 		FileStreamResult StreamImage(string imageName);
 		Task<bool> TryUpdatePostAsync(Guid postId, JsonPatchDocument<PostToUpdateDto> patchDocument);
+		Task<string> SetProfilePicture(Guid userId, Guid postId);
 	}
 }

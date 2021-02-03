@@ -1,11 +1,12 @@
 ﻿@model MyFaceApi.IdentityServer.Application.ViewModels.RegisterViewModel
 
 @{
-    ViewData["Title"] = "Zarejestruj się";
+    ViewData["Title"] = "Rejestracja";
 }
 
 <h1 class="col-12 text-center">Dołącz do nas!</h1>
-
+<h6 class="mt-4 col-12 text-center">Na serwerze będą przechowywane tylko login i hasło.</h6>
+<h6 class="col-12 text-center">Nie podawaj nigdzie swoich danych osobistych.</h6>
 <div class="row">
     <div class="col-12 border p-3 mt-5">
         <form asp-action="Register" method="post">
@@ -27,7 +28,7 @@
                     <label asp-for="FirstName" class="control-label"></label>
                 </div>
                 <div class="col-md-6">
-                    <input asp-for="FirstName" class="form-control input-box" />
+                    <input asp-for="FirstName" class="form-control input-box" style="background :rgb(100, 100, 100)" disabled />
                 </div>
                 <span asp-validation-for="FirstName" class="text-danger align-self-center"></span>
             </div>
@@ -37,7 +38,7 @@
                     <label asp-for="LastName" class="control-label"></label>
                 </div>
                 <div class="col-md-6">
-                    <input asp-for="LastName" class="form-control input-box" />
+                    <input asp-for="LastName" class="form-control input-box" style="background :rgb(100, 100, 100)" disabled />
                 </div>
                 <span asp-validation-for="LastName" class="text-danger align-self-center"></span>
             </div>
@@ -47,7 +48,7 @@
                     <label asp-for="Email" class="control-label"></label>
                 </div>
                 <div class="col-md-6">
-                    <input asp-for="Email" class="form-control input-box" />
+                    <input asp-for="Email" class="form-control input-box" style="background :rgb(100, 100, 100)" disabled />
                 </div>
                 <span asp-validation-for="Email" class="text-danger align-self-center"></span>
             </div>
@@ -72,10 +73,30 @@
                 <span asp-validation-for="ConfirmPassword" class="text-danger align-self-center"></span>
             </div>
 
+            <div class="form-group d-flex">
+                <div class="col-2 col-sm-3 text-right align-self-center">
+                    <label asp-for="City" class="control-label"></label>
+                </div>
+                <div class="col-md-6">
+                    <input asp-for="City" class="form-control input-box" style="background :rgb(100, 100, 100)" disabled />
+                </div>
+                <span asp-validation-for="City" class="text-danger align-self-center"></span>
+            </div>
+
+            <div class="form-group d-flex">
+                <div class="col-2 col-sm-3 text-right align-self-center">
+                    <label asp-for="DateOfBirth" class="control-label"></label>
+                </div>
+                <div class="col-md-6">
+                    <input type="date" asp-for="DateOfBirth" class="form-control input-box" style="background :rgb(100, 100, 100)" disabled />
+                </div>
+                <span asp-validation-for="DateOfBirth" class="text-danger align-self-center"></span>
+            </div>
+
             <div class="col-9 col-sm-9 col-md-6 offset-3">
                 <div class="btn-group d-flex">
                     <button type="submit" class="btn btn-dark btn-block mr-1">Utwórz</button>
-                    <a asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl" class="btn btn-dark btn-block ml-1 mt-0">Masz już konto?</a>
+                    <a asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl" asp-route-seenNotification="@Model.AlreadySeenNotification" class="btn btn-dark btn-block ml-1 mt-0">Masz już konto?</a>
                 </div>
             </div>
 

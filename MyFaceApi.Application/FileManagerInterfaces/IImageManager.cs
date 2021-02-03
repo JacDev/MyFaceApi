@@ -12,6 +12,5 @@ namespace MyFaceApi.Api.Application.FileManagerInterfaces
 		Task<Tuple<string, string>> SaveImage(IFormFile image);
 		FileStream ImageStream(string imageName);
 		string AddProfileImage(string imageName, int width, int height);
-
 	}
 }

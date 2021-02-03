@@ -271,5 +271,32 @@ namespace MyFaceApi.Api.Controllers
 				return StatusCode(StatusCodes.Status500InternalServerError);
 			}
 		}
+		[HttpPost("{postId}")]
+		public async Task<ActionResult<string>> SetProfilePicture(string userId, string postId)
+		{
+			if (Guid.TryParse(postId, out Guid gPostiId) && Guid.TryParse(userId, out Guid gUserId))
+			{
+				try
+				{
+					if (await _userService.CheckIfUserExists(gUserId))
+					{
+						return await _postService.SetProfilePicture(gUserId, gPostiId);
+					}
+					else
+					{
+						return NotFound($"User: {userId} not found.");
+					}
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Error occured during adding the user post. User id: {user}", userId);
+					return StatusCode(StatusCodes.Status500InternalServerError);
+				}
+			}
+			else
+			{
+				return BadRequest($"{userId} is not valid guid.");
+			}
+		}
 	}
 }

@@ -24,18 +24,21 @@ namespace MyFaceApi.Api.Application.Services
 		private readonly ILogger<PostService> _logger;
 		private readonly IMapper _mapper;
 		private readonly IImageManager _imageManager;
+		private readonly IUserService _userService;
 
 		public PostService(IRepository<Post> postRepository,
 			ILogger<PostService> logger,
 			IMapper mapper,
 			IFriendsRelationService friendsRelationService,
-			IImageManager imageManager)
+			IImageManager imageManager, 
+			IUserService userService)
 		{
 			_postRepository = postRepository;
 			_logger = logger;
 			_mapper = mapper;
 			_friendsRelationService = friendsRelationService;
 			_imageManager = imageManager;
+			_userService = userService;
 		}
 		public async Task<PostDto> AddPostAsync(Guid userId, PostToAddDto post)
 		{
@@ -218,6 +221,29 @@ namespace MyFaceApi.Api.Application.Services
 		{
 			string mime = imageName.Substring(imageName.LastIndexOf('.') + 1);
 			return new FileStreamResult(_imageManager.ImageStream(imageName), $"image/{mime}");
+		}
+		public async Task<string> SetProfilePicture(Guid userId, Guid postId)
+		{
+			_logger.LogDebug("Trying to add profile picture: {post}", postId);
+			if (postId == Guid.Empty)
+			{
+				throw new ArgumentNullException(nameof(postId));
+			}
+			try
+			{
+				var post = _postRepository.GetById(postId);
+				if (!string.IsNullOrWhiteSpace(post.ImagePath))
+				{
+					var path = _imageManager.AddProfileImage(post.ImagePath, 50, 50);
+					return (await _userService.UpdateProfilePath(userId, path)).ProfileImagePath;
+				}
+				return null;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occured adding profile picture.");
+				throw;
+			}
 		}
 	}
 }

@@ -55,5 +55,11 @@ namespace MyFaceApi.Api.Application.Services
 			content.Collection.AddMetadataParams(content.PaginationMetadata);
 			return content.Collection;
 		}
+		public async Task<UserDto> UpdateProfilePath(Guid userId, string path)
+		{
+			HttpResponseMessage response = await _identityServerHttpService.Client.PostToApiAsJsonAsync($"/users/{userId}", path);
+			return await response.ReadContentAs<UserDto>();
+		}
+
 	}
 }

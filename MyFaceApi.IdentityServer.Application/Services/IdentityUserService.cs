@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MyFaceApi.IdentityServer.Infrastructure.Database;
 using Pagination.Helpers;
+using System.Threading.Tasks;
 
 namespace MyFaceApi.IdentityServer.Application.Services
 {
@@ -52,6 +53,13 @@ namespace MyFaceApi.IdentityServer.Application.Services
 							paginationParams.PageNumber,
 							paginationParams.PageSize,
 							(paginationParams.PageNumber - 1) * paginationParams.PageSize + paginationParams.Skip);
+		}
+		public async Task<IdentityUserDto> AddProfileImage(Guid userId, string path)
+		{
+			ApplicationUser user = _dbContext.Users.FirstOrDefault(x => x.Id == userId);
+			user.ProfileImagePath = path;
+			await _dbContext.SaveChangesAsync();
+			return _mapper.Map<IdentityUserDto>(user);
 		}
 	}
 }

@@ -40,7 +40,6 @@ namespace MyFaceApi
 						.AllowAnyHeader()
 						.AllowAnyMethod()
 						.AllowCredentials();
-					//.AllowAnyOrigin();
 				});
 			});
 

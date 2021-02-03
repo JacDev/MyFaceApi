@@ -1,7 +1,7 @@
 ﻿@model MyFaceApi.IdentityServer.Application.ViewModels.LoginViewModel
 
 @{
-    ViewData["Title"] = "Zaloguj się";
+    ViewData["Title"] = "Logowanie";
 }
 
 <h1 class="col-12 text-center">Zaloguj się</h1>
@@ -11,13 +11,12 @@
         <form asp-action="Login" method="post">
             <input type="hidden" asp-for="ReturnUrl" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @*col-sm-2  *@
             <div class="form-group d-flex">
                 <div class="col-2 col-sm-3 text-right align-self-center">
                     <label asp-for="Login" class="control-label"></label>
                 </div>
                 <div class="col-md-6">
-                    <input asp-for="Login" class="form-control input-box" value="w"/>
+                    <input id="log" asp-for="Login" class="form-control input-box" value="w" />
                 </div>
                 <span asp-validation-for="Login" class="text-danger align-self-center"></span>
             </div>
@@ -27,20 +26,48 @@
                     <label asp-for="Password" class="control-label"></label>
                 </div>
                 <div class="col-md-6">
-                    <input asp-for="Password" class="form-control input-box" value="w"/>
+                    <input id="pass" asp-for="Password" class="form-control input-box" value="w" />
                 </div>
                 <span asp-validation-for="Password" class="text-danger align-self-center"></span>
             </div>
 
             <div class="col-9 col-sm-9 col-md-6 offset-3 mb-2">
                 <div class="btn-group d-flex">
-                    <input type="submit" class="btn btn-dark btn-block mr-1" value="Zaloguj" />
-                    <a asp-controller="Auth" asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl" class="btn btn-dark btn-block ml-1 mt-0">Utwórz konto</a>
+                    <input type="submit" class="btn btn-dark btn-block mr-1 border border-white" value="Zaloguj" />
+                    <a asp-controller="Auth" asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl" asp-route-seenNotification="@true" class="btn btn-dark btn-block ml-1 mt-0 border border-white">Utwórz konto</a>
 
                 </div>
             </div>
-            <a asp-controller="Auth" asp-action="ForgotPassword" asp-route-returnUrl="@Model.ReturnUrl" class="offset-7 offset-md-6 offset-lg-7">Zapomniałeś hasła?</a>
+            <div class="col-4 col-sm-4 col-md-3 offset-8 offset-md-6 mb-2">
+                <div class="btn-group d-flex">
+                    <input onclick="fillData()" class="btn btn-dark btn-block border border-white" value="Drugie konto" />
+                </div>
+            </div>
+            @*<a onclick="fillData()" class="btn offset-7 offset-sm-9 offset-md-7">Drugie konto</a>*@
         </form>
     </div>
 </div>
 
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+@if (!Model.AlreadySeenNotificaton)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            showInfo();
+        });
+    </script>
+}
+<script type="text/javascript">
+    function showInfo() {
+        Swal.fire({
+            text: 'Jeśli chcesz tylko zapoznać sie z funkcjami strony bez zakładania konta, użyj wprowadzonych danych.\n W celu przetestowania czatu oraz powiadomień, otwórz okno prywatne i naciśnij przycisk: "drugie konto".',
+            confirmButtonColor: 'rgb(253, 126, 20)'
+        })
+    };
+    function fillData() {
+        let pass = document.getElementById("pass");
+        pass.value = 'q'
+        let login = document.getElementById("log");
+        login.value = 'q'
+    }
+</script>

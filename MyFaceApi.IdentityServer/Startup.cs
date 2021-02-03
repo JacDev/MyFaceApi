@@ -26,16 +26,14 @@ namespace MyFaceApi.IdentityServer
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			var origin = Configuration.GetSection("MyFaceCongif").GetValue<string>("AllowedCorsOrigins");
 			services.AddCors(options =>
 			{
-				// this defines a CORS policy called "default"
 				options.AddPolicy("default", policy =>
 				{
-					policy.WithOrigins("http://localhost:4200")
+					policy.WithOrigins(origin)
 						.AllowAnyHeader()
 						.AllowAnyMethod();
-					//.AllowCredentials();
-					//.AllowAnyOrigin();
 				});
 			});
 
@@ -122,12 +120,13 @@ namespace MyFaceApi.IdentityServer
 			using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
 			{
 				serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
-
+				IConfigurationSection myFaceConfig = Configuration.GetSection("MyFaceCongif");					
+					
 				var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
 				context.Database.Migrate();
 				if (!context.Clients.Any())
 				{
-					foreach (var client in AuthConfiguration.GetClients())
+					foreach (var client in AuthConfiguration.GetClients(myFaceConfig))
 					{
 						context.Clients.Add(client.ToEntity());
 					}

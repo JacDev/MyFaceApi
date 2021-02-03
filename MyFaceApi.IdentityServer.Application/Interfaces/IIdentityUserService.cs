@@ -2,6 +2,7 @@
 using Pagination.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MyFaceApi.IdentityServer.Application.Interfaces
 {
@@ -10,5 +11,6 @@ namespace MyFaceApi.IdentityServer.Application.Interfaces
 		IdentityUserDto GetUser(Guid userId);
 		List<IdentityUserDto> GetUsers(string[] ids);
 		PagedList<IdentityUserDto> GetUsers(string searchString, PaginationParams paginationParams);
+		Task<IdentityUserDto> AddProfileImage(Guid userId, string path);
 	}
 }
