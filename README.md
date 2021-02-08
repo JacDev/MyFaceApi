@@ -1,4 +1,7 @@
-# MyFaceApi
+<div align="center">
+<h1>MyFaceApi</h1>
+</div>
+
 Projekt jest RESTowym API dla portalu społecznościowego [Myface](https://github.com/JacDev/MyFaceClient). 
 Zawiera także IdentityServer do autentykacji i autoryzacji użytkowników oraz autoryzacji zapytań do API.
 
