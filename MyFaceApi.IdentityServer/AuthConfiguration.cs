@@ -67,11 +67,10 @@ namespace MyFaceApi.IdentityServer
 					RequirePkce = true,
 					AllowAccessTokensViaBrowser = true,
 					RequireConsent = false,
-
-					RedirectUris =           { configurationSection.GetValue<string>("RedirectUris")  },
+					RedirectUris =           { $"{configurationSection.GetValue<string>("RedirectUris")}signin-callback", $"{configurationSection.GetValue<string>("RedirectUris")}assets/silent-callback.html" },
 					PostLogoutRedirectUris = { configurationSection.GetValue<string>("PostLogoutRedirectUris") },
 					AllowedCorsOrigins =     { configurationSection.GetValue<string>("AllowedCorsOrigins")},
-
+					AccessTokenLifetime = 600,
 					AllowedScopes =
 					{
 						IdentityServerConstants.StandardScopes.OpenId,

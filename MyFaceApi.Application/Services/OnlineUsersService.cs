@@ -14,12 +14,12 @@ namespace MyFaceApi.Api.Application.Services
 {
 	public class OnlineUsersService : IOnlineUsersService
 	{
-		private readonly IRepository<OnlineUser> _onlineUsersRepository;
+		private readonly IOnlineUserRepository<OnlineUser> _onlineUsersRepository;
 		private readonly IFriendsRelationService _friendsRelationService;
 		private readonly IUserService _userService;
 		private readonly ILogger<OnlineUsersService> _logger;
 		private readonly IMapper _mapper;
-		public OnlineUsersService(IRepository<OnlineUser> onlineUsersRepository,
+		public OnlineUsersService(IOnlineUserRepository<OnlineUser> onlineUsersRepository,
 			ILogger<OnlineUsersService> logger,
 			IUserService userService,
 			IFriendsRelationService friendsRelationService,

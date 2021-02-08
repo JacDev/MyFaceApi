@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Controllers
 {
-	[AllowAnonymous]
 	[Route("api/users/{userId}/posts")]
 	[ApiController]
 	public class PostsController : ControllerBase
@@ -280,7 +279,7 @@ namespace MyFaceApi.Api.Controllers
 				{
 					if (await _userService.CheckIfUserExists(gUserId))
 					{
-						return await _postService.SetProfilePicture(gUserId, gPostiId);
+						return Ok(await _postService.SetProfilePicture(gUserId, gPostiId));
 					}
 					else
 					{

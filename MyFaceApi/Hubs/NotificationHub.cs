@@ -122,7 +122,7 @@ namespace MyFaceApi.Api.Hubs
 		public override async Task OnDisconnectedAsync(Exception ex)
 		{
 			OnlineUserDto _loggedUser = GetLoggedUser();
-			if (_loggedUser != null)
+			if (_loggedUser != null && !string.IsNullOrWhiteSpace(_loggedUser.Id))
 			{
 				await _onlineUsersService.RemoveUserAsync(_loggedUser.Id);
 			}
@@ -130,12 +130,20 @@ namespace MyFaceApi.Api.Hubs
 		}
 		private OnlineUserDto GetLoggedUser()
 		{
-			OnlineUserDto user = new OnlineUserDto();
-			if (Context.User.Claims != null)
+			try
 			{
-				user.Id = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+				OnlineUserDto user = new OnlineUserDto();
+				if (Context.User.Claims.Any())
+				{
+					user.Id = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+				}
+
+				return user;
 			}
-			return user;
+			catch (Exception ex)
+			{
+				return null;
+			}
 		}
 	}
 }

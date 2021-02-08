@@ -2,12 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>edf1c6f8-58a7-4d5e-a7b7-e5b4faa54579</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/277316fa-1178-45c0-ae9e-21e5167a4225/resourceGroups/myface/providers/microsoft.insights/components/identityserverMyFace</ApplicationInsightsResourceId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.0.0" />
+    <PackageReference Include="Azure.Identity" Version="1.2.2" />
     <PackageReference Include="IdentityServer4" Version="4.1.1" />
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.1" />
     <PackageReference Include="IdentityServer4.EntityFramework" Version="4.1.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.2" />
@@ -15,6 +20,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,7 +29,7 @@
     <ProjectReference Include="..\Pagination\Pagination.csproj" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 
 </Project>

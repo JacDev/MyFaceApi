@@ -35,7 +35,7 @@ namespace MyFaceApi.IdentityServer.Application.Services
 
 			return logoutRequest.PostLogoutRedirectUri;
 		}
-		public async Task RegisterUser(RegisterViewModel registerViewModel)
+		public async Task<IdentityResult> RegisterUser(RegisterViewModel registerViewModel)
 		{
 			var user = new ApplicationUser
 			{
@@ -48,7 +48,7 @@ namespace MyFaceApi.IdentityServer.Application.Services
 				DateOfBirht = DateTime.Now
 			};
 
-			await _userManager.CreateAsync(user, registerViewModel.Password);
+			return await _userManager.CreateAsync(user, registerViewModel.Password);
 		}
 	}
 }

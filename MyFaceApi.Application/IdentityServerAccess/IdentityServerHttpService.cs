@@ -13,6 +13,8 @@ namespace MyFaceApi.Api.Application.IdentityServerAccess
 			Client = clientFactory.CreateClient();
 			IConfigurationSection identityServerConf = configuration.GetSection("IdentityServerConfiguration");
 			Client.BaseAddress = new Uri(identityServerConf.GetValue<string>("IdentityServerUri"));
+			//Client.BaseAddress = new Uri("https://myfaceauth.azurewebsites.net");
+			
 		}
 	}
 }

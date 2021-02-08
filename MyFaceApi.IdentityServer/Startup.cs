@@ -27,6 +27,7 @@ namespace MyFaceApi.IdentityServer
 		public void ConfigureServices(IServiceCollection services)
 		{
 			var origin = Configuration.GetSection("MyFaceCongif").GetValue<string>("AllowedCorsOrigins");
+
 			services.AddCors(options =>
 			{
 				options.AddPolicy("default", policy =>
@@ -71,7 +72,11 @@ namespace MyFaceApi.IdentityServer
 
 			var assembly = typeof(Startup).Assembly.GetName().Name;
 
-			services.AddIdentityServer()
+			services.AddIdentityServer(options =>
+			{
+				options.Authentication.CookieLifetime = TimeSpan.FromMinutes(15);
+				options.Authentication.CookieSlidingExpiration = true;
+			})
 				.AddAspNetIdentity<ApplicationUser>()
 				.AddConfigurationStore(options =>
 				{
@@ -86,6 +91,7 @@ namespace MyFaceApi.IdentityServer
 				.AddDeveloperSigningCredential(); //add rsa key
 
 			services.AddApplication();
+			//services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_CONNECTIONSTRING"]);
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -97,7 +103,7 @@ namespace MyFaceApi.IdentityServer
 			}
 			else
 			{
-				app.UseExceptionHandler("/Home/Error");
+				//app.UseExceptionHandler("/Home/Error");
 				app.UseHsts();
 			}
 			app.UseHttpsRedirection();

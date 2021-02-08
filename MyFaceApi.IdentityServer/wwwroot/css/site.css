@@ -12,7 +12,78 @@
     border: none;
 }
 
-.input-box, .input-box:focus, .input-box:hover {
+span {
+    font-size: 15px;
+}
+
+.input-box, .input-box:focus, .input-box:hover,
+.input-box:active {
     background-color: rgb(120, 120, 120);
     color: white;
+}
+
+    .input-box:-webkit-autofill, /* chrome*/
+    .input-box:-webkit-autofill:hover,
+    .input-box:-webkit-autofill:focus,
+    .input-box:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px #808080 inset !important;
+    }
+
+    .input-box:-webkit-autofill {
+        -webkit-text-fill-color: white !important;
+    }
+
+.form-control::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: transparent;
+}
+
+.form-control:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: transparent;
+    opacity: 1;
+}
+
+.form-control::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: transparent;
+    opacity: 1;
+}
+
+.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: transparent;
+}
+
+.form-control::-ms-input-placeholder { /* Microsoft Edge */
+    color: transparent;
+}
+
+.form-control::placeholder { /* Most modern browsers support this now. */
+    color: transparent;
+}
+
+@media screen and (max-width: 767px) {
+    .form-control::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+        color: white;
+    }
+
+    .form-control:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+        color: white;
+        opacity: 1;
+    }
+
+    .form-control::-moz-placeholder { /* Mozilla Firefox 19+ */
+        color: white;
+        opacity: 1;
+    }
+
+    .form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+        color: white;
+    }
+
+    .form-control::-ms-input-placeholder { /* Microsoft Edge */
+        color: white;
+    }
+
+    .form-control::placeholder { /* Most modern browsers support this now. */
+        color: white;
+        font-size: 15px;
+    }
 }

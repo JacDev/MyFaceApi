@@ -55,3 +55,27 @@
 /MyFaceApi.IdentityServer/wwwroot/lib
 /MyFaceApi.IdentityServer/appsettings.Development.json
 /MyFaceApi/appsettings.Development.json
+/MyFaceApi/bin/Release/netcoreapp3.1
+/MyFaceApi/Properties
+/MyFaceApi.Application/bin/Release/netcoreapp3.1
+/MyFaceApi.Domain/bin/Release/netcoreapp3.1
+/MyFaceApi.IdentityServer/bin/Release/netcoreapp3.1
+/MyFaceApi.IdentityServer/Properties/PublishProfiles
+/MyFaceApi.IdentityServer/Properties/ServiceDependencies
+/MyFaceApi.IdentityServer/Properties/serviceDependencies.json
+/MyFaceApi.IdentityServer/Properties/serviceDependencies.local.json.user
+/MyFaceApi.IdentityServer/Properties/serviceDependencies.identityserverMyFace - Web Deploy.json.user
+/MyFaceApi.IdentityServer/Properties/serviceDependencies.identityserverMyFace - Web Deploy.json
+/MyFaceApi.IdentityServer/Properties/serviceDependencies.local.json
+/MyFaceApi.IdentityServer/Properties/serviceDependencies.myfaceauth - Web Deploy.json
+/MyFaceApi.IdentityServer/Properties/serviceDependencies.myfaceauth - Web Deploy.json.user
+/MyFaceApi.IdentityServer.Application/bin/Release/netcoreapp3.1
+/MyFaceApi.IdentityServer.Domain/bin/Release/netcoreapp3.1
+/MyFaceApi.IdentityServer.Infrastructure/bin/Release/netcoreapp3.1
+/MyFaceApi.Infrastructure/bin/Release/netcoreapp3.1/MyFaceApi.Api.Domain.dll
+/MyFaceApi.Infrastructure/bin/Release/netcoreapp3.1
+/Pagination/bin/Release/netcoreapp3.1
+/MyFaceApi.IdentityServer/.config/dotnet-tools.json
+/MyFaceApi.IdentityServer/wwwroot/favicon.ico
+/MyFaceApi.Tests.UnitTests/bin/Release/netcoreapp3.1
+/MyFaceApi.IdentityServer/appsettings.json

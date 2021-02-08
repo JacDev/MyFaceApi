@@ -9,24 +9,24 @@ namespace MyFaceApi.IdentityServer.Application.ViewModels
 		[MaxLength(20, ErrorMessage = "Maks. 20 znaków!")]
 		public string Login { get; set; }
 
-		//[Required(ErrorMessage = "Imie jest wymagane!")]
-		//[StringLength(20, ErrorMessage = "Maks. 20 znaków!")]
+		[Required(ErrorMessage = "Imie jest wymagane!")]
+		[StringLength(20, ErrorMessage = "Maks. 20 znaków!")]
 		[DisplayName("Imię")]
 		public string FirstName { get; set; }
 
-		//[Required(ErrorMessage = "Nazwisko jest wymagane!")]
-		//[StringLength(20, ErrorMessage = "Maks. 20 znaków!")]
+		[Required(ErrorMessage = "Nazwisko jest wymagane!")]
+		[StringLength(20, ErrorMessage = "Maks. 20 znaków!")]
 		[DisplayName("Nazwisko")]
 		public string LastName { get; set; }
 
 		//[Required(ErrorMessage = "Email jest wymagany!")]
-		//[EmailAddress]
+		[EmailAddress]
 		public string Email { get; set; }
 
 		[DataType(DataType.Password)]
 		[Required(ErrorMessage = "Hasło jest wymagane!")]
 		[DisplayName("Hasło")]
-		//[StringLength(20, MinimumLength = 8, ErrorMessage = "Passwords must be at least 8 characters.")]
+		[StringLength(20, ErrorMessage = "Maks. 20 znaków!")]
 		public string Password { get; set; }
 
 		[DataType(DataType.Password)]
@@ -42,5 +42,6 @@ namespace MyFaceApi.IdentityServer.Application.ViewModels
 		public string DateOfBirth { get; set; }
 		public string ReturnUrl { get; set; }
 		public bool AlreadySeenNotification { get; set; }
+		public string ErrorMessage { get; set; }
 	}
 }

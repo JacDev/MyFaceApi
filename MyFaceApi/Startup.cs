@@ -31,12 +31,13 @@ namespace MyFaceApi
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			string clientUri = Configuration.GetValue<string>("ClientUri");
 			services.AddCors(options =>
 			{
 				// this defines a CORS policy called "default"
 				options.AddPolicy("default", policy =>
 				{
-					policy.WithOrigins("http://localhost:4200")
+					policy.WithOrigins(clientUri)
 						.AllowAnyHeader()
 						.AllowAnyMethod()
 						.AllowCredentials();
@@ -94,7 +95,9 @@ namespace MyFaceApi
 					options.UseSqlServer(Configuration.GetConnectionString("MyFaceApi")
 						,b => b.MigrationsAssembly("MyFaceApi.Api"));
 					});
-
+			services.AddDbContext<OnlineUserDbContext>(
+				options => options.UseInMemoryDatabase("OnlineUsers")
+				);
 			services.AddHttpClient();
 			services.AddInfrastructure();
 			services.AddApplication();

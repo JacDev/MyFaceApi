@@ -12,38 +12,43 @@
             <input type="hidden" asp-for="ReturnUrl" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group d-flex">
-                <div class="col-2 col-sm-3 text-right align-self-center">
+                <div class="col-2 col-sm-3 text-right align-self-center d-none d-md-block">
                     <label asp-for="Login" class="control-label"></label>
                 </div>
                 <div class="col-md-6">
-                    <input id="log" asp-for="Login" class="form-control input-box" value="w" />
+                    <input id="log" asp-for="Login" class="form-control input-box" value="pokazowe1" />
                 </div>
                 <span asp-validation-for="Login" class="text-danger align-self-center"></span>
             </div>
 
             <div class="form-group d-flex">
-                <div class="col-2 col-sm-3 text-right align-self-center">
+                <div class="col-2 col-sm-3 text-right align-self-center d-none d-md-block">
                     <label asp-for="Password" class="control-label"></label>
                 </div>
                 <div class="col-md-6">
-                    <input id="pass" asp-for="Password" class="form-control input-box" value="w" />
+                    <input id="pass" asp-for="Password" class="form-control input-box" value="pokazowe1" />
                 </div>
                 <span asp-validation-for="Password" class="text-danger align-self-center"></span>
             </div>
 
-            <div class="col-9 col-sm-9 col-md-6 offset-3 mb-2">
+            <div class="col-12 col-sm-12 col-md-6 offset-0 offset-md-3 mb-2">
                 <div class="btn-group d-flex">
                     <input type="submit" class="btn btn-dark btn-block mr-1 border border-white" value="Zaloguj" />
                     <a asp-controller="Auth" asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl" asp-route-seenNotification="@true" class="btn btn-dark btn-block ml-1 mt-0 border border-white">Utwórz konto</a>
 
                 </div>
             </div>
-            <div class="col-4 col-sm-4 col-md-3 offset-8 offset-md-6 mb-2">
-                <div class="btn-group d-flex">
-                    <input onclick="fillData()" class="btn btn-dark btn-block border border-white" value="Drugie konto" />
+            @*<div class="col-4 col-sm-4 col-md-3 offset-2 offset-sm-3 mb-2">
+                    <div class="btn-group d-flex">
+                        <input onclick="fillData()" class="btn text-white" style="cursor:pointer;" value="Drugie konto" />
+                    </div>
+                </div>*@
+            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+            {
+                <div class="col-12 col-md-6 offset-0 offset-md-3 h6 text-danger text-center">
+                    @Model.ErrorMessage
                 </div>
-            </div>
-            @*<a onclick="fillData()" class="btn offset-7 offset-sm-9 offset-md-7">Drugie konto</a>*@
+            }
         </form>
     </div>
 </div>
@@ -53,21 +58,57 @@
 {
     <script type="text/javascript">
         $(document).ready(function () {
-            showInfo();
+            showInfo2();
+        });
+    </script>
+}
+else if (Model.SuccessfulRegistration)
+{
+    Model.SuccessfulRegistration = false;
+    <script type="text/javascript">
+        $(document).ready(function () {
+            successfulRegistration();
         });
     </script>
 }
 <script type="text/javascript">
+    function successfulRegistration() {
+        Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: 'Konto zostało utworzone!',
+            showConfirmButton: false,
+            timer: 1500
+        })
+    };
     function showInfo() {
         Swal.fire({
-            text: 'Jeśli chcesz tylko zapoznać sie z funkcjami strony bez zakładania konta, użyj wprowadzonych danych.\n W celu przetestowania czatu oraz powiadomień, otwórz okno prywatne i naciśnij przycisk: "drugie konto".',
+            text: '\n W celu przetestowania czatu oraz powiadomień, otwórz okno prywatne i naciśnij przycisk: "drugie konto".',
             confirmButtonColor: 'rgb(253, 126, 20)'
         })
     };
-    function fillData() {
-        let pass = document.getElementById("pass");
-        pass.value = 'q'
-        let login = document.getElementById("log");
-        login.value = 'q'
+    function showInfo2() {
+        Swal.mixin({
+
+            showCancelButton: true,
+            cancelButtonText:'Pomiń',
+            confirmButtonText: 'Dalej &rarr;',
+            progressSteps: ['1', '2', '3']
+        }).queue([
+            {
+                text: 'Jeśli chcesz tylko zapoznać sie z funkcjami strony bez zakładania konta, użyj wprowadzonych danych.',
+                cancelButtonText:'Pomiń',
+            },
+            {
+                text: 'W celu przetestowania działania czatu oraz powiadomień, załóż dwa nowe konta, ponieważ jeśli inna osoba będzie zalogowana na konto demo, funkcje te nie będą działać prawidłowo.'
+            },
+            {
+                text: 'Na koncie demo możliwe jest dodawanie oraz edycja postów i komentarzy, ale wyłączna jest możliwość usuwania.',
+                cancelButtonText: 'Zamknij',
+                showConfirmButton: false,
+            },
+        ]).then((result) => {
+           
+        })
     }
 </script>

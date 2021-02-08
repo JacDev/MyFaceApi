@@ -11,8 +11,9 @@ namespace MyFaceApi.Api.Infrastructure
 		public static IServiceCollection AddInfrastructure(this IServiceCollection services)
 		{
 			services.AddScoped<IAppDbContext>(provider => provider.GetService<AppDbContext>());
+			services.AddScoped<IOnlineUsersDbContext>(provider => provider.GetService<OnlineUserDbContext>());
 			services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
+			services.AddScoped(typeof(IOnlineUserRepository<>), typeof(OnlineUsersRepository<>));
 			return services;
 		}
 	}
