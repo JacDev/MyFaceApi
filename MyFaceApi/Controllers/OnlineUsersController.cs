@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Controllers
 {
-	[AllowAnonymous]
 	[Route("api/users/{userId}/onlinefriends")]
 	[ApiController]
 	public class OnlineUsersController : ControllerBase

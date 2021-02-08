@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace MyFaceApi.Api.Controllers
 {
-	[AllowAnonymous]
 	[Route("api/users/{userId}/posts/{postId}/reactions")]
 	[ApiController]
 	public class PostReactionsController : ControllerBase

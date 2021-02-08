@@ -45,7 +45,6 @@ namespace MyFaceApi.Api.Controllers
 		/// <response code="404"> If user or post not found</response>   
 		/// <response code="500"> If internal error occured</response>
 		[HttpPost]
-		[AllowAnonymous]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -95,7 +94,6 @@ namespace MyFaceApi.Api.Controllers
 		/// <response code="404"> If post not found</response>   
 		/// <response code="500"> If internal error occured</response>
 		[HttpGet(Name = "GetComments")]
-		[AllowAnonymous]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]

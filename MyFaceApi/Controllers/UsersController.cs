@@ -13,7 +13,6 @@ using System.Collections.Generic;
 
 namespace MyFaceApi.Api.Controllers
 {
-	[AllowAnonymous]
 	[Produces("application/json")]
 	[Route("api/[controller]")]
 	[ApiController]
