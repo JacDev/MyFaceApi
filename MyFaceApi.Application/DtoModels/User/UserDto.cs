@@ -12,5 +12,6 @@ namespace MyFaceApi.Api.Application.DtoModels.User
 		public int NewNotificationsCounter { get; set; }
 		public int TotalFriendsCounter { get; set; }
 		public int TotalPostCounter { get; set; }
+		public string Role { get; set; }
 	}
 }

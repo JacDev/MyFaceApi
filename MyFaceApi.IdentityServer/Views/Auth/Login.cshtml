@@ -16,7 +16,7 @@
                     <label asp-for="Login" class="control-label"></label>
                 </div>
                 <div class="col-md-6">
-                    <input id="log" asp-for="Login" class="form-control input-box" value="pokazowe1" />
+                    <input id="login" asp-for="Login" class="form-control input-box" value="pokazowe1" />
                 </div>
                 <span asp-validation-for="Login" class="text-danger align-self-center"></span>
             </div>
@@ -38,11 +38,6 @@
 
                 </div>
             </div>
-            @*<div class="col-4 col-sm-4 col-md-3 offset-2 offset-sm-3 mb-2">
-                    <div class="btn-group d-flex">
-                        <input onclick="fillData()" class="btn text-white" style="cursor:pointer;" value="Drugie konto" />
-                    </div>
-                </div>*@
             @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
             {
                 <div class="col-12 col-md-6 offset-0 offset-md-3 h6 text-danger text-center">
@@ -58,7 +53,7 @@
 {
     <script type="text/javascript">
         $(document).ready(function () {
-            showInfo2();
+            showInfo();
         });
     </script>
 }
@@ -68,6 +63,8 @@ else if (Model.SuccessfulRegistration)
     <script type="text/javascript">
         $(document).ready(function () {
             successfulRegistration();
+            document.getElementById('login').value = ""
+            document.getElementById('pass').value = ""
         });
     </script>
 }
@@ -82,12 +79,6 @@ else if (Model.SuccessfulRegistration)
         })
     };
     function showInfo() {
-        Swal.fire({
-            text: '\n W celu przetestowania czatu oraz powiadomień, otwórz okno prywatne i naciśnij przycisk: "drugie konto".',
-            confirmButtonColor: 'rgb(253, 126, 20)'
-        })
-    };
-    function showInfo2() {
         Swal.mixin({
 
             showCancelButton: true,

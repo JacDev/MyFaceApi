@@ -6,7 +6,6 @@ namespace MyFaceApi.Api.Application.DtoModels.Post
 {
 	public class PostToAddDto
 	{
-		[Required]
 		public string Text { get; set; }
 		public DateTime WhenAdded { get; set; }
 		public IFormFile Picture { get; set; }

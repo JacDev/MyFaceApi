@@ -79,3 +79,5 @@
 /MyFaceApi.IdentityServer/wwwroot/favicon.ico
 /MyFaceApi.Tests.UnitTests/bin/Release/netcoreapp3.1
 /MyFaceApi.IdentityServer/appsettings.json
+/MyFaceApi/appsettings.json
+/MyFaceApi.IdentityServer/Migrations

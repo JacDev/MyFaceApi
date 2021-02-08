@@ -9,5 +9,6 @@ namespace MyFaceApi.IdentityServer.Domain.Entities
 		public string LastName { get; set; }
 		public string ProfileImagePath { get; set; }
 		public DateTime DateOfBirht { get; set; }
+		public string Role { get; set; }
 	}
 }
